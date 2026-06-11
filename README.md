@@ -1,2 +1,0 @@
-# respos
-Restaurant Application
