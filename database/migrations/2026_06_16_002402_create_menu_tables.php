@@ -23,7 +23,7 @@ return new class extends Migration
 
         Schema::create('qr_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('table_id', 36)->unique();
+            $table->unsignedBigInteger('table_id')->unique();
             $table->text('payload');
             $table->string('image_path', 255)->nullable();
             $table->timestamp('generated_at')->useCurrent();
@@ -43,7 +43,7 @@ return new class extends Migration
 
         Schema::create('menu_items', function (Blueprint $table) {
             $table->id();
-            $table->string('category_id', 36);
+            $table->unsignedBigInteger('category_id');
             $table->string('name', 80);
             $table->string('description', 200)->nullable();
             $table->decimal('base_price', 10, 2);

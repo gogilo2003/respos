@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('table_sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('table_id', 36);
+            $table->unsignedBigInteger('table_id');
             $table->string('session_token', 64)->unique();
-            $table->string('opened_by', 36)->nullable();
+            $table->unsignedBigInteger('opened_by')->nullable();
             $table->enum('open_source', ['customer_qr', 'waiter', 'cashier'])->default('customer_qr');
             $table->enum('status', ['open', 'billing', 'closed', 'force_closed'])->default('open');
             $table->unsignedTinyInteger('customer_count')->nullable();
@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('token_expires_at');
             $table->timestamp('opened_at')->useCurrent();
             $table->timestamp('closed_at')->nullable();
-            $table->string('closed_by', 36)->nullable();
+            $table->unsignedBigInteger('closed_by')->nullable();
             $table->string('close_reason', 200)->nullable();
 
             $table->foreign('table_id')->references('id')->on('restaurant_tables')->cascadeOnDelete();
@@ -30,12 +30,12 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('session_id', 36);
+            $table->unsignedBigInteger('session_id');
             $table->enum('placed_by_role', ['customer', 'waiter', 'cashier']);
-            $table->string('placed_by_user', 36)->nullable();
+            $table->unsignedBigInteger('placed_by_user')->nullable();
             $table->enum('status', ['pending', 'accepted', 'preparing', 'ready', 'served', 'cancelled'])->default('pending');
             $table->string('cancel_reason', 200)->nullable();
-            $table->string('cancelled_by', 36)->nullable();
+            $table->unsignedBigInteger('cancelled_by')->nullable();
             $table->timestamp('placed_at')->useCurrent();
             $table->timestamp('accepted_at')->nullable();
             $table->timestamp('first_ready_at')->nullable();
@@ -49,8 +49,8 @@ return new class extends Migration
 
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->string('order_id', 36);
-            $table->string('menu_item_id', 36);
+            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('menu_item_id');
             $table->unsignedTinyInteger('quantity')->default(1);
             $table->decimal('unit_price', 10, 2);
             $table->string('special_instructions', 120)->nullable();
@@ -62,7 +62,7 @@ return new class extends Migration
             $table->timestamp('served_at')->nullable();
             $table->timestamp('cancelled_at')->nullable();
             $table->string('void_reason', 200)->nullable();
-            $table->string('voided_by', 36)->nullable();
+            $table->unsignedBigInteger('voided_by')->nullable();
 
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
             $table->foreign('menu_item_id')->references('id')->on('menu_items')->cascadeOnDelete();

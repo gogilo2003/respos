@@ -12,9 +12,14 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::prefix('users')->group(function () {
-    Route::get('/', [UserController::class, 'index'])->name('users.index');
-    Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+Route::prefix('users')
+->name('users')
+->group(function () {
+    Route::get('/', [UserController::class, 'index']);
+    Route::get('/{user}', [UserController::class, 'show'])->name('.show');
+    Route::post('/', [UserController::class, 'store'])->name('.store');
+    Route::patch('/{user}', [UserController::class, 'update'])->name('.update');
+    Route::delete('/{user}', [UserController::class, 'destroy'])->name('.destroy');
 });
 
 Route::middleware('auth')->group(function () {
