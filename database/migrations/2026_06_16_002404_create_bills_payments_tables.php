@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('session_id', 36);
-            $table->unsignedBigInteger('generated_by', 36);
+            $table->unsignedBigInteger('session_id');
+            $table->unsignedBigInteger('generated_by');
             $table->enum('status', ['draft', 'open', 'partially_paid', 'paid', 'voided'])->default('draft');
             $table->decimal('subtotal', 10, 2)->default(0.00);
             $table->decimal('vat_rate', 5, 2)->default(0.00);
@@ -20,12 +20,12 @@ return new class extends Migration
             $table->decimal('service_charge_amount', 10, 2)->default(0.00);
             $table->decimal('discount_amount', 10, 2)->default(0.00);
             $table->string('discount_reason', 200)->nullable();
-            $table->string('discount_approved_by', 36)->nullable();
+            $table->unsignedBigInteger('discount_approved_by')->nullable();
             $table->decimal('grand_total', 10, 2)->default(0.00);
             $table->timestamp('generated_at')->useCurrent();
             $table->timestamp('paid_at')->nullable();
             $table->timestamp('voided_at')->nullable();
-            $table->unsignedBigInteger('voided_by', 36)->nullable();
+            $table->unsignedBigInteger('voided_by')->nullable();
             $table->string('void_reason', 200)->nullable();
 
             $table->foreign('session_id')->references('id')->on('table_sessions')->cascadeOnDelete();
@@ -36,8 +36,8 @@ return new class extends Migration
 
         Schema::create('bill_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bill_id', 36);
-            $table->unsignedBigInteger('order_item_id', 36);
+            $table->unsignedBigInteger('bill_id');
+            $table->unsignedBigInteger('order_item_id');
             $table->unsignedTinyInteger('quantity');
             $table->decimal('unit_price', 10, 2);
             $table->decimal('line_total', 10, 2);
@@ -49,7 +49,7 @@ return new class extends Migration
 
         Schema::create('bill_splits', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bill_id', 36);
+            $table->unsignedBigInteger('bill_id');
             $table->enum('split_type', ['by_item', 'equally', 'custom']);
             $table->string('split_label', 60)->nullable();
             $table->decimal('amount_due', 10, 2);
@@ -61,8 +61,8 @@ return new class extends Migration
 
         Schema::create('bill_split_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('split_id', 36);
-            $table->unsignedBigInteger('bill_item_id', 36);
+            $table->unsignedBigInteger('split_id');
+            $table->unsignedBigInteger('bill_item_id');
 
             $table->foreign('split_id')->references('id')->on('bill_splits')->cascadeOnDelete();
             $table->foreign('bill_item_id')->references('id')->on('bill_items')->restrictOnDelete();
@@ -70,9 +70,9 @@ return new class extends Migration
 
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bill_id', 36);
-            $table->unsignedBigInteger('split_id', 36)->nullable();
-            $table->unsignedBigInteger('cashier_id', 36);
+            $table->unsignedBigInteger('bill_id');
+            $table->unsignedBigInteger('split_id')->nullable();
+            $table->unsignedBigInteger('cashier_id');
             $table->enum('payment_method', ['cash', 'manual'])->default('cash');
             $table->string('manual_note', 100)->nullable();
             $table->decimal('amount_due', 10, 2);
@@ -88,10 +88,10 @@ return new class extends Migration
 
         Schema::create('refunds', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('payment_id', 36);
+            $table->unsignedBigInteger('payment_id');
             $table->decimal('amount', 10, 2);
             $table->string('reason', 255);
-            $table->unsignedBigInteger('approved_by', 36);
+            $table->unsignedBigInteger('approved_by');
             $table->string('credit_note_ref', 50);
             $table->timestamp('refunded_at')->useCurrent();
 
