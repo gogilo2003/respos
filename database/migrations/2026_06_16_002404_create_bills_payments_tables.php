@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bills', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('session_id', 36);
             $table->string('generated_by', 36);
             $table->enum('status', ['draft', 'open', 'partially_paid', 'paid', 'voided'])->default('draft');
@@ -35,7 +35,7 @@ return new class extends Migration
         });
 
         Schema::create('bill_items', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('bill_id', 36);
             $table->string('order_item_id', 36);
             $table->unsignedTinyInteger('quantity');
@@ -48,7 +48,7 @@ return new class extends Migration
         });
 
         Schema::create('bill_splits', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('bill_id', 36);
             $table->enum('split_type', ['by_item', 'equally', 'custom']);
             $table->string('split_label', 60)->nullable();
@@ -60,7 +60,7 @@ return new class extends Migration
         });
 
         Schema::create('bill_split_items', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('split_id', 36);
             $table->string('bill_item_id', 36);
 
@@ -69,7 +69,7 @@ return new class extends Migration
         });
 
         Schema::create('payments', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('bill_id', 36);
             $table->string('split_id', 36)->nullable();
             $table->string('cashier_id', 36);
@@ -87,7 +87,7 @@ return new class extends Migration
         });
 
         Schema::create('refunds', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('payment_id', 36);
             $table->decimal('amount', 10, 2);
             $table->string('reason', 255);

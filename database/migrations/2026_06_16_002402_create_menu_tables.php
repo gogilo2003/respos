@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('restaurant_tables', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('table_number', 20);
             $table->unsignedTinyInteger('capacity')->default(4);
             $table->string('location', 80)->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         Schema::create('qr_codes', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('table_id', 36)->unique();
             $table->text('payload');
             $table->string('image_path', 255)->nullable();
@@ -33,7 +33,7 @@ return new class extends Migration
         });
 
         Schema::create('menu_categories', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('name', 80);
             $table->string('description', 200)->nullable();
             $table->unsignedSmallInteger('sort_order')->default(0);
@@ -42,7 +42,7 @@ return new class extends Migration
         });
 
         Schema::create('menu_items', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('category_id', 36);
             $table->string('name', 80);
             $table->string('description', 200)->nullable();

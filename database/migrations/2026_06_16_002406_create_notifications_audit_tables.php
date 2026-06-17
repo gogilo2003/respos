@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('assistance_requests', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('session_id', 36);
             $table->enum('request_type', ['assistance', 'bill_request'])->default('assistance');
             $table->string('handled_by', 36)->nullable();
@@ -22,7 +22,7 @@ return new class extends Migration
         });
 
         Schema::create('notifications', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->enum('target_role', ['customer', 'waiter', 'kitchen', 'cashier', 'admin']);
             $table->string('target_user_id', 36)->nullable();
             $table->string('session_id', 36)->nullable();
@@ -37,7 +37,7 @@ return new class extends Migration
         });
 
         Schema::create('audit_logs', function (Blueprint $table) {
-            $table->unsignedBigInteger('id')->autoIncrement()->primary();
+            $table->id();
             $table->string('user_id', 36)->nullable();
             $table->string('action', 100);
             $table->string('entity_type', 60);

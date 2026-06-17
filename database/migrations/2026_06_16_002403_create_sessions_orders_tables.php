@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('table_sessions', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('table_id', 36);
             $table->string('session_token', 64)->unique();
             $table->string('opened_by', 36)->nullable();
@@ -29,7 +29,7 @@ return new class extends Migration
         });
 
         Schema::create('orders', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('session_id', 36);
             $table->enum('placed_by_role', ['customer', 'waiter', 'cashier']);
             $table->string('placed_by_user', 36)->nullable();
@@ -48,7 +48,7 @@ return new class extends Migration
         });
 
         Schema::create('order_items', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('order_id', 36);
             $table->string('menu_item_id', 36);
             $table->unsignedTinyInteger('quantity')->default(1);

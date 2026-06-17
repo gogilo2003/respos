@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('receipts', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('bill_id', 36);
             $table->string('cashier_id', 36);
             $table->string('receipt_number', 30);
@@ -23,7 +23,7 @@ return new class extends Migration
         });
 
         Schema::create('receipt_reprints', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->string('receipt_id', 36);
             $table->string('reprinted_by', 36);
             $table->timestamp('reprinted_at')->useCurrent();
@@ -33,7 +33,7 @@ return new class extends Migration
         });
 
         Schema::create('cash_reconciliations', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->id();
             $table->date('reconciliation_date');
             $table->string('prepared_by', 36);
             $table->string('approved_by', 36)->nullable();

@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('system_settings', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
+            $table->ulid('public_id')->unique()->index();
             $table->string('key', 80);
             $table->string('value', 255);
             $table->string('description', 200)->nullable();
@@ -20,24 +20,21 @@ return new class extends Migration
         });
 
         Schema::create('roles', function (Blueprint $table) {
-            $table->unsignedTinyInteger('id')->autoIncrement()->primary();
+            $table->id();
             $table->enum('name', ['customer', 'waiter', 'kitchen', 'cashier', 'manager', 'admin'])->unique();
         });
 
         Schema::create('users', function (Blueprint $table) {
-            $table->string('id', 36)->primary();
-            $table->unsignedTinyInteger('role_id');
+            $table->id();
+            $table->foreignId('role_id')->constrained('roles')->onDelete('restrict');
             $table->string('name', 100);
-            $table->string('username', 60);
+            $table->string('username', 60)->unique();
             $table->string('email', 100)->nullable();
             $table->string('password_hash', 255);
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
-
-            $table->unique(['username'], 'uq_username');
-            $table->foreign('role_id')->references('id')->on('roles')->restrictOnDelete();
         });
     }
 
