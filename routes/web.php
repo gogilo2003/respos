@@ -3,7 +3,6 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,7 +16,6 @@ Route::prefix('users')
     ->name('users')
     ->group(function () {
         Route::get('/', [UserController::class, 'index']);
-        Route::get('/{user}', [UserController::class, 'show'])->name('.show');
         Route::post('/', [UserController::class, 'store'])->name('.store');
         Route::patch('/{user}', [UserController::class, 'update'])->name('.update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('.destroy');
