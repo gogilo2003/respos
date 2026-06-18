@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Model
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -25,6 +25,7 @@ class User extends Model
 
     protected $hidden = [
         'password_hash',
+        'remember_token',
     ];
 
     protected function casts(): array
@@ -32,6 +33,7 @@ class User extends Model
         return [
             'is_active' => 'boolean',
             'last_login_at' => 'datetime',
+            'email_verified_at' => 'datetime',
         ];
     }
 
@@ -40,8 +42,24 @@ class User extends Model
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function getAuthPassword()
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPasswordName()
     {
-        return $this->password_hash;
+        return 'password_hash';
+    }
+
+    /**
+     * Check if user has a specific role.
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->role && $this->role->name === $role;
     }
 }

@@ -12,7 +12,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            \App\Interfaces\Repositories\UserRepositoryInterface::class,
+            \App\Repositories\UserRepository::class
+        );
+        $this->app->bind(
+            \App\Interfaces\Repositories\RoleRepositoryInterface::class,
+            \App\Repositories\RoleRepository::class
+        );
     }
 
     /**
@@ -21,5 +28,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Vite::prefetch(concurrency: 3);
+
+        $roles = ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'customer'];
+
+        foreach ($roles as $role) {
+            \Illuminate\Support\Facades\Gate::define($role, function (\App\Models\User $user) use ($role) {
+                return $user->hasRole($role);
+            });
+        }
     }
 }
