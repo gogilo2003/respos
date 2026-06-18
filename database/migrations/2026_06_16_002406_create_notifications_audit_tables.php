@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('assistance_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('session_id', 36);
+            $table->unsignedBigInteger('session_id');
             $table->enum('request_type', ['assistance', 'bill_request'])->default('assistance');
-            $table->string('handled_by', 36)->nullable();
+            $table->unsignedBigInteger('handled_by')->nullable();
             $table->enum('status', ['pending', 'handled'])->default('pending');
             $table->timestamp('requested_at')->useCurrent();
             $table->timestamp('handled_at')->nullable();
@@ -24,8 +24,8 @@ return new class extends Migration
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->enum('target_role', ['customer', 'waiter', 'kitchen', 'cashier', 'admin']);
-            $table->string('target_user_id', 36)->nullable();
-            $table->string('session_id', 36)->nullable();
+            $table->unsignedBigInteger('target_user_id')->nullable();
+            $table->unsignedBigInteger('session_id')->nullable();
             $table->string('event_type', 60);
             $table->json('payload')->nullable();
             $table->boolean('is_read')->default(false);
@@ -38,10 +38,10 @@ return new class extends Migration
 
         Schema::create('audit_logs', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id', 36)->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('action', 100);
             $table->string('entity_type', 60);
-            $table->string('entity_id', 36);
+            $table->unsignedBigInteger('entity_id');
             $table->json('old_value')->nullable();
             $table->json('new_value')->nullable();
             $table->string('reason', 255)->nullable();

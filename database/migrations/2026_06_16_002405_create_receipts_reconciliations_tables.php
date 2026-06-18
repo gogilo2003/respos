@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('bill_id', 36);
-            $table->unsignedBigInteger('cashier_id', 36);
+            $table->unsignedBigInteger('bill_id');
+            $table->unsignedBigInteger('cashier_id');
             $table->string('receipt_number', 30);
             $table->string('pdf_path', 255)->nullable();
             $table->unsignedTinyInteger('print_count')->default(0);
@@ -24,8 +24,8 @@ return new class extends Migration
 
         Schema::create('receipt_reprints', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('receipt_id', 36);
-            $table->unsignedBigInteger('reprinted_by', 36);
+            $table->unsignedBigInteger('receipt_id');
+            $table->unsignedBigInteger('reprinted_by');
             $table->timestamp('reprinted_at')->useCurrent();
 
             $table->foreign('receipt_id')->references('id')->on('receipts')->cascadeOnDelete();
@@ -35,8 +35,8 @@ return new class extends Migration
         Schema::create('cash_reconciliations', function (Blueprint $table) {
             $table->id();
             $table->date('reconciliation_date');
-            $table->unsignedBigInteger('prepared_by', 36);
-            $table->unsignedBigInteger('approved_by', 36)->nullable();
+            $table->unsignedBigInteger('prepared_by');
+            $table->unsignedBigInteger('approved_by')->nullable();
             $table->decimal('system_total', 10, 2);
             $table->decimal('physical_count', 10, 2);
             $table->decimal('variance_amount', 10, 2)->virtualAs('physical_count - system_total')->stored();
