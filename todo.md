@@ -35,7 +35,7 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 
 ## Milestone 4: Tables, QR Codes & Session Management
 - [ ] Table Management CRUD (Backend + Frontend).
-- [ ] QR Code generation logic (`{restaurant_id}|{table_id}|{branch_id}|{api_base_url}`).
+- [ ] QR Code generation logic (`{restaurant_id}|{table_id}|{base_url}`).
 - [ ] Table Session Management (Open/Close logic, token validation).
 
 ## Milestone 5: Customer-Facing Ordering (Public QR Flow)
