@@ -2,7 +2,7 @@
 import { ref, defineExpose } from 'vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 
 const isOpen = ref(false);
 
@@ -19,22 +19,25 @@ defineExpose({
     close,
     isOpen,
 });
+
+const appName = ref(usePage().props.appName || 'Laravel');
 </script>
 
 <template>
     <!-- Desktop Sidebar (md and up) -->
-    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 bg-gray-800">
-        <div class="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-gray-800">
+    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+        <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
             <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                <div class="flex items-center flex-shrink-0 px-4">
-                    <Link :href="route('dashboard')">
-                        <svg class="h-8 w-auto fill-current text-gray-800" viewBox="0 0 24 24" fill="currentColor">
+                <div class="flex items-center flex-shrink-0 px-4 text-gray-200">
+                    <Link :href="route('dashboard')" class="flex gap-2 items-center">
+                        <svg class="h-8 w-auto fill-current text-gray-100" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor"
                                 stroke-width="2" fill="none" />
                         </svg>
+                        <div v-text="appName"></div>
                     </Link>
                 </div>
-                <nav class="mt-5 flex-1 px-2 gap-1 flex flex-col">
+                <nav class="mt-5 flex-1 gap-1 flex flex-col pl-3">
                     <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
                         Dashboard
                     </NavLink>

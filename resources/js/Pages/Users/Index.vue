@@ -9,21 +9,7 @@ import Modal from '@/Components/Modal.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
-
-interface Role {
-    id: number;
-    name: string;
-}
-
-interface User {
-    id: number;
-    name: string;
-    username: string;
-    email: string | null;
-    role_id: number;
-    role: Role;
-    is_active: boolean;
-}
+import type { Role, UserListItem as User } from '@/interfaces/user';
 
 const props = defineProps<{
     users: User[];
@@ -96,6 +82,7 @@ const deleteUser = () => {
 </script>
 
 <template>
+
     <Head title="Users Management" />
 
     <AuthenticatedLayout>
@@ -111,17 +98,27 @@ const deleteUser = () => {
         </template>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="mx-4 sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Name</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Username</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Role</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status</th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -129,18 +126,23 @@ const deleteUser = () => {
                                     <td class="px-6 py-4 whitespace-nowrap">{{ user.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ user.username }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <span
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                             {{ user.role.name }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <span :class="user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
+                                        <span
+                                            :class="user.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                            class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
                                             {{ user.is_active ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                                        <button @click="openEditModal(user)" class="text-indigo-600 hover:text-indigo-900">Edit</button>
-                                        <button @click="confirmUserDeletion(user.id)" class="text-red-600 hover:text-red-900">Delete</button>
+                                        <button @click="openEditModal(user)"
+                                            class="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                        <button @click="confirmUserDeletion(user.id)"
+                                            class="text-red-600 hover:text-red-900">Delete</button>
                                     </td>
                                 </tr>
                             </tbody>
@@ -160,7 +162,8 @@ const deleteUser = () => {
                 <form @submit.prevent="submit" class="mt-6 space-y-4">
                     <div>
                         <InputLabel for="role_id" value="Role" />
-                        <select id="role_id" v-model="form.role_id" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                        <select id="role_id" v-model="form.role_id"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                             <option value="" disabled>Select a role</option>
                             <option v-for="role in roles" :key="role.id" :value="role.id.toString()">
                                 {{ role.name }}
@@ -177,7 +180,8 @@ const deleteUser = () => {
 
                     <div>
                         <InputLabel for="username" value="Username" />
-                        <TextInput id="username" v-model="form.username" type="text" class="mt-1 block w-full" required />
+                        <TextInput id="username" v-model="form.username" type="text" class="mt-1 block w-full"
+                            required />
                         <InputError :message="form.errors.username" class="mt-2" />
                     </div>
 
@@ -188,24 +192,29 @@ const deleteUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="password" :value="editingUser ? 'Password (Leave blank to keep current)' : 'Password'" />
-                        <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full" :required="!editingUser" />
+                        <InputLabel for="password"
+                            :value="editingUser ? 'Password (Leave blank to keep current)' : 'Password'" />
+                        <TextInput id="password" v-model="form.password" type="password" class="mt-1 block w-full"
+                            :required="!editingUser" />
                         <InputError :message="form.errors.password" class="mt-2" />
                     </div>
 
                     <div>
                         <InputLabel for="password_confirmation" value="Confirm Password" />
-                        <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password" class="mt-1 block w-full" :required="!editingUser" />
+                        <TextInput id="password_confirmation" v-model="form.password_confirmation" type="password"
+                            class="mt-1 block w-full" :required="!editingUser" />
                     </div>
 
                     <div v-if="editingUser" class="flex items-center">
-                        <input type="checkbox" id="is_active" v-model="form.is_active" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
+                        <input type="checkbox" id="is_active" v-model="form.is_active"
+                            class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" />
                         <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
                     </div>
 
                     <div class="mt-6 flex justify-end">
                         <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
-                        <PrimaryButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                        <PrimaryButton class="ms-3" :class="{ 'opacity-25': form.processing }"
+                            :disabled="form.processing">
                             {{ editingUser ? 'Update User' : 'Create User' }}
                         </PrimaryButton>
                     </div>
@@ -221,7 +230,8 @@ const deleteUser = () => {
                 </h2>
                 <div class="mt-6 flex justify-end">
                     <SecondaryButton @click="confirmingUserDeletion = false"> Cancel </SecondaryButton>
-                    <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="deleteUser">
+                    <DangerButton class="ms-3" :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
+                        @click="deleteUser">
                         Delete User
                     </DangerButton>
                 </div>
