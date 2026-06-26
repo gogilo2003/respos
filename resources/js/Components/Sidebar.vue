@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, defineExpose } from 'vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const isOpen = ref(false);
 
@@ -52,21 +52,42 @@ const appName = ref(usePage().props.appName || 'Laravel');
     </div>
 
     <!-- Mobile Overlay -->
-    <div v-if="isOpen" class="fixed inset-0 z-40 flex md:hidden" role="dialog" aria-modal="true">
+    <div
+        v-if="isOpen"
+        class="fixed inset-0 z-40 flex md:hidden"
+        role="dialog"
+        aria-modal="true"
+    >
         <!-- Backdrop -->
-        <div class="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity" @click="close"></div>
+        <div
+            class="fixed inset-0 bg-gray-600 bg-opacity-75 transition-opacity"
+            @click="close"
+        ></div>
 
         <!-- Sidebar panel -->
-        <div class="relative flex w-full max-w-xs flex-1 flex-col bg-white pt-5 pb-4">
+        <div
+            class="relative flex w-full max-w-xs flex-1 flex-col bg-white pb-4 pt-5"
+        >
             <!-- Close button -->
-            <div class="absolute top-0 right-0 -mr-12 pt-2">
-                <button @click="close"
-                    class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+            <div class="absolute right-0 top-0 -mr-12 pt-2">
+                <button
+                    @click="close"
+                    class="ml-1 flex h-10 w-10 items-center justify-center rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                >
                     <span class="sr-only">Close sidebar</span>
-                    <svg class="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                        class="h-6 w-6 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
             </div>
@@ -82,7 +103,11 @@ const appName = ref(usePage().props.appName || 'Laravel');
 
             <div class="mt-5 h-0 flex-1 overflow-y-auto">
                 <nav class="space-y-1 px-2">
-                    <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')" @click="close">
+                    <ResponsiveNavLink
+                        :href="route('dashboard')"
+                        :active="route().current('dashboard')"
+                        @click="close"
+                    >
                         Dashboard
                     </ResponsiveNavLink>
                     <ResponsiveNavLink v-if="$page.props.auth.user.role === 'admin'" :href="route('users')"

@@ -8,9 +8,16 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, "welcome"]);
 
+// Optional split pages (same landing data)
+Route::get('/welcome-categories', [HomeController::class, "welcomeCategories"])->name('welcome.categories');
+Route::get('/welcome-menu', [HomeController::class, "welcomeMenu"])->name('welcome.menu');
+
+Route::post('/cart/add', [\App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
 
 Route::prefix('users')
     ->name('users')
