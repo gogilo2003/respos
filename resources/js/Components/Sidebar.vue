@@ -2,6 +2,7 @@
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const isOpen = ref(false);
 
