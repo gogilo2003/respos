@@ -6,92 +6,87 @@ import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import type { Role, UserListItem as User } from '@/interfaces/user';
+import type { MenuCategory } from '@/interfaces/menu';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps<{
-    users: User[];
-    roles: Role[];
+    categories: MenuCategory[];
 }>();
 
-const confirmingUserDeletion = ref(false);
-const userToDelete = ref<number | null>(null);
-const editingUser = ref<User | null>(null);
-const showUserModal = ref(false);
+const confirmingCategoryDeletion = ref(false);
+const categoryToDelete = ref<number | null>(null);
+const editingCategory = ref<MenuCategory | null>(null);
+const showCategoryModal = ref(false);
 
 const form = useForm({
-    role_id: '',
     name: '',
-    username: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
+    description: '',
+    sort_order: '0',
     is_active: true,
 });
 
 const openCreateModal = () => {
-    editingUser.value = null;
+    editingCategory.value = null;
     form.reset();
-    showUserModal.value = true;
+    form.is_active = true;
+    form.sort_order = '0';
+    showCategoryModal.value = true;
 };
 
-const openEditModal = (user: User) => {
-    editingUser.value = user;
+const openEditModal = (category: MenuCategory) => {
+    editingCategory.value = category;
     form.clearErrors();
-    form.role_id = user.role_id.toString();
-    form.name = user.name;
-    form.username = user.username;
-    form.email = user.email || '';
-    form.is_active = user.is_active;
-    form.password = '';
-    form.password_confirmation = '';
-    showUserModal.value = true;
+    form.name = category.name;
+    form.description = category.description || '';
+    form.sort_order = category.sort_order.toString();
+    form.is_active = category.is_active;
+    showCategoryModal.value = true;
 };
 
 const submit = () => {
-    if (editingUser.value) {
-        form.patch(route('users.update', editingUser.value.id), {
+    if (editingCategory.value) {
+        form.patch(route('menu-categories.update', editingCategory.value.id), {
             onSuccess: () => closeModal(),
         });
     } else {
-        form.post(route('users.store'), {
+        form.post(route('menu-categories.store'), {
             onSuccess: () => closeModal(),
         });
     }
 };
 
 const closeModal = () => {
-    showUserModal.value = false;
+    showCategoryModal.value = false;
     form.reset();
 };
 
-const confirmUserDeletion = (id: number) => {
-    userToDelete.value = id;
-    confirmingUserDeletion.value = true;
+const confirmCategoryDeletion = (id: number) => {
+    categoryToDelete.value = id;
+    confirmingCategoryDeletion.value = true;
 };
 
-const deleteUser = () => {
-    if (userToDelete.value) {
-        form.delete(route('users.destroy', userToDelete.value), {
-            onSuccess: () => (confirmingUserDeletion.value = false),
+const deleteCategory = () => {
+    if (categoryToDelete.value) {
+        form.delete(route('menu-categories.destroy', categoryToDelete.value), {
+            onSuccess: () => (confirmingCategoryDeletion.value = false),
         });
     }
 };
 </script>
 
 <template>
-    <Head title="Users Management" />
+    <Head title="Menu Categories" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Users Management
+                    Menu Categories
                 </h2>
                 <PrimaryButton @click="openCreateModal">
-                    Add User
+                    Add Category
                 </PrimaryButton>
             </div>
         </template>
@@ -111,12 +106,17 @@ const deleteUser = () => {
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                                     >
-                                        Username
+                                        Description
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                                     >
-                                        Role
+                                        Items Count
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
+                                        Sort Order
                                     </th>
                                     <th
                                         class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
@@ -131,33 +131,30 @@ const deleteUser = () => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="user in users" :key="user.id">
+                                <tr v-for="category in categories" :key="category.id">
                                     <td class="whitespace-nowrap px-6 py-4">
-                                        {{ user.name }}
+                                        {{ category.name }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        {{ category.description || '-' }}
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
-                                        {{ user.username }}
+                                        {{ category.menu_items_count }}
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
-                                        <span
-                                            class="inline-flex rounded-full bg-blue-100 px-2 text-xs font-semibold leading-5 text-blue-800"
-                                        >
-                                            {{ user.role.name }}
-                                        </span>
+                                        {{ category.sort_order }}
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <span
                                             :class="
-                                                user.is_active
+                                                category.is_active
                                                     ? 'bg-green-100 text-green-800'
                                                     : 'bg-red-100 text-red-800'
                                             "
                                             class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                         >
                                             {{
-                                                user.is_active
-                                                    ? 'Active'
-                                                    : 'Inactive'
+                                                category.is_active ? 'Active' : 'Inactive'
                                             }}
                                         </span>
                                     </td>
@@ -165,14 +162,16 @@ const deleteUser = () => {
                                         class="space-x-2 whitespace-nowrap px-6 py-4 text-sm font-medium"
                                     >
                                         <button
-                                            @click="openEditModal(user)"
+                                            @click="openEditModal(category)"
                                             class="text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             @click="
-                                                confirmUserDeletion(user.id)
+                                                confirmCategoryDeletion(
+                                                    category.id
+                                                )
                                             "
                                             class="text-red-600 hover:text-red-900"
                                         >
@@ -187,36 +186,14 @@ const deleteUser = () => {
             </div>
         </div>
 
-        <!-- User Modal -->
-        <Modal :show="showUserModal" @close="closeModal">
+        <!-- Category Modal -->
+        <Modal :show="showCategoryModal" @close="closeModal">
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900">
-                    {{ editingUser ? 'Edit User' : 'Add New User' }}
+                    {{ editingCategory ? 'Edit Category' : 'Add New Category' }}
                 </h2>
 
                 <form @submit.prevent="submit" class="mt-6 space-y-4">
-                    <div>
-                        <InputLabel for="role_id" value="Role" />
-                        <select
-                            id="role_id"
-                            v-model="form.role_id"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        >
-                            <option value="" disabled>Select a role</option>
-                            <option
-                                v-for="role in roles"
-                                :key="role.id"
-                                :value="role.id.toString()"
-                            >
-                                {{ role.name }}
-                            </option>
-                        </select>
-                        <InputError
-                            :message="form.errors.role_id"
-                            class="mt-2"
-                        />
-                    </div>
-
                     <div>
                         <InputLabel for="name" value="Name" />
                         <TextInput
@@ -225,73 +202,39 @@ const deleteUser = () => {
                             type="text"
                             class="mt-1 block w-full"
                             required
+                            maxlength="80"
                         />
                         <InputError :message="form.errors.name" class="mt-2" />
                     </div>
 
                     <div>
-                        <InputLabel for="username" value="Username" />
+                        <InputLabel for="description" value="Description" />
                         <TextInput
-                            id="username"
-                            v-model="form.username"
+                            id="description"
+                            v-model="form.description"
                             type="text"
                             class="mt-1 block w-full"
-                            required
+                            maxlength="200"
                         />
                         <InputError
-                            :message="form.errors.username"
+                            :message="form.errors.description"
                             class="mt-2"
                         />
                     </div>
 
                     <div>
-                        <InputLabel for="email" value="Email (Optional)" />
+                        <InputLabel for="sort_order" value="Sort Order" />
                         <TextInput
-                            id="email"
-                            v-model="form.email"
-                            type="email"
+                            id="sort_order"
+                            v-model="form.sort_order"
+                            type="number"
+                            min="0"
                             class="mt-1 block w-full"
                         />
-                        <InputError :message="form.errors.email" class="mt-2" />
+                        <InputError :message="form.errors.sort_order" class="mt-2" />
                     </div>
 
-                    <div>
-                        <InputLabel
-                            for="password"
-                            :value="
-                                editingUser
-                                    ? 'Password (Leave blank to keep current)'
-                                    : 'Password'
-                            "
-                        />
-                        <TextInput
-                            id="password"
-                            v-model="form.password"
-                            type="password"
-                            class="mt-1 block w-full"
-                            :required="!editingUser"
-                        />
-                        <InputError
-                            :message="form.errors.password"
-                            class="mt-2"
-                        />
-                    </div>
-
-                    <div>
-                        <InputLabel
-                            for="password_confirmation"
-                            value="Confirm Password"
-                        />
-                        <TextInput
-                            id="password_confirmation"
-                            v-model="form.password_confirmation"
-                            type="password"
-                            class="mt-1 block w-full"
-                            :required="!editingUser"
-                        />
-                    </div>
-
-                    <div v-if="editingUser" class="flex items-center">
+                    <div class="flex items-center">
                         <input
                             type="checkbox"
                             id="is_active"
@@ -314,7 +257,7 @@ const deleteUser = () => {
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                         >
-                            {{ editingUser ? 'Update User' : 'Create User' }}
+                            {{ editingCategory ? 'Update Category' : 'Create Category' }}
                         </PrimaryButton>
                     </div>
                 </form>
@@ -323,24 +266,28 @@ const deleteUser = () => {
 
         <!-- Delete Confirmation Modal -->
         <Modal
-            :show="confirmingUserDeletion"
-            @close="confirmingUserDeletion = false"
+            :show="confirmingCategoryDeletion"
+            @close="confirmingCategoryDeletion = false"
         >
             <div class="p-6">
                 <h2 class="text-lg font-medium text-gray-900">
-                    Are you sure you want to delete this user?
+                    Are you sure you want to delete this category?
                 </h2>
+                <p class="mt-1 text-sm text-gray-600">
+                    This action cannot be undone. Categories with associated menu items
+                    may not be deletable.
+                </p>
                 <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="confirmingUserDeletion = false">
+                    <SecondaryButton @click="confirmingCategoryDeletion = false">
                         Cancel
                     </SecondaryButton>
                     <DangerButton
                         class="ms-3"
                         :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
-                        @click="deleteUser"
+                        @click="deleteCategory"
                     >
-                        Delete User
+                        Delete Category
                     </DangerButton>
                 </div>
             </div>

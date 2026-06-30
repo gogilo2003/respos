@@ -3,19 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Services\MenuService;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller
 {
     protected $menuService;
+
     public function __construct(MenuService $MenuService)
     {
         $this->menuService = $MenuService;
     }
-    function welcome()
+
+    public function welcome()
     {
         $menuItems = $this->menuService->getMenuItems();
+
         return Inertia::render('Welcome', ['menuItems' => $menuItems]);
     }
 
@@ -27,7 +29,7 @@ class HomeController extends Controller
     public function welcomeMenu()
     {
         $menuItems = $this->menuService->getMenuItems();
+
         return Inertia::render('WelcomeMenu', ['menuItems' => $menuItems]);
     }
-
 }

@@ -13,6 +13,7 @@ use Inertia\Inertia;
 class UserController extends Controller
 {
     protected UserRepositoryInterface $userRepository;
+
     protected RoleRepositoryInterface $roleRepository;
 
     public function __construct(
@@ -66,7 +67,7 @@ class UserController extends Controller
             'is_active' => 'required|boolean',
         ]);
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $validated['password_hash'] = Hash::make($validated['password']);
         }
         unset($validated['password']);

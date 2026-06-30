@@ -41,10 +41,10 @@ return new class extends Migration
             $table->decimal('physical_count', 10, 2);
             $table->decimal('variance_amount', 10, 2)->virtualAs('physical_count - system_total')->stored();
             $table->decimal('variance_pct', 6, 3)->virtualAs(
-                "CASE WHEN system_total = 0 THEN 0 ELSE ((physical_count - system_total) / system_total) * 100 END"
+                'CASE WHEN system_total = 0 THEN 0 ELSE ((physical_count - system_total) / system_total) * 100 END'
             )->stored();
             $table->boolean('flagged')->virtualAs(
-                "ABS((physical_count - system_total) / system_total) > 0.005"
+                'ABS((physical_count - system_total) / system_total) > 0.005'
             )->stored();
             $table->string('notes', 500)->nullable();
             $table->timestamp('created_at')->useCurrent();

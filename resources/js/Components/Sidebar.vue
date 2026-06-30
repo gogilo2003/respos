@@ -25,25 +25,56 @@ const appName = ref(usePage().props.appName || 'Laravel');
 
 <template>
     <!-- Desktop Sidebar (md and up) -->
-    <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
-        <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
-            <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-                <div class="flex items-center flex-shrink-0 px-4 text-gray-200">
-                    <Link :href="route('dashboard')" class="flex gap-2 items-center">
-                        <svg class="h-8 w-auto fill-current text-gray-100" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor"
-                                stroke-width="2" fill="none" />
+    <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+        <div class="flex min-h-0 flex-1 flex-col bg-gray-800">
+            <div class="flex flex-1 flex-col overflow-y-auto pb-4 pt-5">
+                <div class="flex flex-shrink-0 items-center px-4 text-gray-200">
+                    <Link
+                        :href="route('dashboard')"
+                        class="flex items-center gap-2"
+                    >
+                        <svg
+                            class="h-8 w-auto fill-current text-gray-100"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path
+                                d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                fill="none"
+                            />
                         </svg>
                         <div v-text="appName"></div>
                     </Link>
                 </div>
-                <nav class="mt-5 flex-1 gap-1 flex flex-col pl-3">
-                    <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                <nav class="mt-5 flex flex-1 flex-col gap-1 pl-3">
+                    <NavLink
+                        :href="route('dashboard')"
+                        :active="route().current('dashboard')"
+                    >
                         Dashboard
                     </NavLink>
-                    <NavLink v-if="$page.props.auth.user.role === 'admin'" :href="route('users')"
-                        :active="route().current('users*')">
+                    <NavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('users')"
+                        :active="route().current('users*')"
+                    >
                         Users
+                    </NavLink>
+                    <NavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('menu-categories')"
+                        :active="route().current('menu-categories*')"
+                    >
+                        Menu Categories
+                    </NavLink>
+                    <NavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('menu-items')"
+                        :active="route().current('menu-items*')"
+                    >
+                        Menu Items
                     </NavLink>
                     <!-- Add more navigation links here -->
                 </nav>
@@ -94,9 +125,17 @@ const appName = ref(usePage().props.appName || 'Laravel');
 
             <div class="flex flex-shrink-0 items-center px-4">
                 <Link :href="route('dashboard')" @click="close">
-                    <svg class="h-8 w-auto fill-current text-gray-800" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor"
-                            stroke-width="2" fill="none" />
+                    <svg
+                        class="h-8 w-auto fill-current text-gray-800"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                    >
+                        <path
+                            d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            fill="none"
+                        />
                     </svg>
                 </Link>
             </div>
@@ -110,11 +149,31 @@ const appName = ref(usePage().props.appName || 'Laravel');
                     >
                         Dashboard
                     </ResponsiveNavLink>
-                    <ResponsiveNavLink v-if="$page.props.auth.user.role === 'admin'" :href="route('users')"
-                        :active="route().current('users*')" @click="close">
-                        Users
-                    </ResponsiveNavLink>
-                    <!-- Add more navigation links here -->
+<ResponsiveNavLink
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('users')"
+                            :active="route().current('users*')"
+                            @click="close"
+                        >
+                            Users
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('menu-categories')"
+                            :active="route().current('menu-categories*')"
+                            @click="close"
+                        >
+                            Menu Categories
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('menu-items')"
+                            :active="route().current('menu-items*')"
+                            @click="close"
+                        >
+                            Menu Items
+                        </ResponsiveNavLink>
+                        <!-- Add more navigation links here -->
                 </nav>
             </div>
         </div>

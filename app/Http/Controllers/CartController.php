@@ -18,13 +18,13 @@ class CartController extends Controller
         $validator->validate();
 
         $menuItem = MenuItem::query()->findOrFail($request->input('menu_item_id'));
-        $quantity = (int)($request->input('quantity', 1));
+        $quantity = (int) ($request->input('quantity', 1));
 
         $cart = $request->session()->get('cart', []);
 
         $id = (string) $menuItem->id;
 
-        if (!isset($cart[$id])) {
+        if (! isset($cart[$id])) {
             $cart[$id] = [
                 'menu_item_id' => $menuItem->id,
                 'title' => $menuItem->name,
@@ -47,4 +47,3 @@ class CartController extends Controller
         ]);
     }
 }
-

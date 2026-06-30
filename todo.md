@@ -15,9 +15,9 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [x] Run migrations for all tables.
 - [x] Implement Repository Pattern Base and core repositories:
     - [x] `BaseRepository` / `RepositoryInterface`
-    - [x] `UserRepository`
-    - [x] `RoleRepository`
-    - [ ] `MenuItemRepository`
+    - [x] `UserRepository` / `UserRepositoryInterface`
+    - [x] `RoleRepository` / `RoleRepositoryInterface`
+    - [x] `MenuItemRepository`
     - [ ] `TableRepository`
     - [ ] `OrderRepository`
     - [ ] `BillRepository`
@@ -29,9 +29,9 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [x] Seed default admin user and roles.
 
 ## Milestone 3: Menu Management (Admin)
-- [ ] Menu Categories CRUD (Backend + Frontend).
-- [ ] Menu Items CRUD (Backend + Frontend).
-- [ ] Image upload handling for menu items.
+- [x] Menu Categories CRUD (Backend + Frontend).
+- [x] Menu Items CRUD (Backend + Frontend).
+- [x] Image upload handling for menu items.
 
 ## Milestone 4: Tables, QR Codes & Session Management
 - [ ] Table Management CRUD (Backend + Frontend).
@@ -39,8 +39,8 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [ ] Table Session Management (Open/Close logic, token validation).
 
 ## Milestone 5: Customer-Facing Ordering (Public QR Flow)
-- [ ] Public Menu view (Mobile-first, by table session).
-- [ ] Cart management (Frontend).
+- [/] Public Menu view (Mobile-first, by table session).
+- [/] Cart management (Frontend).
 - [ ] Order placement logic.
 - [ ] Real-time Order Tracking for customers.
 

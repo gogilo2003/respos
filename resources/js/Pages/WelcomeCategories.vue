@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const isOpen = ref(false);
@@ -13,7 +13,9 @@ const scrollToAnchor = (id: string) => {
 };
 
 const scrollToCategory = () => {
-    document.getElementById('menu-categories')?.scrollIntoView({ behavior: 'smooth' });
+    document
+        .getElementById('menu-categories')
+        ?.scrollIntoView({ behavior: 'smooth' });
 };
 
 const categoryCards = [
@@ -52,7 +54,7 @@ const categoryCards = [
                         </a>
 
                         <button
-                            class="sm:hidden inline-flex items-center justify-center rounded-md p-2 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-200"
+                            class="inline-flex items-center justify-center rounded-md p-2 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-200 sm:hidden"
                             type="button"
                             aria-label="Open menu"
                             @click="isOpen = !isOpen"
@@ -75,7 +77,7 @@ const categoryCards = [
                             </svg>
                         </button>
 
-                        <div class="hidden sm:flex items-center gap-6">
+                        <div class="hidden items-center gap-6 sm:flex">
                             <a
                                 href="/"
                                 class="text-sm font-semibold hover:underline"
@@ -107,7 +109,7 @@ const categoryCards = [
                         </div>
                     </div>
 
-                    <div v-show="isOpen" class="sm:hidden pb-4">
+                    <div v-show="isOpen" class="pb-4 sm:hidden">
                         <div class="flex flex-col gap-3">
                             <a
                                 href="/"
@@ -151,7 +153,9 @@ const categoryCards = [
         <section id="menu-categories" class="bg-white py-12">
             <div class="mx-auto max-w-7xl px-4">
                 <div class="mb-8">
-                    <h2 class="text-2xl font-bold text-gray-900">Food Categories</h2>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        Food Categories
+                    </h2>
                     <p class="mt-1 text-sm text-gray-600">Choose a category</p>
                 </div>
 
@@ -168,21 +172,28 @@ const categoryCards = [
                                 :alt="category.title"
                                 class="h-full w-full object-cover"
                             />
-                            <div v-else class="flex h-full w-full items-center justify-center text-gray-400">
+                            <div
+                                v-else
+                                class="flex h-full w-full items-center justify-center text-gray-400"
+                            >
                                 No image
                             </div>
                         </div>
 
                         <div class="p-4">
-                            <h3 class="text-base font-bold text-gray-900">{{ category.title }}</h3>
-<p class="mt-2 text-sm text-gray-600">Menu items go here</p>
+                            <h3 class="text-base font-bold text-gray-900">
+                                {{ category.title }}
+                            </h3>
+                            <p class="mt-2 text-sm text-gray-600">
+                                Menu items go here
+                            </p>
 
-                        <button
-                            class="mt-4 w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-800 transition"
-                            @click="window.location.href = '/welcome-menu'"
-                        >
-                            View
-                        </button>
+                            <button
+                                class="mt-4 w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+                                @click="router.visit('/welcome-menu')"
+                            >
+                                View
+                            </button>
                         </div>
                     </article>
                 </div>
@@ -190,4 +201,3 @@ const categoryCards = [
         </section>
     </div>
 </template>
-

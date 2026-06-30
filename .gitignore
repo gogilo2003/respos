@@ -21,3 +21,13 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# Backup environment files
+*.bak
+.env.bak
+
+# Personal notes (if only for your own planning)
+MILESTONE-3-BREAKDOWN.md
+
+# Ignore accidental nested project copy
+respos/
