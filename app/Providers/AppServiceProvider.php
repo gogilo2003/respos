@@ -2,6 +2,16 @@
 
 namespace App\Providers;
 
+use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
+use App\Interfaces\Repositories\MenuItemRepositoryInterface;
+use App\Interfaces\Repositories\RoleRepositoryInterface;
+use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Models\User;
+use App\Repositories\MenuCategoryRepository;
+use App\Repositories\MenuItemRepository;
+use App\Repositories\RoleRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -13,12 +23,20 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(
-            \App\Interfaces\Repositories\UserRepositoryInterface::class,
-            \App\Repositories\UserRepository::class
+            UserRepositoryInterface::class,
+            UserRepository::class
         );
         $this->app->bind(
-            \App\Interfaces\Repositories\RoleRepositoryInterface::class,
-            \App\Repositories\RoleRepository::class
+            RoleRepositoryInterface::class,
+            RoleRepository::class
+        );
+        $this->app->bind(
+            MenuCategoryRepositoryInterface::class,
+            MenuCategoryRepository::class
+        );
+        $this->app->bind(
+            MenuItemRepositoryInterface::class,
+            MenuItemRepository::class
         );
     }
 
@@ -32,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         $roles = ['admin', 'manager', 'cashier', 'kitchen', 'waiter', 'customer'];
 
         foreach ($roles as $role) {
-            \Illuminate\Support\Facades\Gate::define($role, function (\App\Models\User $user) use ($role) {
+            Gate::define($role, function (User $user) use ($role) {
                 return $user->hasRole($role);
             });
         }

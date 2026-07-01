@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import { Link } from '@inertiajs/vue3';
+import { computed } from 'vue';
 
 const props = defineProps<{
     href: string;
@@ -15,8 +15,11 @@ const classes = computed(() =>
 </script>
 
 <template>
-    <Link class="w-fill inline-flex items-center border-b-2 pl-6 pr-3 py-4 text-lg rounded-l-full hover:bg-gray-100"
-        :href="href" :class="classes">
+    <Link
+        class="w-fill inline-flex items-center rounded-l-full border-b-2 py-4 pl-6 pr-3 text-lg hover:bg-gray-100"
+        :href="href"
+        :class="classes"
+    >
         <slot />
     </Link>
 </template>

@@ -1,47 +1,47 @@
 <script setup lang="ts">
+import { useHeroIcon } from '@/Composables/useHeroIcon';
 import { computed } from 'vue';
-import Facebook from './Facebook.vue'
-import Twitter from './Twitter.vue'
-import Linkedin from './Linkedin.vue'
-import Instagram from './Instagram.vue'
-import Youtube from './Youtube.vue'
-import Phone from './Phone.vue'
-import Email from './Email.vue'
-import Address from './Address.vue'
-import Location from './Location.vue'
-import Close from './Close.vue'
-import ChevronUp from './ChevronUp.vue'
-import ChevronDown from './ChevronDown.vue'
-import Copy from './Copy.vue'
-import Menu from './Menu.vue'
-import Dashboard from './Dashboard.vue';
-import Image from './Image.vue';
-import People from './People.vue';
-import ArrowForward from './ArrowForward.vue';
+import Address from './Address.vue';
 import ArrowBack from './ArrowBack.vue';
-import Elements from './Elements.vue';
-import Projects from './Projects.vue';
-import Goals from './Goals.vue';
-import News from './News.vue';
-import Sections from './Sections.vue';
+import ArrowForward from './ArrowForward.vue';
+import ChevronDown from './ChevronDown.vue';
+import ChevronUp from './ChevronUp.vue';
+import Close from './Close.vue';
+import CloudDownload from './CloudDownload.vue';
+import Copy from './Copy.vue';
 import CurvedArrowLeft from './CurvedArrowLeft.vue';
 import CurvedArrowLeftDouble from './CurvedArrowLeftDouble.vue';
 import CurvedArrowRight from './CurvedArrowRight.vue';
 import CurvedArrowRightDouble from './CurvedArrowRightDouble.vue';
-import Downloads from './Downloads.vue';
-import Pdf from './Pdf.vue';
+import Dashboard from './Dashboard.vue';
 import Doc from './Doc.vue';
 import Docx from './Docx.vue';
-import Xlsx from './Xlsx.vue';
-import Xls from './Xls.vue';
-import Ppt from './Ppt.vue';
-import CloudDownload from './CloudDownload.vue';
 import Download from './Download.vue';
+import Downloads from './Downloads.vue';
+import Elements from './Elements.vue';
 import EllipsisHorizontal from './EllipsisHorizontal.vue';
-import { useHeroIcon } from '@/Composables/useHeroIcon';
+import Email from './Email.vue';
+import Facebook from './Facebook.vue';
+import Goals from './Goals.vue';
+import Image from './Image.vue';
+import Instagram from './Instagram.vue';
+import Linkedin from './Linkedin.vue';
+import Location from './Location.vue';
+import Menu from './Menu.vue';
+import News from './News.vue';
+import Pdf from './Pdf.vue';
+import People from './People.vue';
+import Phone from './Phone.vue';
+import Ppt from './Ppt.vue';
+import Projects from './Projects.vue';
+import Sections from './Sections.vue';
+import Twitter from './Twitter.vue';
+import Xls from './Xls.vue';
+import Xlsx from './Xlsx.vue';
+import Youtube from './Youtube.vue';
 import Zip from './Zip.vue';
 
-const props = defineProps({ type: String })
+const props = defineProps({ type: String });
 
 const icon = computed(() => {
     if (props.type == 'facebook') {
@@ -135,7 +135,7 @@ const icon = computed(() => {
     }
 
     return useHeroIcon(props.type || '') ?? 'span';
-})
+});
 </script>
 
 <template>

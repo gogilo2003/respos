@@ -33,18 +33,20 @@ abstract class BaseRepository implements RepositoryInterface
     public function update(int|string $id, array $data): bool
     {
         $record = $this->find($id);
-        if (!$record) {
+        if (! $record) {
             return false;
         }
+
         return $record->update($data);
     }
 
     public function delete(int|string $id): bool
     {
         $record = $this->find($id);
-        if (!$record) {
+        if (! $record) {
             return false;
         }
+
         return $record->delete();
     }
 }

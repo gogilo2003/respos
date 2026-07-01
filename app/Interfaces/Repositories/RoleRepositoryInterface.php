@@ -2,6 +2,4 @@
 
 namespace App\Interfaces\Repositories;
 
-interface RoleRepositoryInterface extends RepositoryInterface
-{
-}
+interface RoleRepositoryInterface extends RepositoryInterface {}
