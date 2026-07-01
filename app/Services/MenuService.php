@@ -2,14 +2,18 @@
 
 namespace App\Services;
 
+use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
+use App\Repositories\MenuCategoryRepository;
+
 class MenuService
 {
+    protected MenuCategoryRepository $menuCategoryRepository;
     /**
      * Create a new class instance.
      */
-    public function __construct()
+    public function __construct(MenuCategoryRepositoryInterface $menuCategoryRepository)
     {
-        //
+        $this->menuCategoryRepository = $menuCategoryRepository;
     }
 
     public function getMenuItems()
@@ -65,28 +69,7 @@ class MenuService
     public function getMenuCategories()
     {
         // Dummy categories for now (replace with DB query later)
-        $categories = [
-            [
-                'id' => 1,
-                'name' => 'Appetizers',
-                'description' => 'Start your meal with our delicious appetizers.',
-            ],
-            [
-                'id' => 2,
-                'name' => 'Main Courses',
-                'description' => 'Satisfying main courses to fill you up.',
-            ],
-            [
-                'id' => 3,
-                'name' => 'Desserts',
-                'description' => 'Sweet treats to end your meal on a high note.',
-            ],
-            [
-                'id' => 4,
-                'name' => 'Beverages',
-                'description' => 'Refreshing drinks to accompany your meal.',
-            ],
-        ];
+        $categories = $this->menuCategoryRepository->getActiveCategories();
 
         return $categories;
     }

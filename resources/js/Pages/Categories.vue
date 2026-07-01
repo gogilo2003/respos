@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
+
+defineProps<{
+    categories: {
+        id: number;
+        name: string;
+        image: string;
+        description: string;
+    }[];
+}>();
 
 const isOpen = ref(false);
 
@@ -18,103 +27,14 @@ const scrollToCategory = () => {
         .getElementById('menu-categories')
         ?.scrollIntoView({ behavior: 'smooth' });
 };
-
-const categoryCards = [
-    {
-        title: 'Main Meals',
-        image: '',
-        anchor: 'main-meals-section',
-    },
-    {
-        title: 'Breakfast',
-        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=1200&q=60',
-        anchor: 'breakfast-section',
-    },
-    {
-        title: 'Beverages',
-        image: 'https://images.unsplash.com/photo-1563371404-45d9f7f1d52a?auto=format&fit=crop&w=1200&q=60',
-        anchor: 'beverages-section',
-    },
-];
+// const categoryCards = computed(() => usePage().props.categories)
 </script>
 
 <template>
 
-    <Head title="Welcome Categories" />
     <WebLayout title="Menu categories">
+        <pre>{{ categories }}</pre>
         <div class="relative min-h-screen overflow-hidden bg-[#D2A679]">
-            <header class="w-full">
-                <nav class="bg-[#ffea95] text-black">
-                    <div class="mx-auto max-w-7xl px-4">
-                        <div class="flex h-16 items-center justify-between">
-                            <a href="/" class="text-lg font-bold tracking-wide" @click.prevent="scrollToTop">
-                                ResPos
-                            </a>
-
-                            <button
-                                class="inline-flex items-center justify-center rounded-md p-2 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-200 sm:hidden"
-                                type="button" aria-label="Open menu" @click="isOpen = !isOpen">
-                                <span class="sr-only">Menu</span>
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path v-if="!isOpen" d="M4 6h16" />
-                                    <path v-if="!isOpen" d="M4 12h16" />
-                                    <path v-if="!isOpen" d="M4 18h16" />
-                                    <path v-if="isOpen" d="M6 18L18 6" />
-                                    <path v-if="isOpen" d="M6 6l12 12" />
-                                </svg>
-                            </button>
-
-                            <div class="hidden items-center gap-6 sm:flex">
-                                <Link href="/" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToTop">
-                                    Home
-                                </Link>
-                                <Link href="#menu-categories" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToCategory">
-                                    Food Menu
-                                </Link>
-                                <Link href="#about" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToAnchor('about')">
-                                    About Us
-                                </Link>
-                                <Link href="#contact" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToAnchor('contact')">
-                                    Contact
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div v-show="isOpen" class="pb-4 sm:hidden">
-                            <div class="flex flex-col gap-3">
-                                <a href="/" class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToTop">
-                                    Home
-                                </a>
-                                <a href="#menu-categories"
-                                    class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToCategory">
-                                    Food Menu
-                                </a>
-                                <a href="#about" class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToAnchor('about')">
-                                    About Us
-                                </a>
-                                <a href="#contact"
-                                    class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToAnchor('contact')">
-                                    Contact
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-
-            <div class="sr-only" aria-hidden="true">
-                <div id="about"></div>
-                <div id="contact"></div>
-            </div>
 
             <section id="menu-categories" class="bg-white py-12">
                 <div class="mx-auto max-w-7xl px-4">
@@ -126,7 +46,7 @@ const categoryCards = [
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <article v-for="category in categoryCards" :key="category.title"
+                        <article v-for="category in categories" :key="category.title"
                             class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                             <div class="h-48 bg-gray-100">
                                 <img v-if="category.image" :src="category.image" :alt="category.title"
@@ -138,10 +58,10 @@ const categoryCards = [
 
                             <div class="p-4">
                                 <h3 class="text-base font-bold text-gray-900">
-                                    {{ category.title }}
+                                    {{ category.name }}
                                 </h3>
                                 <p class="mt-2 text-sm text-gray-600">
-                                    Menu items go here
+                                    {{ category.description }}
                                 </p>
 
                                 <button
