@@ -12,12 +12,10 @@ use Inertia\Inertia;
 Route::get('/', [HomeController::class, 'welcome']);
 
 // Optional split pages (same landing data)
-Route::get('/welcome-categories', [HomeController::class, 'welcomeCategories'])->name('welcome.categories');
-Route::get('/welcome-menu', [HomeController::class, 'welcomeMenu'])->name('welcome.menu');
-
-Route::get('/about', function () {
-    return Inertia::render('About');
-})->name('about');
+Route::get('/categories', [HomeController::class, 'categories'])->name('categories');
+Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+Route::get('/about', [HomeController::class, 'about'])->name('about');
+Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 
 Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 
@@ -60,4 +58,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

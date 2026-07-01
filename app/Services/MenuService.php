@@ -61,6 +61,33 @@ class MenuService
         ];
 
         return $data;
+    }
+    public function getMenuCategories()
+    {
+        // Dummy categories for now (replace with DB query later)
+        $categories = [
+            [
+                'id' => 1,
+                'name' => 'Appetizers',
+                'description' => 'Start your meal with our delicious appetizers.',
+            ],
+            [
+                'id' => 2,
+                'name' => 'Main Courses',
+                'description' => 'Satisfying main courses to fill you up.',
+            ],
+            [
+                'id' => 3,
+                'name' => 'Desserts',
+                'description' => 'Sweet treats to end your meal on a high note.',
+            ],
+            [
+                'id' => 4,
+                'name' => 'Beverages',
+                'description' => 'Refreshing drinks to accompany your meal.',
+            ],
+        ];
 
+        return $categories;
     }
 }

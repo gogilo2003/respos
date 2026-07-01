@@ -100,7 +100,7 @@ const submit = () => {
             formData,
             {
                 onSuccess: () => closeModal(),
-            }
+            },
         );
     } else {
         router.post(route('menu-items.store'), formData, {
@@ -220,7 +220,9 @@ const formatPrice = (price: string | number) => {
                                             class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                         >
                                             {{
-                                                item.is_available ? 'Available' : 'Unavailable'
+                                                item.is_available
+                                                    ? 'Available'
+                                                    : 'Unavailable'
                                             }}
                                         </span>
                                     </td>
@@ -234,7 +236,9 @@ const formatPrice = (price: string | number) => {
                                             Edit
                                         </button>
                                         <button
-                                            @click="confirmItemDeletion(item.id)"
+                                            @click="
+                                                confirmItemDeletion(item.id)
+                                            "
                                             class="text-red-600 hover:text-red-900"
                                         >
                                             Delete
@@ -319,11 +323,17 @@ const formatPrice = (price: string | number) => {
                                 class="mt-1 block w-full"
                                 required
                             />
-                            <InputError :message="form.errors.base_price" class="mt-2" />
+                            <InputError
+                                :message="form.errors.base_price"
+                                class="mt-2"
+                            />
                         </div>
 
                         <div>
-                            <InputLabel for="prep_time_min" value="Prep Time (min)" />
+                            <InputLabel
+                                for="prep_time_min"
+                                value="Prep Time (min)"
+                            />
                             <TextInput
                                 id="prep_time_min"
                                 v-model="form.prep_time_min"
@@ -333,7 +343,10 @@ const formatPrice = (price: string | number) => {
                                 class="mt-1 block w-full"
                                 required
                             />
-                            <InputError :message="form.errors.prep_time_min" class="mt-2" />
+                            <InputError
+                                :message="form.errors.prep_time_min"
+                                class="mt-2"
+                            />
                         </div>
                     </div>
 
@@ -347,7 +360,11 @@ const formatPrice = (price: string | number) => {
                             class="mt-1 block w-full"
                         />
                         <div v-if="imagePreview" class="mt-2">
-                            <img :src="imagePreview" alt="Preview" class="h-32 w-32 object-cover rounded" />
+                            <img
+                                :src="imagePreview"
+                                alt="Preview"
+                                class="h-32 w-32 rounded object-cover"
+                            />
                         </div>
                     </div>
 
@@ -390,7 +407,10 @@ const formatPrice = (price: string | number) => {
                             min="0"
                             class="mt-1 block w-full"
                         />
-                        <InputError :message="form.errors.sort_order" class="mt-2" />
+                        <InputError
+                            :message="form.errors.sort_order"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div class="mt-6 flex justify-end">

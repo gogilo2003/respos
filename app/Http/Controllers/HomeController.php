@@ -21,15 +21,25 @@ class HomeController extends Controller
         return Inertia::render('Welcome', ['menuItems' => $menuItems]);
     }
 
-    public function welcomeCategories()
+    public function categories()
     {
-        return Inertia::render('WelcomeCategories');
+        return Inertia::render('Categories', ['categories' => $this->menuService->getMenuCategories()]);
     }
 
-    public function welcomeMenu()
+    public function menu()
     {
         $menuItems = $this->menuService->getMenuItems();
 
-        return Inertia::render('WelcomeMenu', ['menuItems' => $menuItems]);
+        return Inertia::render('Menu', ['menuItems' => $menuItems]);
+    }
+
+    public function about()
+    {
+        return Inertia::render('About');
+    }
+
+    public function contact()
+    {
+        return Inertia::render('Contact');
     }
 }

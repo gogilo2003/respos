@@ -131,7 +131,10 @@ const deleteCategory = () => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="category in categories" :key="category.id">
+                                <tr
+                                    v-for="category in categories"
+                                    :key="category.id"
+                                >
                                     <td class="whitespace-nowrap px-6 py-4">
                                         {{ category.name }}
                                     </td>
@@ -154,7 +157,9 @@ const deleteCategory = () => {
                                             class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                         >
                                             {{
-                                                category.is_active ? 'Active' : 'Inactive'
+                                                category.is_active
+                                                    ? 'Active'
+                                                    : 'Inactive'
                                             }}
                                         </span>
                                     </td>
@@ -170,7 +175,7 @@ const deleteCategory = () => {
                                         <button
                                             @click="
                                                 confirmCategoryDeletion(
-                                                    category.id
+                                                    category.id,
                                                 )
                                             "
                                             class="text-red-600 hover:text-red-900"
@@ -231,7 +236,10 @@ const deleteCategory = () => {
                             min="0"
                             class="mt-1 block w-full"
                         />
-                        <InputError :message="form.errors.sort_order" class="mt-2" />
+                        <InputError
+                            :message="form.errors.sort_order"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div class="flex items-center">
@@ -257,7 +265,11 @@ const deleteCategory = () => {
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                         >
-                            {{ editingCategory ? 'Update Category' : 'Create Category' }}
+                            {{
+                                editingCategory
+                                    ? 'Update Category'
+                                    : 'Create Category'
+                            }}
                         </PrimaryButton>
                     </div>
                 </form>
@@ -274,11 +286,13 @@ const deleteCategory = () => {
                     Are you sure you want to delete this category?
                 </h2>
                 <p class="mt-1 text-sm text-gray-600">
-                    This action cannot be undone. Categories with associated menu items
-                    may not be deletable.
+                    This action cannot be undone. Categories with associated
+                    menu items may not be deletable.
                 </p>
                 <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="confirmingCategoryDeletion = false">
+                    <SecondaryButton
+                        @click="confirmingCategoryDeletion = false"
+                    >
                         Cancel
                     </SecondaryButton>
                     <DangerButton
