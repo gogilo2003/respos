@@ -46,7 +46,7 @@ return new class extends Migration
             $table->json('new_value')->nullable();
             $table->string('reason', 255)->nullable();
             $table->string('ip_address', 45)->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->index(['entity_type', 'entity_id'], 'idx_audit_entity');
             $table->index(['user_id'], 'idx_audit_user');

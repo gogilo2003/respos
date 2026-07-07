@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('pdf_path', 255)->nullable();
             $table->unsignedTinyInteger('print_count')->default(0);
             $table->timestamp('generated_at')->useCurrent();
+            $table->timestamps();
 
             $table->unique(['receipt_number'], 'uq_receipt_number');
             $table->foreign('bill_id')->references('id')->on('bills')->restrictOnDelete();
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->unsignedBigInteger('receipt_id');
             $table->unsignedBigInteger('reprinted_by');
             $table->timestamp('reprinted_at')->useCurrent();
+            $table->timestamps();
 
             $table->foreign('receipt_id')->references('id')->on('receipts')->cascadeOnDelete();
             $table->foreign('reprinted_by')->references('id')->on('users')->restrictOnDelete();
@@ -47,7 +49,7 @@ return new class extends Migration
                 'ABS((physical_count - system_total) / system_total) > 0.005'
             )->stored();
             $table->string('notes', 500)->nullable();
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->unique(['reconciliation_date'], 'uq_reconciliation_date');
             $table->foreign('prepared_by')->references('id')->on('users')->restrictOnDelete();

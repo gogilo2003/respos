@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('value', 255);
             $table->string('description', 200)->nullable();
             $table->string('updated_by', 36)->nullable();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
 
             $table->index(['key']);
         });
@@ -22,6 +22,7 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             $table->enum('name', ['customer', 'waiter', 'kitchen', 'cashier', 'manager', 'admin'])->unique();
+            $table->timestamps();
         });
 
         Schema::create('users', function (Blueprint $table) {
@@ -33,8 +34,7 @@ return new class extends Migration
             $table->string('password_hash', 255);
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_login_at')->nullable();
-            $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 
