@@ -1,178 +1,198 @@
-# Milestone 4: Tables, QR Codes & Session Management (Admin + Public Integration)
+# Milestone 4: Tables, QR Codes & Session Management
 
-## Goal
-Enable restaurants to manage physical **dining tables** and convert each table into a secure, time-safe **QR entry point** that starts a customer ordering flow.
+Expands and documents what needs to be built for **Milestone 4** and how it should behave in the restaurant ordering system.
 
-This milestone covers:
-1. **Table Management (Admin CRUD)**
-2. **QR Code generation logic** (stable payload format)
-3. **Table Session Management** (Open/Close + token validation)
+> Milestone 4 is the backend + admin foundation required for Milestone 5 (Public QR Flow).
 
 ---
 
-## 1) Table Management CRUD (Backend + Frontend)
-### What we need
-Admin can:
-- create a restaurant table (e.g., “Table 1”, “Patio - Booth A”)
-- update table properties
-- deactivate/rename tables (optional but recommended)
-- delete tables (optional; if you do, ensure foreign-key safety)
-- view a table list (with pagination/search optional)
+## 1) Goals of Milestone 4
 
-### Data model (expected)
-Typically represented by `RestaurantTable`.
-Key fields (minimum):
+This milestone adds three core capabilities:
+
+1. **Table Management CRUD (Admin)**
+   - Admin defines the set of physical tables on the floor.
+   - Admin can enable/disable tables.
+
+2. **QR Code generation / scanning contract**
+   - QR encodes enough information so the server can identify the table.
+   - Required QR payload format:
+     - `{restaurant_id}|{table_id}|{base_url}`
+
+3. **Table Session Management**
+   - When customers start ordering, you create an “open session” for that table.
+   - Closing a session prevents new ordering.
+   - Server must validate QR-derived table/session state.
+
+---
+
+## 2) Data Model (what you should have)
+
+### `RestaurantTable`
+Represents a physical table.
+
+Minimum viable fields:
 - `id`
-- `restaurant_id` (if multi-restaurant is supported)
-- `name` / `label` (e.g., “Table 12”)
-- `status` (e.g., active/inactive)
+- `restaurant_id` (optional if single-restaurant app)
+- `name` or `label` (e.g., “Table 1”, “VIP Room”)
+- `status` (active/inactive)
 - timestamps
 
-> Note: your migrations already include `RestaurantTable` and `TableSession` models in the codebase, so this milestone should wire CRUD to those models.
+### `TableSession`
+Represents an ordering window for a table.
 
-### Backend routes / controllers (Admin)
-You should implement routes similar to:
-- `GET /admin/tables`
-- `POST /admin/tables` (create)
-- `PUT/PATCH /admin/tables/{table}` (update)
-- `DELETE /admin/tables/{table}` (delete)
+Minimum viable fields:
+- `id`
+- `restaurant_table_id` (or `table_id`)
+- `status` (`open`, `closed`)
+- `opened_at`
+- `closed_at` (nullable)
 
-Controller responsibilities:
-- validate input
-- call repository/service for persistence
-- return Inertia responses with the required props
-
-### Frontend (Admin)
-Create an Admin UI that includes:
-- Tables index page (list + create button)
-- Tables form (create/edit)
-- Optional: confirmation modal for delete
-
-### Acceptance criteria
-- Tables persist in the database.
-- Admin can update a table and changes reflect immediately.
-- Inactive tables don’t appear in the public QR entry flow (if you implement status filtering).
+Important invariant:
+- **At most one active session per table**.
 
 ---
 
-## 2) QR Code Generation Logic
-### Payload format
-The milestone requires QR payload:
+## 3) Admin: Table Management CRUD
+
+### Admin use-cases
+Admin must be able to:
+- view all tables
+- create a table
+- edit a table (rename / status)
+- deactivate a table (or delete, but deactivation is safer)
+
+### Backend responsibilities
+- Validate inputs (label/name required, unique per restaurant if you enforce uniqueness).
+- Prevent obvious invalid state (e.g., empty labels).
+- Optional guard (recommended):
+  - If a table has an active session, either block changes or allow status changes only after session close.
+
+### Frontend responsibilities (Inertia)
+- Tables index page with a list/grid
+- create/edit forms
+- simple confirmation for destructive actions
+
+---
+
+## 4) QR Code Contract
+
+### QR payload format
+The milestone requires:
 
 `{restaurant_id}|{table_id}|{base_url}`
 
-Where:
-- `{restaurant_id}`: the restaurant context (or fixed value for single-restaurant installs)
-- `{table_id}`: the table being ordered from
-- `{base_url}`: the root URL used by the app (so the QR can be portable)
+### Why include `base_url`
+This is useful when:
+- you want QR data to remain portable between environments
+- you need to generate or validate absolute URLs
 
-### Recommended strategy
-1. Build a token string using the payload format.
-2. (Best practice) Prefer a **server-validated token** rather than accepting raw IDs directly.
-3. If you truly must store raw payload, validate it robustly before starting a session.
-
-A pragmatic approach for Phase 1:
-- Encode the payload into the QR content (QR stores a string).
-- On scan, parse the string: `{restaurant_id}`, `{table_id}`, `{base_url}`.
-- Derive the session flow from `restaurant_id` + `table_id`.
-
-### QR generation endpoint (optional but typical)
-Admin might generate QR for each table via:
-- a page action “Show QR”
-- or a backend endpoint returning a QR SVG/image
-
-If you generate QR images server-side:
-- use a QR library
-- store nothing (stateless), or optionally cache
-
-If you generate QR client-side:
-- keep the payload generation in the frontend but validate server-side.
-
-### Acceptance criteria
-- QR scans should reliably route to the correct table session endpoint.
-- Invalid payload formats should return a clear error.
+### QR payload parsing
+When a QR is scanned:
+1. Split payload by `|`
+2. Extract:
+   - `restaurant_id`
+   - `table_id`
+   - `base_url`
+3. Validate types and existence.
 
 ---
 
-## 3) Table Session Management (Open/Close + Token Validation)
-### What a table session means
-A **table session** represents an active ordering window for a specific table.
+## 5) Table Session Management (Open/Close)
 
-Common behaviors:
-- A session can be **opened** when a customer starts ordering.
-- A session can be **closed** when ordering ends (or manually by admin/waiter).
-- Only **one active session** per table at a time.
+### Session states
+Recommended:
+- `open`
+- `closed`
 
-### Session lifecycle
-1. Customer visits the table session URL (from the QR).
-2. System validates QR payload.
-3. System checks for existing active session:
-   - If active exists: reuse (or ask user to confirm continue)
-   - If none: create new session marked as open
-4. Customer ordering UI associates all cart/orders to that session token/id.
-5. Close session logic:
-   - called explicitly when the flow ends
-   - or when billing/checkout completes (future milestone)
+### Opening a session
+When a customer hits the QR-derived entry endpoint:
+1. Validate `restaurant_id`
+2. Validate `table_id`
+3. Ensure the table is `active`
+4. Check if there is an existing `open` session
+   - If it exists: reuse it
+   - If it does not exist: create a new open session
+5. Return session context to the frontend
 
-### Token validation
-Token validation should ensure:
-- payload parses correctly
+Returned context should include enough for Milestone 5, such as:
+- `table_id`
+- `table_session_id`
+- `status`
+
+### Closing a session
+Close should:
+- set `status = closed`
+- set `closed_at`
+- prevent any further ordering attempts
+
+Close is typically triggered by later milestones, but you should make the behavior correct now:
+- closing makes the session invalid
+- reopening after close should create a new open session
+
+---
+
+## 6) Token validation (security considerations)
+
+Even though the QR contains IDs, you must **not** trust the QR alone.
+
+Validation must always be server-side:
 - restaurant exists
 - table exists and is active
-- session safety rules:
-  - if session token is required: confirm token matches table+restaurant
-  - prevent opening multiple sessions concurrently
-
-**Security note:** Avoid trusting QR payload blindly. Always validate against server-side records.
-
-### Backend responsibilities
-You will likely implement a controller/service that includes:
-- open session: `POST /tables/{table}/sessions/open` (or similar)
-- close session: `POST /tables/{table}/sessions/close`
-- get current session state for the public ordering page
-
-For token validation you may implement:
-- parse payload
-- confirm `RestaurantTable` exists
-- start or fetch `TableSession`
-
-### Database expectations
-`TableSession` model should include at least:
-- `id`
-- `table_id`
-- `restaurant_id` (optional if table already implies it)
-- `token` or `session_key` (recommended)
-- `status` (open/closed)
-- `opened_at`, `closed_at`
-- timestamps
-
-### Acceptance criteria
-- Scanning a QR for the same table returns the same active session (or creates one if none exists).
-- Closing a session prevents further ordering on that session token.
-- Invalid QR payload does not create sessions.
+- table session rules respected (one open session)
+- session open/closed state checked before allowing ordering/cart actions
 
 ---
 
-## Implementation Checklist (Milestone-ready)
-- [ ] Admin CRUD for tables implemented end-to-end.
-- [ ] QR payload string matches required format: `{restaurant_id}|{table_id}|{base_url}`.
-- [ ] Public/session entry endpoint validates QR payload.
-- [ ] Table session open logic enforces single active session per table.
-- [ ] Close session logic marks session closed and records timestamps.
-- [ ] UI wiring for table session page to use the opened session context.
+## 7) End-to-end behavior checklist
+
+When Milestone 4 is done, verify:
+
+### Tables
+- Admin can add/edit/disable tables
+
+### QR -> session
+- QR for an active table opens a session
+- QR for an inactive table is rejected
+- Re-scanning the same QR while session is open returns/reuses the existing open session
+
+### Session state
+- Closing a session prevents ordering
 
 ---
 
-## How this milestone feeds Milestone 5
-Milestone 5 (“Public Menu view”) will depend on:
-- the ability to resolve a scanned QR into a `TableSession`
-- the ability for the public menu UI to fetch menu items and attach cart/order actions to the active session
+## 8) Suggested endpoints (implementation guidance)
+
+Exact routes depend on your project conventions, but typical Phase 1 endpoints are:
+
+- `GET /admin/tables` (list)
+- `POST /admin/tables` (create)
+- `PUT /admin/tables/{table}` (update)
+- `POST /tables/qr/resolve` (QR payload -> session context)
+- `POST /tables/sessions/{session}/close` (close session; may be admin-driven for now)
 
 ---
 
-## Deliverables
-- Admin tables UI + API
-- QR payload generator and/or QR rendering
-- Table session open/close + validation
-- Documentation in this file to guide follow-up milestones
+## 9) Files you typically touch (to keep boundaries clean)
+
+- **Models**: `RestaurantTable`, `TableSession`
+- **Migrations**: `create_menu_tables` already exists; ensure tables/session migrations are present
+- **Repositories/Services**: create/find open session; close session; QR payload parsing
+- **Controllers**:
+  - Admin Tables CRUD controller
+  - QR resolve controller
+  - Session open/close controller
+- **Frontend**:
+  - Admin tables pages (Inertia)
+  - Public table session entry page/components for Milestone 5
+
+---
+
+## Milestone 4 acceptance criteria (summary)
+
+- [ ] Admin can CRUD tables.
+- [ ] QR payload parsing works with `{restaurant_id}|{table_id}|{base_url}`.
+- [ ] QR resolve endpoint validates table and returns/creates an open session.
+- [ ] Table session open/close rules are enforced.
+
 
