@@ -39,24 +39,38 @@ const categoryCards = [
 </script>
 
 <template>
-
-    <Head title="Welcome Categories" />
+    <Head title="Menu Categories" />
     <WebLayout title="Menu categories">
         <div class="relative min-h-screen overflow-hidden bg-[#D2A679]">
             <header class="w-full">
+            <!--
                 <nav class="bg-[#ffea95] text-black">
                     <div class="mx-auto max-w-7xl px-4">
                         <div class="flex h-16 items-center justify-between">
-                            <a href="/" class="text-lg font-bold tracking-wide" @click.prevent="scrollToTop">
+                            <a
+                                href="/"
+                                class="text-lg font-bold tracking-wide"
+                                @click.prevent="scrollToTop"
+                            >
                                 ResPos
                             </a>
 
                             <button
                                 class="inline-flex items-center justify-center rounded-md p-2 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-yellow-200 sm:hidden"
-                                type="button" aria-label="Open menu" @click="isOpen = !isOpen">
+                                type="button"
+                                aria-label="Open menu"
+                                @click="isOpen = !isOpen"
+                            >
                                 <span class="sr-only">Menu</span>
-                                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <svg
+                                    class="h-6 w-6"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
                                     <path v-if="!isOpen" d="M4 6h16" />
                                     <path v-if="!isOpen" d="M4 12h16" />
                                     <path v-if="!isOpen" d="M4 18h16" />
@@ -65,55 +79,89 @@ const categoryCards = [
                                 </svg>
                             </button>
 
-                            <div class="hidden items-center gap-6 sm:flex">
-                                <Link href="/" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToTop">
+<div class="hidden items-center gap-6 sm:flex">
+                                <Link
+                                    href="/"
+                                    class="text-sm font-semibold hover:underline"
+                                    @click.prevent="scrollToTop"
+                                >
                                     Home
                                 </Link>
-                                <Link href="#menu-categories" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToCategory">
+                                <Link
+                                    href="#menu-categories"
+                                    class="text-sm font-semibold hover:underline"
+                                    @click.prevent="scrollToCategory"
+                                >
                                     Food Menu
                                 </Link>
-                                <Link href="#about" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToAnchor('about')">
+                                <Link
+                                    href="#about"
+                                    class="text-sm font-semibold hover:underline"
+                                    @click.prevent="scrollToAnchor('about')"
+                                >
                                     About Us
-                                </Link>
-                                <Link href="#contact" class="text-sm font-semibold hover:underline"
-                                    @click.prevent="scrollToAnchor('contact')">
-                                    Contact
                                 </Link>
                             </div>
-                        </div>
 
-                        <div v-show="isOpen" class="pb-4 sm:hidden">
-                            <div class="flex flex-col gap-3">
-                                <a href="/" class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToTop">
-                                    Home
-                                </a>
-                                <a href="#menu-categories"
-                                    class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToCategory">
-                                    Food Menu
-                                </a>
-                                <a href="#about" class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToAnchor('about')">
-                                    About Us
-                                </a>
-                                <a href="#contact"
-                                    class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
-                                    @click.prevent="scrollToAnchor('contact')">
-                                    Contact
-                                </a>
+                            <div v-show="isOpen" class="pb-4 sm:hidden">
+                                <div class="flex flex-col gap-3">
+                                    <a
+                                        href="/"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToTop"
+                                    >
+                                        Home
+                                    </a>
+                                    <a
+                                        href="#menu-categories"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToCategory"
+                                    >
+                                        Food Menu
+                                    </a>
+                                    <a
+                                        href="#about"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToAnchor('about')"
+                                    >
+                                        About Us
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div v-show="isOpen" class="pb-4 sm:hidden">
+                                <div class="flex flex-col gap-3">
+                                    <a
+                                        href="/"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToTop"
+                                    >
+                                        Home
+                                    </a>
+                                    <a
+                                        href="#menu-categories"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToCategory"
+                                    >
+                                        Food Menu
+                                    </a>
+                                    <a
+                                        href="#about"
+                                        class="rounded-md px-2 py-1 text-sm font-semibold hover:bg-yellow-300"
+                                        @click.prevent="scrollToAnchor('about')"
+                                    >
+                                        About Us
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </nav>
+                -->
             </header>
 
             <div class="sr-only" aria-hidden="true">
                 <div id="about"></div>
-                <div id="contact"></div>
             </div>
 
             <section id="menu-categories" class="bg-white py-12">
@@ -122,16 +170,28 @@ const categoryCards = [
                         <h2 class="text-2xl font-bold text-gray-900">
                             Food Categories
                         </h2>
-                        <p class="mt-1 text-sm text-gray-600">Choose a category</p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            Choose a category
+                        </p>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <article v-for="category in categoryCards" :key="category.title"
-                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                        <article
+                            v-for="category in categoryCards"
+                            :key="category.title"
+                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                        >
                             <div class="h-48 bg-gray-100">
-                                <img v-if="category.image" :src="category.image" :alt="category.title"
-                                    class="h-full w-full object-cover" />
-                                <div v-else class="flex h-full w-full items-center justify-center text-gray-400">
+                                <img
+                                    v-if="category.image"
+                                    :src="category.image"
+                                    :alt="category.title"
+                                    class="h-full w-full object-cover"
+                                />
+                                <div
+                                    v-else
+                                    class="flex h-full w-full items-center justify-center text-gray-400"
+                                >
                                     No image
                                 </div>
                             </div>
@@ -144,11 +204,12 @@ const categoryCards = [
                                     Menu items go here
                                 </p>
 
-                                <button
-                                    class="mt-4 w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
-                                    @click="router.visit('/welcome-menu')">
-                                    View
-                                </button>
+<Link
+                                :href="route('menu')"
+                                class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+                            >
+                                View
+                            </Link>
                             </div>
                         </article>
                     </div>

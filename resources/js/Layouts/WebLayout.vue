@@ -9,10 +9,8 @@ defineProps<{
 
 <template>
     <Head :title="title" />
-    <div class="flex min-h-screen w-full bg-yellow-300">
-        <div class="w-64 flex-none bg-purple-400">
-            <WebMenuBar />
-        </div>
+    <div class="flex min-h-screen w-full">
+        <WebMenuBar />
         <div class="flex-1 bg-gray-50">
             <slot />
         </div>

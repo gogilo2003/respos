@@ -76,6 +76,13 @@ const appName = ref(usePage().props.appName || 'Laravel');
                     >
                         Menu Items
                     </NavLink>
+                    <NavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('tables')"
+                        :active="route().current('tables*')"
+                    >
+                        Tables
+                    </NavLink>
                     <!-- Add more navigation links here -->
                 </nav>
             </div>
@@ -126,7 +133,7 @@ const appName = ref(usePage().props.appName || 'Laravel');
             <div class="flex flex-shrink-0 items-center px-4">
                 <Link :href="route('dashboard')" @click="close">
                     <svg
-                        class="h-8 w-auto fill-current text-gray-800"
+                        class="h-8 w-auto fill-current text-red-800"
                         viewBox="0 0 24 24"
                         fill="currentColor"
                     >
@@ -163,17 +170,25 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :active="route().current('menu-categories*')"
                         @click="close"
                     >
-                        Menu Categories
+                        Menu Ctegories
                     </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('menu-items')"
-                        :active="route().current('menu-items*')"
-                        @click="close"
-                    >
-                        Menu Items
-                    </ResponsiveNavLink>
-                    <!-- Add more navigation links here -->
+<ResponsiveNavLink
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('menu-items')"
+                            :active="route().current('menu-items*')"
+                            @click="close"
+                        >
+                            Menu Items
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            v-if="$page.props.auth.user.role === 'admin'"
+                            :href="route('tables')"
+                            :active="route().current('tables*')"
+                            @click="close"
+                        >
+                            Tables
+                        </ResponsiveNavLink>
+                        <!-- Add more navigation links here -->
                 </nav>
             </div>
         </div>

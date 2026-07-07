@@ -18,7 +18,7 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
     - [x] `UserRepository` / `UserRepositoryInterface`
     - [x] `RoleRepository` / `RoleRepositoryInterface`
     - [x] `MenuItemRepository`
-    - [ ] `TableRepository`
+    - [x] `TableRepository`
     - [ ] `OrderRepository`
     - [ ] `BillRepository`
 
@@ -34,11 +34,12 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [x] Image upload handling for menu items.
 
 ## Milestone 4: Tables, QR Codes & Session Management
-- [ ] Table Management CRUD (Backend + Frontend).
-- [ ] QR Code generation logic (`{restaurant_id}|{table_id}|{base_url}`).
-- [ ] Table Session Management (Open/Close logic, token validation).
+- [x] Table Management CRUD (Backend + Frontend).
+- [x] QR Code generation logic (`{restaurant_id}|{table_id}|{base_url}`).
+- [x] Table Session Management (Open/Close logic, token validation).
 
 ## Milestone 5: Customer-Facing Ordering (Public QR Flow)
+
 - [/] Public Menu view (Mobile-first, by table session).
 - [/] Cart management (Frontend).
 - [ ] Order placement logic.

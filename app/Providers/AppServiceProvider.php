@@ -5,11 +5,15 @@ namespace App\Providers;
 use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
 use App\Interfaces\Repositories\MenuItemRepositoryInterface;
 use App\Interfaces\Repositories\RoleRepositoryInterface;
+use App\Interfaces\Repositories\TableRepositoryInterface;
+use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Models\User;
 use App\Repositories\MenuCategoryRepository;
 use App\Repositories\MenuItemRepository;
 use App\Repositories\RoleRepository;
+use App\Repositories\TableRepository;
+use App\Repositories\TableSessionRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
@@ -37,6 +41,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             MenuItemRepositoryInterface::class,
             MenuItemRepository::class
+        );
+        $this->app->bind(
+            TableRepositoryInterface::class,
+            TableRepository::class
+        );
+        $this->app->bind(
+            TableSessionRepositoryInterface::class,
+            TableSessionRepository::class
         );
     }
 

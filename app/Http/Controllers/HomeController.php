@@ -38,8 +38,8 @@ class HomeController extends Controller
         return Inertia::render('About');
     }
 
-    public function contact()
+    public function cart()
     {
-        return Inertia::render('Contact');
+        return Inertia::render('Cart');
     }
 }
