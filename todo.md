@@ -17,10 +17,10 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
     - [x] `BaseRepository` / `RepositoryInterface`
     - [x] `UserRepository` / `UserRepositoryInterface`
     - [x] `RoleRepository` / `RoleRepositoryInterface`
-    - [x] `MenuItemRepository`
-    - [x] `TableRepository`
-    - [ ] `OrderRepository`
-    - [ ] `BillRepository`
+- [x] `MenuItemRepository`
+- [x] `TableRepository`
+- [/] `OrderRepository`
+- [ ] `BillRepository`
 
 ## Milestone 2: Authentication & User Management (Admin + Staff)
 - [x] Staff Login/Auth implementation (Supports email/username and password_hash).
@@ -42,8 +42,8 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 
 - [/] Public Menu view (Mobile-first, by table session).
 - [/] Cart management (Frontend).
-- [ ] Order placement logic.
-- [ ] Real-time Order Tracking for customers.
+- [/] Order placement logic.
+- [/] Real-time Order Tracking for customers.
 
 ## Milestone 6: Waiter Interface
 - [ ] Waiter Dashboard (Table grid).
@@ -74,4 +74,5 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 ## Milestone 11: Testing, Error Handling, Polish & Deployment
 - [ ] Write Pest Feature Tests for critical flows.
 - [ ] Error handling & offline mode banners.
+
 - [ ] Final UI/UX polish.
