@@ -1,4 +1,4 @@
-# Milestone 5: Customer-Facing Ordering (Public QR Flow) — Expounded Explanation
+# Milestone 5: Customer-Facing Ordering (Public QR Flow) — Expounded Explanation  “Order placement logic”.
 
 This document expands **Milestone 5** in plain language and provides an implementation-oriented guide aligned with the existing architecture (Laravel + Inertia + Vue + repository/service separation).
 

@@ -8,7 +8,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TableSessionController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+Route::get('/db-check', function () {
+    DB::table('migrations')->first();
+    return 'Database connected successfully!';
+});
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'welcome']);
