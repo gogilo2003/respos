@@ -173,13 +173,13 @@ Use this to guide completion:
 - [/] Cart totals computed correctly
 
 ### Order placement
-- [ ] Validate table session open
-- [ ] Persist Order + OrderItems
-- [ ] Return order id and clear cart
+- [x] Validate table session open
+- [x] Persist Order + OrderItems
+- [x] Return order id and clear cart
 
 ### Customer tracking
-- [ ] Implement order status fetch (polling to start)
-- [ ] UI shows status progression
+- [x] Implement order status fetch (polling to start)
+- [x] UI shows status progression
 
 ---
 

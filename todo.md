@@ -40,20 +40,22 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 
 ## Milestone 5: Customer-Facing Ordering (Public QR Flow)
 
-- [/] Public Menu view (Mobile-first, by table session).
-- [/] Cart management (Frontend).
-- [/] Order placement logic.
-- [/] Real-time Order Tracking for customers.
+- [x] Public Menu view (Mobile-first, by table session).
+- [x] Cart management (Frontend).
+- [x] Order placement logic.
+- [x] Real-time Order Tracking for customers.
 
 ## Milestone 6: Waiter Interface
-- [ ] Waiter Dashboard (Table grid).
+- [x] Waiter Dashboard (Table grid).
 - [ ] Manual order entry for waiters.
 - [ ] Assistance request handling.
 
-## Milestone 7: Kitchen Interface
-- [ ] Kitchen Dashboard (Order queue).
-- [ ] Item-level status updates (Accepted -> Preparing -> Ready).
-- [ ] SLA timestamp tracking.
+##
+# Milestone 7: Kitchen Interface
+- [x] Kitchen Dashboard (Order queue)
+- [x] Item-level status updates (Accepted → Preparing → Ready)
+- [x] SLA timestamp tracking [timestamps stored in OrderItem]
+- [ ] Real-time polling / synchronization (Frontend)
 
 ## Milestone 8: Cashier, Billing & Payments (Cash Only)
 - [ ] Bill Generation (Served items only).

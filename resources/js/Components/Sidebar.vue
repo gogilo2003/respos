@@ -4,10 +4,11 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
+const isCollapsed = ref(false);
 const isOpen = ref(false);
 
 const toggle = () => {
-    isOpen.value = !isOpen.value;
+    isCollapsed.value = !isCollapsed.value;
 };
 
 const close = () => {
@@ -18,6 +19,7 @@ defineExpose({
     toggle,
     close,
     isOpen,
+    isCollapsed,
 });
 
 const appName = ref(usePage().props.appName || 'Laravel');
@@ -25,11 +27,18 @@ const appName = ref(usePage().props.appName || 'Laravel');
 
 <template>
     <!-- Desktop Sidebar (md and up) -->
-    <div class="hidden md:fixed md:inset-y-0 md:flex md:w-64 md:flex-col">
+    <div
+        class="hidden md:fixed md:inset-y-0 md:flex md:flex-col"
+        :class="isCollapsed ? 'md:w-16' : 'md:w-64'"
+    >
         <div class="flex min-h-0 flex-1 flex-col bg-gray-800">
             <div class="flex flex-1 flex-col overflow-y-auto pb-4 pt-5">
-                <div class="flex flex-shrink-0 items-center px-4 text-gray-200">
+                <div
+                    class="flex flex-shrink-0 items-center px-4 text-gray-200"
+                    :class="isCollapsed ? 'justify-center' : 'justify-between'"
+                >
                     <Link
+                        v-if="!isCollapsed"
                         :href="route('dashboard')"
                         class="flex items-center gap-2"
                     >
@@ -47,41 +56,82 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         </svg>
                         <div v-text="appName"></div>
                     </Link>
+
+                    <!-- Collapse/Expand toggle (hamburger) -->
+                    <button
+                        type="button"
+                        @click="toggle"
+                        class="inline-flex items-center justify-center rounded-md p-2 text-gray-300 transition duration-150 ease-in-out hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white focus:outline-none"
+                        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+                        :aria-expanded="!isCollapsed"
+                    >
+                        <svg
+                            class="h-6 w-6"
+                            stroke="currentColor"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"
+                            />
+                        </svg>
+                    </button>
                 </div>
-                <nav class="mt-5 flex flex-1 flex-col gap-1 pl-3">
+                <nav
+                    class="mt-5 flex flex-1 flex-col gap-1 pl-3"
+                    :class="isCollapsed ? 'items-center pl-0' : ''"
+                >
                     <NavLink
                         :href="route('dashboard')"
                         :active="route().current('dashboard')"
+                        :title="isCollapsed ? 'Dashboard' : undefined"
+                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
                     >
-                        Dashboard
+                        <span v-if="!isCollapsed">Dashboard</span>
+                        <span v-else class="text-lg font-bold">D</span>
                     </NavLink>
                     <NavLink
                         v-if="$page.props.auth.user.role === 'admin'"
                         :href="route('users')"
                         :active="route().current('users*')"
+                        :title="isCollapsed ? 'Users' : undefined"
+                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
                     >
-                        Users
+                        <span v-if="!isCollapsed">Users</span>
+                        <span v-else class="text-lg font-bold">U</span>
                     </NavLink>
                     <NavLink
                         v-if="$page.props.auth.user.role === 'admin'"
                         :href="route('menu-categories')"
                         :active="route().current('menu-categories*')"
+                        :title="isCollapsed ? 'Menu Categories' : undefined"
+                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
                     >
-                        Menu Categories
+                        <span v-if="!isCollapsed">Menu Categories</span>
+                        <span v-else class="text-lg font-bold">C</span>
                     </NavLink>
                     <NavLink
                         v-if="$page.props.auth.user.role === 'admin'"
                         :href="route('menu-items')"
                         :active="route().current('menu-items*')"
+                        :title="isCollapsed ? 'Menu Items' : undefined"
+                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
                     >
-                        Menu Items
+                        <span v-if="!isCollapsed">Menu Items</span>
+                        <span v-else class="text-lg font-bold">M</span>
                     </NavLink>
                     <NavLink
                         v-if="$page.props.auth.user.role === 'admin'"
                         :href="route('tables')"
                         :active="route().current('tables*')"
+                        :title="isCollapsed ? 'Tables' : undefined"
+                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
                     >
-                        Tables
+                        <span v-if="!isCollapsed">Tables</span>
+                        <span v-else class="text-lg font-bold">T</span>
                     </NavLink>
                     <!-- Add more navigation links here -->
                 </nav>

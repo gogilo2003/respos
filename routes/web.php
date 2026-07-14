@@ -80,6 +80,14 @@ Route::prefix('table-sessions')
         Route::post('/{table}/close', [TableSessionController::class, 'close'])->name('.close');
     });
 
+Route::prefix('kitchen')
+    ->name('kitchen')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/dashboard', [KitchenController::class, 'dashboard'])->name('.dashboard');
+        Route::patch('/order-items/{orderItem}', [KitchenController::class, 'updateItemStatus'])->name('.item.update');
+    });
+
 Route::get('/t/{payload}', [TableSessionController::class, 'show'])->name('table.entry');
 
 Route::middleware('auth')->group(function () {
