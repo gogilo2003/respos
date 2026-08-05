@@ -66,6 +66,7 @@ class MenuService
 
         return $data;
     }
+
     public function getMenuCategories()
     {
         // Dummy categories for now (replace with DB query later)

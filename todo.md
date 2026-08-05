@@ -17,10 +17,10 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
     - [x] `BaseRepository` / `RepositoryInterface`
     - [x] `UserRepository` / `UserRepositoryInterface`
     - [x] `RoleRepository` / `RoleRepositoryInterface`
-    - [x] `MenuItemRepository`
-    - [ ] `TableRepository`
-    - [ ] `OrderRepository`
-    - [ ] `BillRepository`
+- [x] `MenuItemRepository`
+- [x] `TableRepository`
+- [/] `OrderRepository`
+- [ ] `BillRepository`
 
 ## Milestone 2: Authentication & User Management (Admin + Staff)
 - [x] Staff Login/Auth implementation (Supports email/username and password_hash).
@@ -34,25 +34,28 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [x] Image upload handling for menu items.
 
 ## Milestone 4: Tables, QR Codes & Session Management
-- [ ] Table Management CRUD (Backend + Frontend).
-- [ ] QR Code generation logic (`{restaurant_id}|{table_id}|{base_url}`).
-- [ ] Table Session Management (Open/Close logic, token validation).
+- [x] Table Management CRUD (Backend + Frontend).
+- [x] QR Code generation logic (`{restaurant_id}|{table_id}|{base_url}`).
+- [x] Table Session Management (Open/Close logic, token validation).
 
 ## Milestone 5: Customer-Facing Ordering (Public QR Flow)
-- [/] Public Menu view (Mobile-first, by table session).
-- [/] Cart management (Frontend).
-- [ ] Order placement logic.
-- [ ] Real-time Order Tracking for customers.
+
+- [x] Public Menu view (Mobile-first, by table session).
+- [x] Cart management (Frontend).
+- [x] Order placement logic.
+- [x] Real-time Order Tracking for customers.
 
 ## Milestone 6: Waiter Interface
-- [ ] Waiter Dashboard (Table grid).
+- [x] Waiter Dashboard (Table grid).
 - [ ] Manual order entry for waiters.
 - [ ] Assistance request handling.
 
-## Milestone 7: Kitchen Interface
-- [ ] Kitchen Dashboard (Order queue).
-- [ ] Item-level status updates (Accepted -> Preparing -> Ready).
-- [ ] SLA timestamp tracking.
+##
+# Milestone 7: Kitchen Interface
+- [x] Kitchen Dashboard (Order queue)
+- [x] Item-level status updates (Accepted → Preparing → Ready)
+- [x] SLA timestamp tracking [timestamps stored in OrderItem]
+- [ ] Real-time polling / synchronization (Frontend)
 
 ## Milestone 8: Cashier, Billing & Payments (Cash Only)
 - [ ] Bill Generation (Served items only).
@@ -73,4 +76,5 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 ## Milestone 11: Testing, Error Handling, Polish & Deployment
 - [ ] Write Pest Feature Tests for critical flows.
 - [ ] Error handling & offline mode banners.
+
 - [ ] Final UI/UX polish.

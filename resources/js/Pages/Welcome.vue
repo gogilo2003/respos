@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import LandingNavBar from '@/Components/LandingNavBar.vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
@@ -20,7 +19,7 @@ const cartCount = ref(0);
 const addError = ref<string | null>(null);
 
 const goToCategories = () => {
-    window.location.href = '/welcome-categories';
+    window.location.href = '/categories';
 };
 
 const scrollToTop = () => {
@@ -132,9 +131,8 @@ const addToCart = async (item: {
         </div>
     </div>
 
-    <!-- About/Contact anchors for navbar -->
+    <!-- About anchor for navbar -->
     <div class="sr-only" aria-hidden="true">
         <div id="about"></div>
-        <div id="contact"></div>
     </div>
 </template>

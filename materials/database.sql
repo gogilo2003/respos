@@ -1,4 +1,4 @@
--- ============================================================
+0-- ============================================================
 -- QR-Based Restaurant Ordering and Billing Management System
 -- Database Schema - Phase 1 (Cash-First Release)
 -- Aligned with Laravel migrations; primary keys use numeric IDs.

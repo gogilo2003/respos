@@ -42,16 +42,28 @@ const scrollToCategory = () => {
                         <h2 class="text-2xl font-bold text-gray-900">
                             Food Categories
                         </h2>
-                        <p class="mt-1 text-sm text-gray-600">Choose a category</p>
+                        <p class="mt-1 text-sm text-gray-600">
+                            Choose a category
+                        </p>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <article v-for="category in categories" :key="category.title"
-                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+                        <article
+                            v-for="category in categories"
+                            :key="category.title"
+                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                        >
                             <div class="h-48 bg-gray-100">
-                                <img v-if="category.image" :src="category.image" :alt="category.title"
-                                    class="h-full w-full object-cover" />
-                                <div v-else class="flex h-full w-full items-center justify-center text-gray-400">
+                                <img
+                                    v-if="category.image"
+                                    :src="category.image"
+                                    :alt="category.title"
+                                    class="h-full w-full object-cover"
+                                />
+                                <div
+                                    v-else
+                                    class="flex h-full w-full items-center justify-center text-gray-400"
+                                >
                                     No image
                                 </div>
                             </div>
@@ -64,11 +76,12 @@ const scrollToCategory = () => {
                                     {{ category.description }}
                                 </p>
 
-                                <button
-                                    class="mt-4 w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
-                                    @click="router.visit('/welcome-menu')">
-                                    View
-                                </button>
+<Link
+                                :href="route('menu')"
+                                class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+                            >
+                                View
+                            </Link>
                             </div>
                         </article>
                     </div>
