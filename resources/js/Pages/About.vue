@@ -40,51 +40,47 @@ const features = [
                 </div>
             </header>
 
+            <!-- cards -->
 
-            
+            <div class="card">
+                <h2>Store Hours</h2>
+                <p>
+                    Monday – Friday: 8:00 AM – 9:00 PM<br />Saturday – Sunday:
+                    9:00 AM – 10:00 PM
+                </p>
+            </div>
 
-            
-    <!-- cards -->
+            <div class="card">
+                <h2>Contact Us</h2>
+                <p>
+                    123 Food Street <br />Delicious City, State 12345
+                    <br />Phone: (123) 456-7890 <br />Email: info@respos.com
+                </p>
 
-    <div class="card">
-        <h2>Store Hours</h2>
-        <p>
-            Monday – Friday: 8:00 AM – 9:00 PM<br />Saturday – Sunday: 9:00 AM –
-            10:00 PM
-        </p>
-    </div>
+                <div class="social-icons">
+                    <a
+                        href="https://www.instagram.com/respos/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img src="" alt="Instagram icon" class="social-icon" />
+                    </a>
 
-    <div class="card">
-        <h2>Contact Us</h2>
-        <p>
-            123 Food Street <br />Delicious City, State 12345 <br />Phone: (123)
-            456-7890 <br />Email: info@respos.com
-        </p>
+                    <a
+                        href="https://www.facebook.com/respos/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img
+                            src="https://tse3.mm.bing.net/th/id/OIP.7Xv7HE8tc1bESoiRSrGm3gHaEl?cb=thfvnextfalcon4&rs=1&pid=ImgDetMain&o=7&rm=3"
+                            alt="Facebook icon"
+                            class="social-icon"
+                        />
+                    </a>
+                </div>
+            </div>
 
-        <div class="social-icons">
-            <a
-                href="https://www.instagram.com/respos/"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <img src="" alt="Instagram icon" class="social-icon" />
-            </a>
-
-            <a
-                href="https://www.facebook.com/respos/"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <img
-                    src="https://tse3.mm.bing.net/th/id/OIP.7Xv7HE8tc1bESoiRSrGm3gHaEl?cb=thfvnextfalcon4&rs=1&pid=ImgDetMain&o=7&rm=3"
-                    alt="Facebook icon"
-                    class="social-icon"
-                />
-            </a>
-        </div>
-    </div>
-
-       <footer class="bg-[#ffea95] py-8">
+            <footer class="bg-[#ffea95] py-8">
                 <div class="mx-auto max-w-7xl px-4">
                     <div
                         class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
@@ -108,7 +104,6 @@ const features = [
             </footer>
         </div>
     </WebLayout>
-
 </template>
 
 <style scoped>

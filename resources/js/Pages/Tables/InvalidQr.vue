@@ -13,7 +13,9 @@ import { Head } from '@inertiajs/vue3';
                         Invalid QR Code
                     </h1>
                     <p class="mt-2 text-sm text-gray-600">
-                        This QR code is invalid or the table is no longer active. Please contact the restaurant staff for assistance.
+                        This QR code is invalid or the table is no longer
+                        active. Please contact the restaurant staff for
+                        assistance.
                     </p>
 
                     <a

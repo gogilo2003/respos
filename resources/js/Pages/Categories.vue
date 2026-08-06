@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps<{
@@ -31,11 +31,9 @@ const scrollToCategory = () => {
 </script>
 
 <template>
-
     <WebLayout title="Menu categories">
         <pre>{{ categories }}</pre>
         <div class="relative min-h-screen overflow-hidden bg-[#D2A679]">
-
             <section id="menu-categories" class="bg-white py-12">
                 <div class="mx-auto max-w-7xl px-4">
                     <div class="mb-8">
@@ -76,12 +74,12 @@ const scrollToCategory = () => {
                                     {{ category.description }}
                                 </p>
 
-<Link
-                                :href="route('menu')"
-                                class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
-                            >
-                                View
-                            </Link>
+                                <Link
+                                    :href="route('menu')"
+                                    class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
+                                >
+                                    View
+                                </Link>
                             </div>
                         </article>
                     </div>

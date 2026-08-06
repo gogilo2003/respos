@@ -62,7 +62,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         type="button"
                         @click="toggle"
                         class="inline-flex items-center justify-center rounded-md p-2 text-gray-300 transition duration-150 ease-in-out hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white focus:outline-none"
-                        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+                        :aria-label="
+                            isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+                        "
                         :aria-expanded="!isCollapsed"
                     >
                         <svg
@@ -88,7 +90,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :href="route('dashboard')"
                         :active="route().current('dashboard')"
                         :title="isCollapsed ? 'Dashboard' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
                         <span v-if="!isCollapsed">Dashboard</span>
                         <span v-else class="text-lg font-bold">D</span>
@@ -98,7 +102,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :href="route('users')"
                         :active="route().current('users*')"
                         :title="isCollapsed ? 'Users' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
                         <span v-if="!isCollapsed">Users</span>
                         <span v-else class="text-lg font-bold">U</span>
@@ -108,7 +114,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :href="route('menu-categories')"
                         :active="route().current('menu-categories*')"
                         :title="isCollapsed ? 'Menu Categories' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
                         <span v-if="!isCollapsed">Menu Categories</span>
                         <span v-else class="text-lg font-bold">C</span>
@@ -118,7 +126,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :href="route('menu-items')"
                         :active="route().current('menu-items*')"
                         :title="isCollapsed ? 'Menu Items' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
                         <span v-if="!isCollapsed">Menu Items</span>
                         <span v-else class="text-lg font-bold">M</span>
@@ -128,7 +138,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         :href="route('tables')"
                         :active="route().current('tables*')"
                         :title="isCollapsed ? 'Tables' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
                         <span v-if="!isCollapsed">Tables</span>
                         <span v-else class="text-lg font-bold">T</span>
@@ -222,23 +234,23 @@ const appName = ref(usePage().props.appName || 'Laravel');
                     >
                         Menu Ctegories
                     </ResponsiveNavLink>
-<ResponsiveNavLink
-                            v-if="$page.props.auth.user.role === 'admin'"
-                            :href="route('menu-items')"
-                            :active="route().current('menu-items*')"
-                            @click="close"
-                        >
-                            Menu Items
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            v-if="$page.props.auth.user.role === 'admin'"
-                            :href="route('tables')"
-                            :active="route().current('tables*')"
-                            @click="close"
-                        >
-                            Tables
-                        </ResponsiveNavLink>
-                        <!-- Add more navigation links here -->
+                    <ResponsiveNavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('menu-items')"
+                        :active="route().current('menu-items*')"
+                        @click="close"
+                    >
+                        Menu Items
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        v-if="$page.props.auth.user.role === 'admin'"
+                        :href="route('tables')"
+                        :active="route().current('tables*')"
+                        @click="close"
+                    >
+                        Tables
+                    </ResponsiveNavLink>
+                    <!-- Add more navigation links here -->
                 </nav>
             </div>
         </div>

@@ -170,10 +170,18 @@ const statusClass = (status: string) => {
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <span
-                                            :class="table.qr_code ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                                            :class="
+                                                table.qr_code
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : 'bg-red-100 text-red-800'
+                                            "
                                             class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                         >
-                                            {{ table.qr_code ? 'Generated' : 'Not Generated' }}
+                                            {{
+                                                table.qr_code
+                                                    ? 'Generated'
+                                                    : 'Not Generated'
+                                            }}
                                         </span>
                                     </td>
                                     <td
@@ -186,7 +194,9 @@ const statusClass = (status: string) => {
                                             Edit
                                         </button>
                                         <button
-                                            @click="confirmTableDeletion(table.id)"
+                                            @click="
+                                                confirmTableDeletion(table.id)
+                                            "
                                             class="text-red-600 hover:text-red-900"
                                         >
                                             Delete
@@ -218,7 +228,10 @@ const statusClass = (status: string) => {
                             required
                             maxlength="20"
                         />
-                        <InputError :message="form.errors.table_number" class="mt-2" />
+                        <InputError
+                            :message="form.errors.table_number"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -232,7 +245,10 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             required
                         />
-                        <InputError :message="form.errors.capacity" class="mt-2" />
+                        <InputError
+                            :message="form.errors.capacity"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -244,7 +260,10 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             maxlength="80"
                         />
-                        <InputError :message="form.errors.location" class="mt-2" />
+                        <InputError
+                            :message="form.errors.location"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -265,7 +284,10 @@ const statusClass = (status: string) => {
                             <option value="cleaning">Cleaning</option>
                             <option value="reserved">Reserved</option>
                         </select>
-                        <InputError :message="form.errors.status" class="mt-2" />
+                        <InputError
+                            :message="form.errors.status"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div class="flex items-center">

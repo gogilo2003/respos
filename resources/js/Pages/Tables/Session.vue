@@ -24,7 +24,8 @@ const props = defineProps<{
 const sessionStatus = ref(props.session.status);
 
 const continueToMenu = () => {
-    window.location.href = props.menu_url + '?session_token=' + props.session.session_token;
+    window.location.href =
+        props.menu_url + '?session_token=' + props.session.session_token;
 };
 </script>
 
@@ -39,10 +40,13 @@ const continueToMenu = () => {
                         Table {{ table.table_number }}
                     </h1>
                     <p class="mt-2 text-sm text-gray-600">
-                        Your session is active. You can now browse the menu and place your order.
+                        Your session is active. You can now browse the menu and
+                        place your order.
                     </p>
 
-                    <div class="mt-6 rounded-md bg-green-50 p-4 text-sm text-green-700">
+                    <div
+                        class="mt-6 rounded-md bg-green-50 p-4 text-sm text-green-700"
+                    >
                         Session Status: {{ sessionStatus }}
                     </div>
 

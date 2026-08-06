@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -16,10 +17,11 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => 2,
+            'role_id' => Role::firstOrCreate(['name' => 'customer'])->id,
             'name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
+            'email_verified_at' => now(),
             'password_hash' => static::$password ??= Hash::make('password'),
             'is_active' => true,
             'last_login_at' => null,
@@ -30,6 +32,7 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_active' => false,
+            'email_verified_at' => null,
         ]);
     }
 }
