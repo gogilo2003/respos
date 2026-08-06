@@ -80,7 +80,7 @@ class WaiterController extends Controller
             ];
         });
 
-        $statistics = $this->waiterStatisticsService->getDashboardStatistics();
+        $statistics = $this->waiterStatisticsService->getDashboardStatistics($sessionIds);
 
         return Inertia::render('Waiter/Dashboard', [
             'tables' => $tables,

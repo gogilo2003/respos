@@ -10,6 +10,7 @@ use App\Interfaces\Repositories\RoleRepositoryInterface;
 use App\Interfaces\Repositories\TableRepositoryInterface;
 use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 use App\Models\User;
 use App\Repositories\AssistanceRequestRepository;
 use App\Repositories\MenuCategoryRepository;
@@ -19,6 +20,7 @@ use App\Repositories\RoleRepository;
 use App\Repositories\TableRepository;
 use App\Repositories\TableSessionRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\WaiterStatisticsRepository;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -61,6 +63,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AssistanceRequestRepositoryInterface::class,
             AssistanceRequestRepository::class
+        );
+        $this->app->bind(
+            WaiterStatisticsRepositoryInterface::class,
+            WaiterStatisticsRepository::class
         );
     }
 

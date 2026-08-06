@@ -14,19 +14,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(RoleSeeder::class);
-        $this->call(MenuCategorySeeder::class);
-        $this->call(MenuItemSeeder::class);
-
-        $adminRole = Role::where('name', 'admin')->first();
-
-        User::factory()->create([
-            'name' => 'System Administrator',
-            'username' => 'admin',
-            'email' => 'admin@respos.com',
-            'password_hash' => Hash::make('password'),
-            'role_id' => $adminRole->id,
-            'is_active' => true,
+        $this->call([
+            RoleSeeder::class,
+            UserSeeder::class,
+            MenuCategorySeeder::class,
+            MenuItemSeeder::class
         ]);
     }
 }

@@ -2,54 +2,43 @@
 
 namespace App\Services;
 
-use App\Interfaces\Repositories\AssistanceRequestRepositoryInterface;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\TableRepositoryInterface;
-use App\Models\Order;
-use App\Models\TableSession;
-use Illuminate\Support\Collection;
+use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 
 class WaiterStatisticsService
 {
     protected TableRepositoryInterface $tableRepository;
     protected OrderRepositoryInterface $orderRepository;
-    protected AssistanceRequestRepositoryInterface $assistanceRequestRepository;
+    protected WaiterStatisticsRepositoryInterface $waiterStatisticsRepository;
 
     public function __construct(
         TableRepositoryInterface $tableRepository,
         OrderRepositoryInterface $orderRepository,
-        AssistanceRequestRepositoryInterface $assistanceRequestRepository
+        WaiterStatisticsRepositoryInterface $waiterStatisticsRepository
     ) {
         $this->tableRepository = $tableRepository;
         $this->orderRepository = $orderRepository;
-        $this->assistanceRequestRepository = $assistanceRequestRepository;
+        $this->waiterStatisticsRepository = $waiterStatisticsRepository;
     }
 
-    public function getDashboardStatistics(): array
+    public function getDashboardStatistics(array $sessionIds = []): array
     {
-        $tables = $this->tableRepository->getActiveTablesWithSessions();
+        $occupiedTables = $this->waiterStatisticsRepository->getOccupiedTableCount();
 
-        $occupiedTables = 0;
-        $sessionIds = [];
+        $pendingOrders = $sessionIds
+            ? $this->waiterStatisticsRepository->getPendingOrderCount($sessionIds)
+            : 0;
 
-        foreach ($tables as $table) {
-            $session = $table->activeSession;
+        $readyOrders = $sessionIds
+            ? $this->waiterStatisticsRepository->getReadyOrderCount($sessionIds)
+            : 0;
 
-            if ($session && in_array($session->status, ['open', 'billing'])) {
-                $occupiedTables++;
-                $sessionIds[] = $session->id;
-            }
-        }
+        $completedToday = $sessionIds
+            ? $this->waiterStatisticsRepository->getCompletedTodayCount($sessionIds)
+            : 0;
 
-        $orders = $sessionIds
-            ? $this->orderRepository->getOrdersBySessionIds($sessionIds)
-            : collect();
-
-        $pendingOrders = $this->countOrdersByStatus($orders, 'pending');
-        $readyOrders = $this->countOrdersByStatus($orders, 'ready');
-        $completedToday = $this->countCompletedToday($orders);
-
-        $assistanceRequests = $this->assistanceRequestRepository->getOpenRequests()->count();
+        $assistanceRequests = $this->waiterStatisticsRepository->getOpenAssistanceRequestCount();
 
         return [
             'active_tables' => $occupiedTables,
@@ -58,21 +47,5 @@ class WaiterStatisticsService
             'completed_today' => $completedToday,
             'assistance_requests' => $assistanceRequests,
         ];
-    }
-
-    private function countOrdersByStatus(Collection $orders, string $status): int
-    {
-        return $orders->where('status', $status)->count();
-    }
-
-    private function countCompletedToday(Collection $orders): int
-    {
-        $today = now()->startOfDay();
-
-        return $orders->filter(function (Order $order) use ($today) {
-            $readyAt = $order->ready_at ?? $order->fully_served_at;
-
-            return $readyAt && $readyAt->greaterThanOrEqualTo($today);
-        })->count();
     }
 }
