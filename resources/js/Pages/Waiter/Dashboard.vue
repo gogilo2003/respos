@@ -9,6 +9,7 @@ import StatisticsCards from '@/Components/StatisticsCards.vue';
 import ActiveOrders from '@/Components/ActiveOrders.vue';
 import AssistanceList from '@/Components/AssistanceList.vue';
 import { ref, computed } from 'vue';
+import type { WaiterStatistics } from '@/interfaces/waiter';
 
 interface ActiveSession {
     table_session_id: number;
@@ -45,13 +46,6 @@ interface WaiterAssistance {
     request: string;
     priority: string;
     time: string;
-}
-
-interface WaiterStatistics {
-    activeTables: number;
-    pendingOrders: number;
-    readyOrders: number;
-    assistanceRequests: number;
 }
 
 const props = defineProps<{

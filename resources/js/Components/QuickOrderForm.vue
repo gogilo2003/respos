@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+import { useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import ToastContainer from '@/Components/ToastContainer.vue';
 
 interface MenuItem {
     id: number;
@@ -30,6 +33,7 @@ const emit = defineEmits<{
 const selectedTableId = ref<number | ''>('');
 const menuQuery = ref('');
 const selectedItems = ref<SelectedItem[]>([]);
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null);
 
 const filteredMenuItems = computed(() => {
     const query = menuQuery.value.trim().toLowerCase();
@@ -83,19 +87,36 @@ const removeItem = (menuItemId: number) => {
     );
 };
 
+const form = useForm<{
+    table_session_id: number | '';
+    items: { menu_item_id: number; quantity: number }[];
+}>({
+    table_session_id: selectedTableId.value,
+    items: [],
+});
+
 const submitOrder = () => {
     if (selectedTableId.value === '' || selectedItems.value.length === 0) {
         return;
     }
 
-    emit('submit', {
-        tableSessionId: selectedTableId.value,
-        items: selectedItems.value,
-    });
+    form.table_session_id = selectedTableId.value;
+    form.items = selectedItems.value.map((item) => ({
+        menu_item_id: item.menuItemId,
+        quantity: item.quantity,
+    }));
 
-    selectedTableId.value = '';
-    selectedItems.value = [];
-    menuQuery.value = '';
+    form.post('/waiter/orders', {
+        onSuccess: () => {
+            selectedTableId.value = '';
+            selectedItems.value = [];
+            menuQuery.value = '';
+            toastRef.value?.show('Order submitted successfully.', 'success');
+        },
+        onError: () => {
+            toastRef.value?.show('Failed to submit order.', 'error');
+        },
+    });
 };
 </script>
 
@@ -184,12 +205,22 @@ const submitOrder = () => {
             </div>
         </div>
 
+        <div v-if="form.errors.table_session_id" class="text-sm text-red-600">
+            {{ form.errors.table_session_id }}
+        </div>
+        <div v-if="form.errors.items" class="text-sm text-red-600">
+            {{ form.errors.items }}
+        </div>
+
         <button
             type="submit"
             class="w-full rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-50"
-            :disabled="selectedTableId === '' || selectedItems.length === 0"
+            :disabled="selectedTableId === '' || selectedItems.length === 0 || form.processing"
         >
-            Submit Order
+            {{ form.processing ? 'Submitting...' : 'Submit Order' }}
         </button>
     </form>
+
+    <ToastContainer ref="toastRef" />
 </template>
+
