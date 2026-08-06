@@ -146,6 +146,18 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         <span v-else class="text-lg font-bold">W</span>
                     </NavLink>
                     <NavLink
+                        v-if="$page.props.auth.user.role === 'kitchen'"
+                        :href="route('kitchen.dashboard')"
+                        :active="route().current('kitchen.dashboard')"
+                        :title="isCollapsed ? 'Kitchen Dashboard' : undefined"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
+                    >
+                        <span v-if="!isCollapsed">Kitchen Dashboard</span>
+                        <span v-else class="text-lg font-bold">K</span>
+                    </NavLink>
+                    <NavLink
                         v-if="$page.props.auth.user.role === 'admin'"
                         :href="route('tables')"
                         :active="route().current('tables*')"
@@ -261,6 +273,14 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         @click="close"
                     >
                         Waiter Dashboard
+                    </ResponsiveNavLink>
+                    <ResponsiveNavLink
+                        v-if="$page.props.auth.user.role === 'kitchen'"
+                        :href="route('kitchen.dashboard')"
+                        :active="route().current('kitchen.dashboard')"
+                        @click="close"
+                    >
+                        Kitchen Dashboard
                     </ResponsiveNavLink>
                     <ResponsiveNavLink
                         v-if="$page.props.auth.user.role === 'admin'"
