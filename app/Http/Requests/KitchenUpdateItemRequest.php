@@ -8,9 +8,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Form request for validating order/item status updates.
+ * Form request for validating kitchen order item updates.
  */
-class UpdateOrderStatusRequest extends FormRequest
+class KitchenUpdateItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,8 @@ class UpdateOrderStatusRequest extends FormRequest
     {
         return [
             'status' => ['required', 'string', 'in:accepted,preparing,ready'],
-            'notes' => ['nullable', 'string', 'max:255'],
+            'preparation_notes' => ['nullable', 'string', 'max:255'],
+            'estimated_ready_time' => ['nullable', 'date_format:Y-m-d H:i:s'],
         ];
     }
 
@@ -41,10 +42,11 @@ class UpdateOrderStatusRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'status.required' => 'Order status is required.',
-            'status.in' => 'The selected order status is invalid.',
-            'notes.string' => 'Notes must be valid text.',
-            'notes.max' => 'Notes may not be greater than 255 characters.',
+            'status.required' => 'Order item status is required.',
+            'status.in' => 'The selected order item status is invalid.',
+            'preparation_notes.string' => 'Preparation notes must be valid text.',
+            'preparation_notes.max' => 'Preparation notes may not be greater than 255 characters.',
+            'estimated_ready_time.date_format' => 'The estimated ready time must be in the format YYYY-MM-DD HH:MM:SS.',
         ];
     }
 
@@ -56,8 +58,9 @@ class UpdateOrderStatusRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'status' => 'order status',
-            'notes' => 'order notes',
+            'status' => 'order item status',
+            'preparation_notes' => 'preparation notes',
+            'estimated_ready_time' => 'estimated ready time',
         ];
     }
 }

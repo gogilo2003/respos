@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Requests\Bill;
+namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Form request for validating payment processing.
+ * Form request for validating payment creation.
  */
-class ProcessPaymentRequest extends FormRequest
+class StorePaymentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,8 +28,10 @@ class ProcessPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'bill_id' => ['required', 'exists:bills,id'],
+            'payment_method' => ['required', 'in:cash,manual'],
             'amount_received' => ['required', 'numeric', 'min:0'],
-            'cashier_id' => ['required', 'exists:users,id'],
+            'manual_note' => ['nullable', 'string', 'max:100'],
         ];
     }
 
@@ -41,11 +43,15 @@ class ProcessPaymentRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'bill_id.required' => 'A bill is required to process payment.',
+            'bill_id.exists' => 'The selected bill is invalid.',
+            'payment_method.required' => 'Payment method is required.',
+            'payment_method.in' => 'The selected payment method is invalid.',
             'amount_received.required' => 'Amount received is required.',
             'amount_received.numeric' => 'Amount received must be a number.',
             'amount_received.min' => 'Amount received cannot be negative.',
-            'cashier_id.required' => 'Cashier is required.',
-            'cashier_id.exists' => 'The selected cashier is invalid.',
+            'manual_note.string' => 'Notes must be valid text.',
+            'manual_note.max' => 'Notes may not be greater than 100 characters.',
         ];
     }
 
@@ -57,8 +63,10 @@ class ProcessPaymentRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'bill_id' => 'bill',
+            'payment_method' => 'payment method',
             'amount_received' => 'amount received',
-            'cashier_id' => 'cashier',
+            'manual_note' => 'notes',
         ];
     }
 }

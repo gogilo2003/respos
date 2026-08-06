@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateOrderStatusRequest;
+use App\Http\Requests\KitchenUpdateItemRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
@@ -59,7 +59,7 @@ class KitchenController extends Controller
         return Inertia::render('Kitchen/Dashboard', ['orders' => $orders]);
     }
 
-    public function updateItemStatus(UpdateOrderStatusRequest $request, OrderItem $orderItem)
+    public function updateItemStatus(KitchenUpdateItemRequest $request, OrderItem $orderItem)
     {
         Gate::authorize('kitchen');
 

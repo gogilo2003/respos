@@ -2,19 +2,17 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TableSessionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WaiterController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-
-Route::get('/db-check', function () {
-    DB::table('migrations')->first();
-    return 'Database connected successfully!';
-});
 use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'welcome']);
@@ -80,12 +78,29 @@ Route::prefix('table-sessions')
         Route::post('/{table}/close', [TableSessionController::class, 'close'])->name('.close');
     });
 
+Route::prefix('payments')
+    ->name('payments')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::post('/bills/{bill}', [PaymentController::class, 'store'])->name('.store');
+    });
+
 Route::prefix('kitchen')
     ->name('kitchen')
     ->middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/dashboard', [KitchenController::class, 'dashboard'])->name('.dashboard');
         Route::patch('/order-items/{orderItem}', [KitchenController::class, 'updateItemStatus'])->name('.item.update');
+    });
+
+Route::prefix('waiter')
+    ->name('waiter')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/dashboard', [WaiterController::class, 'dashboard'])->name('.dashboard');
+        Route::post('/orders', [WaiterController::class, 'storeOrder'])->name('.orders.store');
+        Route::get('/assistance-requests', [WaiterController::class, 'assistanceRequests'])->name('.assistance.index');
+        Route::patch('/assistance-requests/{assistanceRequest}', [WaiterController::class, 'updateAssistance'])->name('.assistance.update');
     });
 
 Route::get('/t/{payload}', [TableSessionController::class, 'show'])->name('table.entry');
@@ -96,4 +111,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
