@@ -91,6 +91,7 @@ Route::prefix('kitchen')
     ->group(function () {
         Route::get('/dashboard', [KitchenController::class, 'dashboard'])->name('.dashboard');
         Route::patch('/order-items/{orderItem}', [KitchenController::class, 'updateItemStatus'])->name('.item.update');
+        Route::patch('/orders/{order}/ready', [KitchenController::class, 'markOrderReady'])->name('.order.ready');
     });
 
 Route::prefix('waiter')
@@ -101,6 +102,7 @@ Route::prefix('waiter')
         Route::post('/orders', [WaiterController::class, 'storeOrder'])->name('.orders.store');
         Route::get('/assistance-requests', [WaiterController::class, 'assistanceRequests'])->name('.assistance.index');
         Route::patch('/assistance-requests/{assistanceRequest}', [WaiterController::class, 'updateAssistance'])->name('.assistance.update');
+        Route::patch('/order-items/{orderItem}/served', [WaiterController::class, 'serveOrderItem'])->name('.order-items.served');
     });
 
 Route::get('/t/{payload}', [TableSessionController::class, 'show'])->name('table.entry');

@@ -5,14 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\KitchenUpdateItemRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\TableSession;
-use Illuminate\Http\Request;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class KitchenController extends Controller
 {
+    public function __construct(protected OrderService $orderService) {}
+
     public function dashboard()
     {
         Gate::authorize('kitchen');
@@ -94,16 +95,44 @@ class KitchenController extends Controller
                 'ready_at' => $newStatus === 'ready' ? now() : $orderItem->ready_at,
             ]);
 
+            // Reload items to pick up the freshly updated status.
+            $order->load('items');
+
             $allReady = $order->items->every(fn ($i) => in_array($i->status, ['ready', 'served']));
             $anyPreparing = $order->items->contains(fn ($i) => $i->status === 'preparing');
 
             if ($allReady) {
-                $order->update(['status' => 'ready']);
+                $this->orderService->markOrderReady($order);
             } elseif ($anyPreparing) {
                 $order->update(['status' => 'preparing']);
             }
         });
 
         return response()->json(['item' => $orderItem->fresh()]);
+    }
+
+    public function markOrderReady(Order $order)
+    {
+        Gate::authorize('kitchen');
+
+        $session = $order->session;
+
+        if (! $session || $session->status !== 'open') {
+            return response()->json(['error' => 'Session not active'], 422);
+        }
+
+        $order->load('items');
+
+        $allItemsReady = $order->items->every(
+            fn ($i) => in_array($i->status, ['ready', 'served'])
+        );
+
+        if (! $allItemsReady) {
+            return response()->json(['error' => 'Not all items are ready'], 422);
+        }
+
+        $this->orderService->markOrderReady($order);
+
+        return response()->json(['order' => $order->fresh()]);
     }
 }

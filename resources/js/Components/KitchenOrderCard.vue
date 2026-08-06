@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import ToastContainer from '@/Components/ToastContainer.vue';
+import { computed, ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 interface OrderItem {
     orderItemId: number;
@@ -8,16 +10,53 @@ interface OrderItem {
     status: string;
 }
 
+interface ItemCounts {
+    pending: number;
+    accepted: number;
+    preparing: number;
+    ready: number;
+}
+
 interface Props {
+    orderId: number;
     orderNumber: number | string;
     table: string;
     customer?: string;
     orderTime: string;
     waitingDuration: string;
     items: OrderItem[];
+    itemCounts: ItemCounts;
 }
 
 const props = defineProps<Props>();
+const loading = ref(false);
+const toastRef = ref<InstanceType<typeof ToastContainer> | null>(null);
+
+/** All items are in a terminal-for-kitchen state (ready or served). */
+const allItemsReady = computed(() =>
+    props.itemCounts.pending === 0 &&
+    props.itemCounts.accepted === 0 &&
+    props.itemCounts.preparing === 0,
+);
+
+const markOrderReady = () => {
+    loading.value = true;
+    router.patch(
+        `/kitchen/orders/${props.orderId}/ready`,
+        {},
+        {
+            onSuccess: () => {
+                toastRef.value?.show(`Order #${props.orderNumber} marked as ready.`, 'success');
+            },
+            onError: () => {
+                toastRef.value?.show('Failed to mark order as ready.', 'error');
+            },
+            onFinish: () => {
+                loading.value = false;
+            },
+        },
+    );
+};
 </script>
 
 <template>
@@ -40,7 +79,7 @@ const props = defineProps<Props>();
             <ul class="mt-2 space-y-1">
                 <li
                     v-for="item in items"
-                    :key="`${item.name}-${item.status}`"
+                    :key="`${item.orderItemId}`"
                     class="flex items-center justify-between text-sm text-gray-700"
                 >
                     <span>{{ item.name }} x{{ item.quantity }}</span>
@@ -48,5 +87,21 @@ const props = defineProps<Props>();
                 </li>
             </ul>
         </div>
+
+        <div class="mt-4 border-t border-gray-200 pt-4">
+            <button
+                type="button"
+                class="w-full rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-50"
+                :class="allItemsReady
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'cursor-not-allowed bg-gray-300'"
+                :disabled="!allItemsReady || loading"
+                @click="markOrderReady"
+            >
+                {{ loading ? 'Updating...' : 'Mark Order Ready' }}
+            </button>
+        </div>
     </div>
+
+    <ToastContainer ref="toastRef" />
 </template>

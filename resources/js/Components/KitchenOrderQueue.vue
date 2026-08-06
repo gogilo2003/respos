@@ -2,18 +2,28 @@
 import KitchenOrderCard from '@/Components/KitchenOrderCard.vue';
 
 interface OrderItem {
+    orderItemId: number;
     name: string;
     quantity: number;
     status: string;
 }
 
+interface ItemCounts {
+    pending: number;
+    accepted: number;
+    preparing: number;
+    ready: number;
+}
+
 interface Order {
+    orderId: number;
     orderNumber: number | string;
     table: string;
     customer?: string;
     orderTime: string;
     waitingDuration: string;
     items: OrderItem[];
+    itemCounts: ItemCounts;
 }
 
 interface Props {
@@ -36,7 +46,7 @@ const emit = defineEmits<{
         <template v-else-if="orders.length > 0">
             <KitchenOrderCard
                 v-for="order in orders"
-                :key="order.orderNumber"
+                :key="order.orderId"
                 v-bind="order"
                 class="cursor-pointer transition hover:shadow-md"
                 @click="emit('select-order', order)"

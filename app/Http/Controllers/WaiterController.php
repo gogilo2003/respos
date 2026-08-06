@@ -13,6 +13,7 @@ use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
+use App\Services\OrderService;
 use App\Services\WaiterStatisticsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -28,6 +29,7 @@ class WaiterController extends Controller
         protected AssistanceRequestRepositoryInterface $assistanceRequestRepository,
         protected MenuItemRepositoryInterface $menuItemRepository,
         protected WaiterStatisticsService $waiterStatisticsService,
+        protected OrderService $orderService,
     ) {
     }
 
@@ -155,5 +157,40 @@ class WaiterController extends Controller
         ]);
 
         return response()->json(['request' => $assistanceRequest->fresh()]);
+    }
+
+    public function serveOrderItem(OrderItem $orderItem)
+    {
+        Gate::authorize('waiter');
+
+        $order = $orderItem->order;
+        $session = $order->session;
+
+        if (! $session || $session->status !== 'open') {
+            return response()->json(['error' => 'Session not active'], 422);
+        }
+
+        if ($orderItem->status !== 'ready') {
+            return response()->json(['error' => 'Only ready items can be marked as served'], 422);
+        }
+
+        DB::transaction(function () use ($orderItem, $order) {
+            $orderItem->update([
+                'status' => 'served',
+                'served_at' => now(),
+            ]);
+
+            $order->load('items');
+
+            $allServed = $order->items->every(
+                fn ($i) => in_array($i->status, ['served', 'cancelled', 'voided'])
+            );
+
+            if ($allServed) {
+                $this->orderService->markOrderFullyServed($order);
+            }
+        });
+
+        return response()->json(['item' => $orderItem->fresh()]);
     }
 }
