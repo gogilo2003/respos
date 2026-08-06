@@ -44,19 +44,19 @@ onUnmounted(() => {
         the page underneath needs top padding equal to roughly this bar's
         height so content doesn't start out hidden behind it.
     -->
-    <header class="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
-        <div class="flex w-full max-w-5xl items-center justify-between rounded-full px-6 py-3 transition-all duration-300"
+    <header class="fixed inset-x-0 top-0 z-50 flex justify-center px-4">
+        <div class="flex w-full max-w-7xl items-center justify-between rounded-full px-8 py-3 transition-all duration-300"
             :class="isScrolled
-                ? 'bg-gray-800/95 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10'
+                ? 'bg-gray-800/90 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10'
                 : 'bg-transparent'">
             <Link href="/" class="text-base font-bold tracking-wide text-white">
-                <ApplicationLogo class="h-8 w-auto" />
+                <ApplicationLogo class="h-10 w-auto" />
             </Link>
 
             <!-- Desktop links -->
-            <nav class="hidden items-center gap-8 md:flex">
+            <nav class="hidden items-center gap-6 md:flex">
                 <Link v-for="link in links" :key="link.name" :href="link.href"
-                    class="text-sm font-semibold text-white/90 transition-colors hover:text-white">
+                    class="text-xl font-medium uppercase text-white/90 transition-colors hover:text-white">
                     {{ link.name }}
                 </Link>
             </nav>

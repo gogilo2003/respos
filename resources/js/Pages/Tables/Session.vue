@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import WebLayout from '@/Layouts/WebLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
@@ -30,10 +31,9 @@ const continueToMenu = () => {
 </script>
 
 <template>
-    <Head title="Table Session" />
-
-    <div class="min-h-screen bg-gray-50">
-        <div class="mx-auto max-w-md px-4 py-16">
+    <WebLayout title="Table Session">
+        <div class="min-h-screen bg-gray-50">
+            <div class="mx-auto max-w-md px-4 py-16">
             <div class="overflow-hidden rounded-lg bg-white shadow">
                 <div class="p-6 text-center">
                     <h1 class="text-2xl font-bold text-gray-900">
@@ -60,5 +60,6 @@ const continueToMenu = () => {
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+    </WebLayout>
 </template>
