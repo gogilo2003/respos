@@ -2,7 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
-import WebMenuBar from '@/Components/WebMenuBar.vue';
+import WebMenuBar from '@/Layouts/WebMenuBar.vue';
 
 const isOpen = ref(false);
 

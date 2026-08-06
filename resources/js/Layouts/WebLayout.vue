@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import WebMenuBar from '@/Components/WebMenuBar.vue';
+import WebMenuBar from '@/Layouts/WebMenuBar.vue';
 import { Head } from '@inertiajs/vue3';
 
 defineProps<{
