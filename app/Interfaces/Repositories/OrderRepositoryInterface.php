@@ -11,4 +11,6 @@ interface OrderRepositoryInterface extends RepositoryInterface
     public function findById(int $id);
 
     public function updateStatus(int $id, string $status, ?array $timestamps = null);
+
+    public function getOrdersBySessionIds(array $sessionIds);
 }

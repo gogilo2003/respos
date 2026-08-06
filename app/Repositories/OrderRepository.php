@@ -44,4 +44,9 @@ class OrderRepository extends BaseRepository implements OrderRepositoryInterface
 
         return $order->update($updateData);
     }
+
+    public function getOrdersBySessionIds(array $sessionIds)
+    {
+        return $this->model->whereIn('session_id', $sessionIds)->get();
+    }
 }

@@ -23,4 +23,11 @@ class TableRepository extends BaseRepository implements TableRepositoryInterface
     {
         return $this->model->with('qrCode')->find($id);
     }
+
+    public function getActiveTablesWithSessions()
+    {
+        return $this->model->where('is_active', true)
+            ->with(['activeSession.orders', 'activeSession.assistanceRequests'])
+            ->get();
+    }
 }
