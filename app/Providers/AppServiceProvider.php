@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Interfaces\Repositories\AssistanceRequestRepositoryInterface;
+use App\Interfaces\Repositories\KitchenRepositoryInterface;
 use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
 use App\Interfaces\Repositories\MenuItemRepositoryInterface;
 use App\Interfaces\Repositories\OrderRepositoryInterface;
@@ -13,6 +14,7 @@ use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 use App\Models\User;
 use App\Repositories\AssistanceRequestRepository;
+use App\Repositories\KitchenRepository;
 use App\Repositories\MenuCategoryRepository;
 use App\Repositories\MenuItemRepository;
 use App\Repositories\OrderRepository;
@@ -59,6 +61,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             OrderRepositoryInterface::class,
             OrderRepository::class
+        );
+        $this->app->bind(
+            KitchenRepositoryInterface::class,
+            KitchenRepository::class
         );
         $this->app->bind(
             AssistanceRequestRepositoryInterface::class,
