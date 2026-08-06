@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
@@ -58,13 +59,11 @@ class KitchenController extends Controller
         return Inertia::render('Kitchen/Dashboard', ['orders' => $orders]);
     }
 
-    public function updateItemStatus(Request $request, OrderItem $orderItem)
+    public function updateItemStatus(UpdateOrderStatusRequest $request, OrderItem $orderItem)
     {
         Gate::authorize('kitchen');
 
-        $validated = $request->validate([
-            'status' => ['required', 'in:accepted,preparing,ready'],
-        ]);
+        $validated = $request->validated();
 
         $order = $orderItem->order;
         $session = $order->session;
