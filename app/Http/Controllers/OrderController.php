@@ -24,24 +24,30 @@ class OrderController extends Controller
             return response()->json(['error' => 'Invalid table session'], 400);
         }
 
-        $order = Order::create([
-            'table_session_id' => $session->id,
-        ]);
-
-        foreach ($request->items as $item) {
-            $menuItem = MenuItem::find($item['menu_item_id']);
-            if (! $menuItem) continue;
-
-            $unitPrice = $menuItem->price;
-            $quantity = $item['quantity'];
-
-            $orderItem = OrderItem::create([
-                'order_id' => $order->id,
-                'menu_item_id' => $menuItem->id,
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
+        $order = DB::transaction(function () use ($request, $session) {
+            $order = Order::create([
+                'session_id' => $session->id,
+                'placed_by_role' => auth()->user()->role->name,
+                'placed_by_user' => auth()->id(),
             ]);
-        }
+
+            foreach ($request->items as $item) {
+                $menuItem = MenuItem::find($item['menu_item_id']);
+                if (! $menuItem) continue;
+
+                $unitPrice = $menuItem->base_price;
+                $quantity = $item['quantity'];
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'menu_item_id' => $menuItem->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $unitPrice,
+                ]);
+            }
+
+            return $order;
+        });
 
         return response()->json([
             'order_id' => $order->id,

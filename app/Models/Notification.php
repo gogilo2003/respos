@@ -43,6 +43,8 @@ class Notification extends Model
 
     public function scopeForRole($query, string $role)
     {
-        return $query->where('target_role', $role)->orWhere('target_user_id', auth()->id());
+        return $query->where(function ($query) use ($role) {
+            $query->where('target_role', $role)->orWhere('target_user_id', auth()->id());
+        });
     }
 }

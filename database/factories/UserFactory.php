@@ -17,7 +17,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => Role::firstOrCreate(['name' => 'customer'])->id,
+            'role_id' => Role::query()->firstOrCreate(['name' => 'customer'], ['name' => 'customer'])->id,
             'name' => fake()->name(),
             'username' => fake()->unique()->userName(),
             'email' => fake()->unique()->safeEmail(),
@@ -26,6 +26,13 @@ class UserFactory extends Factory
             'is_active' => true,
             'last_login_at' => null,
         ];
+    }
+
+    public function withRole(string $role): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id' => Role::query()->firstOrCreate(['name' => $role], ['name' => $role])->id,
+        ]);
     }
 
     public function unverified(): static
