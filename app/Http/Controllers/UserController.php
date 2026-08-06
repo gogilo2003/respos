@@ -47,7 +47,6 @@ class UserController extends Controller
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
-        unset($validated['password']);
 
         $this->userRepository->create($validated);
 
