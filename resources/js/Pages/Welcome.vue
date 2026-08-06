@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
+import WebMenuBar from '@/Components/WebMenuBar.vue';
 
 const isOpen = ref(false);
 
@@ -17,10 +18,6 @@ const props = defineProps<{
 
 const cartCount = ref(0);
 const addError = ref<string | null>(null);
-
-const goToCategories = () => {
-    window.location.href = '/categories';
-};
 
 const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -114,20 +111,19 @@ const addToCart = async (item: {
                 </div>
             </div>
 
-            <LandingNavBar />
+            <WebMenuBar />
         </div>
 
         <!-- See Menu button (centered on the image) -->
         <div
             class="absolute inset-0 z-10 flex items-end justify-center px-4 pb-24"
         >
-            <button
-                type="button"
+            <Link
+                href="/categories"
                 class="rounded-full bg-[#ffea95] px-6 py-3 font-semibold text-black shadow-md transition hover:bg-yellow-300"
-                @click="goToCategories"
             >
                 See Menu
-            </button>
+            </Link>
         </div>
     </div>
 

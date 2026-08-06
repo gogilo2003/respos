@@ -48,14 +48,14 @@ const scrollToCategory = () => {
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
                         <article
                             v-for="category in categories"
-                            :key="category.title"
+                            :key="category.name"
                             class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
                         >
                             <div class="h-48 bg-gray-100">
                                 <img
                                     v-if="category.image"
                                     :src="category.image"
-                                    :alt="category.title"
+                                    :alt="category.name"
                                     class="h-full w-full object-cover"
                                 />
                                 <div

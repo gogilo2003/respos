@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps<{
     table: {
@@ -24,8 +25,7 @@ const props = defineProps<{
 const sessionStatus = ref(props.session.status);
 
 const continueToMenu = () => {
-    window.location.href =
-        props.menu_url + '?session_token=' + props.session.session_token;
+    router.visit(props.menu_url + '?session_token=' + props.session.session_token);
 };
 </script>
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
 
 const features = [
     {
@@ -92,12 +92,13 @@ const features = [
                         <div
                             class="flex items-center gap-6 text-sm text-black/90"
                         >
-                            <a
+                            <Link
                                 href="/welcome-categories"
                                 class="hover:underline"
-                                >Food Menu</a
                             >
-                            <a href="/" class="hover:underline">Home</a>
+                                Food Menu
+                            </Link>
+                            <Link href="/" class="hover:underline">Home</Link>
                         </div>
                     </div>
                 </div>
