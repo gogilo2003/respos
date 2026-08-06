@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Link } from '@inertiajs/vue3';
 import { onMounted, onUnmounted, ref } from 'vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
 const links = ref([
     { name: 'Home', href: '/' },
@@ -49,7 +50,7 @@ onUnmounted(() => {
                 ? 'bg-gray-800/95 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10'
                 : 'bg-transparent'">
             <Link href="/" class="text-base font-bold tracking-wide text-white">
-                LOGO
+                <ApplicationLogo class="h-8 w-auto" />
             </Link>
 
             <!-- Desktop links -->
