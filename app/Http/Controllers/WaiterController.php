@@ -13,6 +13,7 @@ use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
+use App\Services\WaiterStatisticsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -26,6 +27,7 @@ class WaiterController extends Controller
         protected OrderRepositoryInterface $orderRepository,
         protected AssistanceRequestRepositoryInterface $assistanceRequestRepository,
         protected MenuItemRepositoryInterface $menuItemRepository,
+        protected WaiterStatisticsService $waiterStatisticsService,
     ) {
     }
 
@@ -59,13 +61,6 @@ class WaiterController extends Controller
         $orders = $sessionIds ? $this->orderRepository->getOrdersBySessionIds($sessionIds) : collect();
         $assistanceRequests = $this->assistanceRequestRepository->getOpenRequests();
 
-        $statistics = [
-            'active_tables' => $tables->count(),
-            'pending_orders' => $orders->where('status', 'pending')->count(),
-            'ready_orders' => $orders->where('status', 'ready')->count(),
-            'assistance_requests' => $assistanceRequests->count(),
-        ];
-
         $ordersPayload = $orders->map(function ($order) {
             return [
                 'orderNumber' => $order->id,
@@ -84,6 +79,8 @@ class WaiterController extends Controller
                 'time' => $request->requested_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i'),
             ];
         });
+
+        $statistics = $this->waiterStatisticsService->getDashboardStatistics();
 
         return Inertia::render('Waiter/Dashboard', [
             'tables' => $tables,
