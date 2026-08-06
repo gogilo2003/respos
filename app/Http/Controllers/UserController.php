@@ -46,7 +46,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        $validated['password_hash'] = Hash::make($validated['password']);
+        $validated['password'] = Hash::make($validated['password']);
         unset($validated['password']);
 
         $this->userRepository->create($validated);
@@ -68,7 +68,7 @@ class UserController extends Controller
         ]);
 
         if (! empty($validated['password'])) {
-            $validated['password_hash'] = Hash::make($validated['password']);
+            $validated['password'] = Hash::make($validated['password']);
         }
         unset($validated['password']);
 

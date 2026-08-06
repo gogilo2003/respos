@@ -21,13 +21,13 @@ class User extends Authenticatable implements MustVerifyEmailContract
         'name',
         'username',
         'email',
-        'password_hash',
+        'password',
         'is_active',
         'last_login_at',
     ];
 
     protected $hidden = [
-        'password_hash',
+        'password',
         'remember_token',
     ];
 
@@ -50,7 +50,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
      *
      * @var string
      */
-    protected $authPasswordName = 'password_hash';
+    protected $authPasswordName = 'password';
 
     /**
      * Get the password for the user.
@@ -59,7 +59,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
      */
     public function getAuthPassword()
     {
-        return $this->password_hash;
+        return $this->password;
     }
 
     /**

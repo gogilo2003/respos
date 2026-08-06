@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         User::factory()->create([
             'name' => 'System Administrator',
             'email' => 'admin@respos.com',
-            'password_hash' => Hash::make('password'),
+            'password' => Hash::make('password'),
             'role_id' => $adminRole->id,
             'is_active' => true,
         ]);
