@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Bill\GenerateBillRequest;
-use App\Http\Requests\Bill\SplitBillRequest;
 use App\Http\Requests\Bill\ProcessPaymentRequest;
+use App\Http\Requests\Bill\SplitBillRequest;
+use App\Http\Requests\StoreBillRequest;
 use App\Models\Bill;
 use App\Models\TableSession;
 use App\Services\BillService;
@@ -22,13 +21,11 @@ class BillController extends Controller
         $this->billService = $billService;
     }
 
-    public function generate(Request $request)
+    public function generate(StoreBillRequest $request)
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validate([
-            'session_id' => 'required|exists:table_sessions,id',
-        ]);
+        $validated = $request->validated();
 
         $bill = $this->billService->generateBill($validated['session_id'], auth()->id());
 
@@ -39,16 +36,11 @@ class BillController extends Controller
         ]);
     }
 
-    public function split(Request $request, Bill $bill)
+    public function split(SplitBillRequest $request, Bill $bill)
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validate([
-            'split_type' => ['required', 'in:equally,by_item,custom'],
-            'number_of_splits' => 'integer|min:1',
-            'item_groups' => 'array',
-            'custom_amounts' => 'array',
-        ]);
+        $validated = $request->validated();
 
         if ($validated['split_type'] === 'equally') {
             $splits = $this->billService->splitBillEqually($bill, $validated['number_of_splits']);
@@ -64,14 +56,11 @@ class BillController extends Controller
         ]);
     }
 
-    public function processPayment(Request $request, Bill $bill)
+    public function processPayment(ProcessPaymentRequest $request, Bill $bill)
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validate([
-            'amount_received' => 'required|numeric|min:0',
-            'cashier_id' => 'required|exists:users,id',
-        ]);
+        $validated = $request->validated();
 
         $result = $this->billService->processPayment($bill, $validated['amount_received'], $validated['cashier_id']);
 
