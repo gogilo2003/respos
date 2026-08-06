@@ -2,47 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
-use App\Models\OrderItem;
+use App\Http\Requests\StoreOrderRequest;
+use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Models\MenuItem;
 use App\Models\TableSession;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(protected OrderRepositoryInterface $orderRepository)
     {
-        $request->validate([
-            'table_session_id' => 'required|exists:table_sessions,id',
-            'items' => 'required|array',
-            'items.*.menu_item_id' => 'required|exists:menu_items,id',
-            'items.*.quantity' => 'required|integer|min:1',
-        ]);
+    }
 
-        $session = TableSession::find($request->table_session_id);
+    public function store(StoreOrderRequest $request)
+    {
+        $validated = $request->validated();
+
+        $session = TableSession::find($validated['table_session_id']);
         if (! $session || $session->status !== 'open') {
             return response()->json(['error' => 'Invalid table session'], 400);
         }
 
-        $order = DB::transaction(function () use ($request, $session) {
-            $order = Order::create([
+        $order = DB::transaction(function () use ($request, $session, $validated) {
+            $order = $this->orderRepository->createOrder([
                 'session_id' => $session->id,
                 'placed_by_role' => auth()->user()->role->name,
                 'placed_by_user' => auth()->id(),
             ]);
 
-            foreach ($request->items as $item) {
+            foreach ($validated['items'] as $item) {
                 $menuItem = MenuItem::find($item['menu_item_id']);
                 if (! $menuItem) continue;
 
-                $unitPrice = $menuItem->base_price;
-                $quantity = $item['quantity'];
-
-                OrderItem::create([
+                $this->orderRepository->addOrderItem([
                     'order_id' => $order->id,
                     'menu_item_id' => $menuItem->id,
-                    'quantity' => $quantity,
-                    'unit_price' => $unitPrice,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $menuItem->base_price,
                 ]);
             }
 
