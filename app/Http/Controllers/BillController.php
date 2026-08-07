@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Domain\Billing\Services\BillService;
 use App\Http\Requests\StoreBillRequest;
+use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use App\Models\TableSession;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,7 @@ class BillController extends Controller
 
         $bills = $this->billService->all();
 
-        return response()->json($bills, 200);
+        return BillResource::collection($bills)->response()->setStatusCode(200);
     }
 
     public function show(Bill $bill): JsonResponse
@@ -30,7 +31,7 @@ class BillController extends Controller
 
         $data = $this->billService->retrieve($bill->id);
 
-        return response()->json($data, 200);
+        return (new BillResource($data))->response()->setStatusCode(200);
     }
 
     public function store(StoreBillRequest $request): JsonResponse
@@ -42,7 +43,7 @@ class BillController extends Controller
 
         $bill = $this->billService->generateFromOrder($order);
 
-        return response()->json($bill, 201);
+        return (new BillResource($bill))->response()->setStatusCode(201);
     }
 
     public function destroy(Bill $bill): JsonResponse
