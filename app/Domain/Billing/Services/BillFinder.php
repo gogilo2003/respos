@@ -3,8 +3,10 @@
 namespace App\Domain\Billing\Services;
 
 use App\Domain\Billing\DTOs\BillData;
+use App\Domain\Billing\DTOs\BillFilter;
 use App\Domain\Billing\Enums\BillStatus;
 use App\Repositories\Contracts\BillRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 final readonly class BillFinder
 {
@@ -30,5 +32,13 @@ final readonly class BillFinder
     public function findByStatus(BillStatus $status): ?BillData
     {
         return $this->bills->findByStatus($status);
+    }
+
+    /**
+     * @return Collection<int, BillData>
+     */
+    public function findAll(BillFilter $filter): Collection
+    {
+        return $this->bills->findAll($filter);
     }
 }

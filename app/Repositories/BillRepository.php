@@ -102,6 +102,48 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
     /**
      * @return Collection<int, BillData>
      */
+    public function findAll(\App\Domain\Billing\DTOs\BillFilter $filter): Collection
+    {
+        $query = $this->model->query();
+
+        if ($filter->status) {
+            $query->where('status', $filter->status->value);
+        }
+
+        if ($filter->billNumber) {
+            $query->where('bill_number', 'like', '%' . $filter->billNumber . '%');
+        }
+
+        if ($filter->from) {
+            $query->whereDate('created_at', '>=', $filter->from);
+        }
+
+        if ($filter->to) {
+            $query->whereDate('created_at', '<=', $filter->to);
+        }
+
+        if ($filter->table) {
+            $query->whereHas('session', function ($q) use ($filter) {
+                $q->where('table_id', $filter->table);
+            });
+        }
+
+        if ($filter->cashierId) {
+            $query->where('generated_by', $filter->cashierId);
+        }
+
+        if ($filter->customer) {
+            $query->whereHas('session.table', function ($q) use ($filter) {
+                $q->where('customer', 'like', '%' . $filter->customer . '%');
+            });
+        }
+
+        return $query->get()->map(fn (Bill $bill) => $this->toDto($bill));
+    }
+
+    /**
+     * @return Collection<int, BillData>
+     */
     public function findOpenBills(): Collection
     {
         return $this->model->whereIn('status', ['open', 'partially_paid'])->get()->map(fn (Bill $bill) => $this->toDto($bill));

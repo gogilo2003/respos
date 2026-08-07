@@ -12,7 +12,9 @@ use App\Interfaces\Repositories\TableRepositoryInterface;
 use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
+use App\Models\Bill;
 use App\Models\User;
+use App\Policies\BillPolicy;
 use App\Repositories\AssistanceRequestRepository;
 use App\Repositories\KitchenRepository;
 use App\Repositories\MenuCategoryRepository;
@@ -90,5 +92,7 @@ class AppServiceProvider extends ServiceProvider
                 return $user->hasRole($role);
             });
         }
+
+        Gate::policy(Bill::class, BillPolicy::class);
     }
 }

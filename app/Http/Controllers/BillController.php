@@ -17,7 +17,7 @@ class BillController extends Controller
 
     public function index(): JsonResponse
     {
-        Gate::authorize('cashier');
+        Gate::authorize('viewAny', Bill::class);
 
         $bills = $this->billService->all();
 
@@ -26,7 +26,7 @@ class BillController extends Controller
 
     public function show(Bill $bill): JsonResponse
     {
-        Gate::authorize('cashier');
+        Gate::authorize('view', $bill);
 
         $data = $this->billService->retrieve($bill->id);
 
@@ -35,7 +35,7 @@ class BillController extends Controller
 
     public function store(StoreBillRequest $request): JsonResponse
     {
-        Gate::authorize('cashier');
+        Gate::authorize('create', Bill::class);
 
         $session = TableSession::findOrFail($request->validated('session_id'));
         $order = $session->orders()->latest()->firstOrFail();
@@ -47,7 +47,7 @@ class BillController extends Controller
 
     public function destroy(Bill $bill): JsonResponse
     {
-        Gate::authorize('cashier');
+        Gate::authorize('delete', $bill);
 
         $this->billService->delete($bill->id);
 
