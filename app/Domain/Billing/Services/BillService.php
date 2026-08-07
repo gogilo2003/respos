@@ -5,6 +5,10 @@ namespace App\Domain\Billing\Services;
 use App\Domain\Billing\Contracts\BillGeneratorInterface;
 use App\Domain\Billing\DTOs\BillData;
 use App\Domain\Billing\Enums\BillStatus;
+use App\Domain\Billing\Events\BillClosed;
+use App\Domain\Billing\Events\BillCreated;
+use App\Domain\Billing\Events\BillOpened;
+use App\Domain\Billing\Events\BillVoided;
 use App\Domain\Billing\Exceptions\BillAlreadyPaidException;
 use App\Domain\Billing\Exceptions\BillVoidedException;
 use App\Domain\Billing\Exceptions\InvalidPaymentException;
@@ -22,14 +26,21 @@ final readonly class BillService
 
     public function generate(BillData $bill): BillData
     {
-        return $this->bills->create($bill);
+        $bill = $this->bills->create($bill);
+
+        event(new BillCreated($bill));
+
+        return $bill;
     }
 
     public function generateFromOrder(Order $order): BillData
     {
         $bill = $this->generator->generateForOrder($order);
+        $bill = $this->bills->create($bill);
 
-        return $this->bills->create($bill);
+        event(new BillCreated($bill));
+
+        return $bill;
     }
 
     public function update(BillData $bill): BillData
@@ -61,7 +72,7 @@ final readonly class BillService
             throw new BillVoidedException('Bill is already voided.');
         }
 
-        return $this->bills->update(BillData::from(
+        $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
             customer: $bill->customer,
             table: $bill->table,
@@ -83,6 +94,10 @@ final readonly class BillService
             paidAt: $bill->paidAt,
             voidedAt: $bill->voidedAt,
         ));
+
+        event(new BillOpened($bill));
+
+        return $bill;
     }
 
     public function close(int $billId): BillData
@@ -97,7 +112,7 @@ final readonly class BillService
             throw new BillVoidedException('Bill is already voided.');
         }
 
-        return $this->bills->update(BillData::from(
+        $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
             customer: $bill->customer,
             table: $bill->table,
@@ -119,6 +134,10 @@ final readonly class BillService
             paidAt: new \DateTimeImmutable(),
             voidedAt: $bill->voidedAt,
         ));
+
+        event(new BillClosed($bill));
+
+        return $bill;
     }
 
     public function void(int $billId, ?string $reason = null, ?int $voidedBy = null): BillData
@@ -137,7 +156,7 @@ final readonly class BillService
             throw new BillVoidedException('Bill is already voided.');
         }
 
-        return $this->bills->update(BillData::from(
+        $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
             customer: $bill->customer,
             table: $bill->table,
@@ -159,6 +178,10 @@ final readonly class BillService
             paidAt: $bill->paidAt,
             voidedAt: new \DateTimeImmutable(),
         ));
+
+        event(new BillVoided($bill));
+
+        return $bill;
     }
 
     public function retrieve(int $billId): ?BillData
