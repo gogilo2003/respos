@@ -3,8 +3,8 @@ import KitchenDashboardHeader from '@/Components/KitchenDashboardHeader.vue';
 import KitchenOrderQueue from '@/Components/KitchenOrderQueue.vue';
 import KitchenQueueFilters from '@/Components/KitchenQueueFilters.vue';
 import KitchenStatisticsCards from '@/Components/KitchenStatisticsCards.vue';
-import { type KitchenDashboardProps } from '@/Composables/useKitchenDashboard';
-import { useKitchenDashboard } from '@/Composables/useKitchenDashboard';
+import { type KitchenDashboardProps, useKitchenDashboard } from '@/Composables/useKitchenDashboard';
+import { useKitchenQueue } from '@/Composables/useKitchenQueue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -14,18 +14,25 @@ const props = defineProps<KitchenDashboardProps>();
 const page = usePage();
 const authUser = computed(() => (page.props.auth as any)?.user);
 
+// Data fetching, shaping, and refresh
+const { loading, refreshing, error, currentTime, allOrders, stats, refresh } =
+    useKitchenDashboard(props);
+
+// Filtering, sorting, and searching over the shaped order list
 const {
-    refreshing,
-    error,
     statusFilter,
-    priorityFilter,
-    currentTime,
-    filteredOrders,
+    searchQuery,
+    sortBy,
+    sortDirection,
+    sortedOrders,
     orderCount,
-    stats,
     isEmpty,
-    refresh,
-} = useKitchenDashboard(props);
+    hasActiveFilters,
+    clearFilters,
+    setSort,
+    QUEUE_STATUS_OPTIONS,
+    QUEUE_SORT_OPTIONS,
+} = useKitchenQueue(allOrders);
 </script>
 
 <template>
@@ -59,8 +66,46 @@ const {
                 <!-- Filters -->
                 <KitchenQueueFilters
                     v-model:status-filter="statusFilter"
-                    v-model:priority-filter="priorityFilter"
+                    v-model:priority-filter="sortBy"
                 />
+
+                <!-- Search + sort controls -->
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <input
+                        v-model="searchQuery"
+                        type="search"
+                        placeholder="Search by order #, table, or item…"
+                        class="w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:max-w-xs"
+                    />
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-medium text-gray-500">Sort:</span>
+                        <button
+                            v-for="opt in QUEUE_SORT_OPTIONS"
+                            :key="opt.key"
+                            type="button"
+                            class="rounded-full border px-3 py-1 text-xs font-medium transition"
+                            :class="sortBy === opt.key
+                                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
+                            @click="setSort(opt.key)"
+                        >
+                            {{ opt.label }}
+                            <span v-if="sortBy === opt.key" class="ml-0.5">
+                                {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                            </span>
+                        </button>
+
+                        <button
+                            v-if="hasActiveFilters"
+                            type="button"
+                            class="rounded-full border border-red-300 px-3 py-1 text-xs font-medium text-red-600 transition hover:bg-red-50"
+                            @click="clearFilters"
+                        >
+                            Clear filters
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Order Queue -->
                 <section>
@@ -78,15 +123,15 @@ const {
                     </h3>
 
                     <KitchenOrderQueue
-                        :orders="filteredOrders"
-                        :loading="refreshing"
+                        :orders="sortedOrders"
+                        :loading="loading || refreshing"
                     />
 
                     <p
-                        v-if="isEmpty"
+                        v-if="isEmpty && !loading && !refreshing"
                         class="py-12 text-center text-sm text-gray-500"
                     >
-                        No active orders.
+                        {{ hasActiveFilters ? 'No orders match the active filters.' : 'No active orders.' }}
                     </p>
                 </section>
 

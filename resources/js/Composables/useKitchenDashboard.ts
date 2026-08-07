@@ -49,7 +49,7 @@ export interface KitchenDashboardProps {
 }
 
 // ---------------------------------------------------------------------------
-// Types — component-facing (camelCase, passed to KitchenOrderQueue / KitchenOrderCard)
+// Types — component-facing (camelCase, consumed by KitchenOrderQueue / KitchenOrderCard)
 // ---------------------------------------------------------------------------
 
 export interface ShapedOrderItem {
@@ -96,12 +96,10 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
     const loading = ref(false);
     const refreshing = ref(false);
     const error = ref<string | null>(null);
-    const statusFilter = ref('');
-    const priorityFilter = ref('');
     const currentTime = ref(formatClock());
 
     // -----------------------------------------------------------------------
-    // Pure formatting helpers (no reactivity — safe to call in computed)
+    // Formatting helpers
     // -----------------------------------------------------------------------
 
     function formatClock(): string {
@@ -151,44 +149,28 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
     }
 
     // -----------------------------------------------------------------------
-    // Computed values
+    // Computed
     // -----------------------------------------------------------------------
 
-    /** All three order lists merged and shaped, preserving placement order. */
+    /**
+     * All three order lists merged and shaped, preserving placement order.
+     * Passed to useKitchenQueue for filtering / sorting / searching.
+     */
     const allOrders = computed<ShapedOrder[]>(() => [
         ...props.pending_orders.map(shapeOrder),
         ...props.preparing_orders.map(shapeOrder),
         ...props.ready_orders.map(shapeOrder),
     ]);
 
-    /**
-     * Orders after applying the active status filter.
-     * An order is included when at least one of its items matches the filter,
-     * or when no filter is active.
-     */
-    const filteredOrders = computed<ShapedOrder[]>(() => {
-        if (!statusFilter.value) return allOrders.value;
-
-        return allOrders.value.filter((order) =>
-            order.items.some((item) => item.status === statusFilter.value),
-        );
-    });
-
-    /** Total number of orders currently visible after filtering. */
-    const orderCount = computed(() => filteredOrders.value.length);
-
     /** Statistics passed through directly — no re-shaping needed. */
     const stats = computed(() => props.statistics);
 
-    /** True when the queue is empty after applying the active filter. */
-    const isEmpty = computed(() => !loading.value && filteredOrders.value.length === 0);
-
     // -----------------------------------------------------------------------
-    // Refresh action
+    // Refresh
     // -----------------------------------------------------------------------
 
     function refresh(): void {
-        if (refreshing.value) return;   // debounce concurrent refreshes
+        if (refreshing.value) return;
 
         refreshing.value = true;
         error.value = null;
@@ -209,7 +191,7 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
     }
 
     // -----------------------------------------------------------------------
-    // Auto-refresh (30-second interval, matches KitchenDashboardHeader timer)
+    // Auto-refresh (30-second interval)
     // -----------------------------------------------------------------------
 
     let autoRefreshTimer: ReturnType<typeof setInterval> | null = null;
@@ -234,16 +216,11 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
         loading,
         refreshing,
         error,
-        statusFilter,
-        priorityFilter,
         currentTime,
 
         // Computed
         allOrders,
-        filteredOrders,
-        orderCount,
         stats,
-        isEmpty,
 
         // Actions
         refresh,
