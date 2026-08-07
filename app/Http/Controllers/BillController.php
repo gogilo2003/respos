@@ -2,83 +2,55 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Bill\ProcessPaymentRequest;
-use App\Http\Requests\Bill\SplitBillRequest;
+use App\Domain\Billing\Services\BillService;
 use App\Http\Requests\StoreBillRequest;
 use App\Models\Bill;
 use App\Models\TableSession;
-use App\Services\BillService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Log;
 
 class BillController extends Controller
 {
-    protected BillService $billService;
-
-    public function __construct(BillService $billService)
+    public function __construct(private BillService $billService)
     {
-        $this->billService = $billService;
     }
 
-    public function generate(StoreBillRequest $request)
+    public function index(): JsonResponse
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validated();
+        $bills = $this->billService->all();
 
-        $bill = $this->billService->generateBill($validated['session_id'], auth()->id());
-
-        return response()->json([
-            'bill_id' => $bill->id,
-            'status' => 'success',
-            'grand_total' => $bill->grand_total,
-        ]);
+        return response()->json($bills, 200);
     }
 
-    public function split(SplitBillRequest $request, Bill $bill)
+    public function show(Bill $bill): JsonResponse
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validated();
+        $data = $this->billService->retrieve($bill->id);
 
-        if ($validated['split_type'] === 'equally') {
-            $splits = $this->billService->splitBillEqually($bill, $validated['number_of_splits']);
-        } elseif ($validated['split_type'] === 'by_item') {
-            $splits = $this->billService->splitBillByItem($bill, $validated['item_groups']);
-        } else {
-            $splits = $this->billService->splitBillCustom($bill, $validated['custom_amounts']);
-        }
-
-        return response()->json([
-            'splits' => $splits,
-            'status' => 'success',
-        ]);
+        return response()->json($data, 200);
     }
 
-    public function processPayment(ProcessPaymentRequest $request, Bill $bill)
+    public function store(StoreBillRequest $request): JsonResponse
     {
         Gate::authorize('cashier');
 
-        $validated = $request->validated();
+        $session = TableSession::findOrFail($request->validated('session_id'));
+        $order = $session->orders()->latest()->firstOrFail();
 
-        $result = $this->billService->processPayment($bill, $validated['amount_received'], $validated['cashier_id']);
+        $bill = $this->billService->generateFromOrder($order);
 
-        return response()->json([
-            'payment_id' => $result['payment']->id,
-            'change_due' => $result['change_due'],
-            'bill_status' => $result['status'],
-        ]);
+        return response()->json($bill, 201);
     }
 
-    public function receipt(Bill $bill)
+    public function destroy(Bill $bill): JsonResponse
     {
         Gate::authorize('cashier');
 
-        $receipt = $this->billService->generateReceipt($bill);
+        $this->billService->delete($bill->id);
 
-        return response($receipt, 200)
-            ->header('Content-Type', 'text/plain')
-            ->header('Content-Disposition', 'attachment; filename=bill_' . $bill->id . '.txt');
+        return response()->json(null, 204);
     }
 }

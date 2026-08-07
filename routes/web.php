@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KitchenController;
@@ -76,6 +77,16 @@ Route::prefix('table-sessions')
     ->group(function () {
         Route::get('/{table}', [TableSessionController::class, 'show'])->name('.show');
         Route::post('/{table}/close', [TableSessionController::class, 'close'])->name('.close');
+    });
+
+Route::prefix('bills')
+    ->name('bills')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/', [BillController::class, 'index'])->name('.index');
+        Route::post('/', [BillController::class, 'store'])->name('.store');
+        Route::get('/{bill}', [BillController::class, 'show'])->name('.show');
+        Route::delete('/{bill}', [BillController::class, 'destroy'])->name('.destroy');
     });
 
 Route::prefix('payments')

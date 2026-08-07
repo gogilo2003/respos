@@ -3,6 +3,7 @@
 namespace App\Repositories\Contracts;
 
 use App\Domain\Billing\DTOs\BillData;
+use App\Domain\Billing\Enums\BillStatus;
 use Illuminate\Database\Eloquent\Collection;
 
 interface BillRepositoryInterface
@@ -20,6 +21,10 @@ interface BillRepositoryInterface
     public function findByNumber(string $billNumber): ?BillData;
 
     public function findByOrder(int $orderId): ?BillData;
+
+    public function findByStatus(BillStatus $status): ?BillData;
+
+    public function nextBillNumber(string $prefix, int $year): string;
 
     /**
      * @return Collection<int, BillData>

@@ -10,4 +10,5 @@ enum BillStatus: string
     case PartiallyPaid = 'partially_paid';
     case Cancelled = 'cancelled';
     case Voided = 'voided';
+    case Refunded = 'refunded';
 }

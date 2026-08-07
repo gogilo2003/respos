@@ -88,6 +88,17 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
         return $this->toDto($model);
     }
 
+    public function findByStatus(\App\Domain\Billing\Enums\BillStatus $status): ?BillData
+    {
+        $model = $this->model->where('status', $status->value)->first();
+
+        if (! $model) {
+            return null;
+        }
+
+        return $this->toDto($model);
+    }
+
     /**
      * @return Collection<int, BillData>
      */
@@ -111,9 +122,27 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
         })->exists();
     }
 
+    public function nextBillNumber(string $prefix, int $year): string
+    {
+        $lastNumber = $this->model
+            ->where('bill_number', 'like', "{$prefix}-{$year}-%")
+            ->orderByDesc('bill_number')
+            ->value('bill_number');
+
+        if (! $lastNumber) {
+            return sprintf('%s-%d-%06d', $prefix, $year, 1);
+        }
+
+        $parts = explode('-', $lastNumber);
+        $sequence = (int) end($parts);
+
+        return sprintf('%s-%d-%06d', $prefix, $year, $sequence + 1);
+    }
+
     private function toEloquentArray(BillData $dto): array
     {
         return [
+            'bill_number' => $dto->billNumber,
             'session_id' => $dto->sessionId,
             'generated_by' => $dto->generatedBy,
             'status' => $dto->status->value,
@@ -136,7 +165,7 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
         $order = $model->session?->table?->order ?? null;
 
         return BillData::from(
-            billNumber: 'BILL-' . $model->id,
+            billNumber: $model->bill_number ?? 'BILL-' . $model->id,
             customer: $customer,
             table: $table,
             order: $order,

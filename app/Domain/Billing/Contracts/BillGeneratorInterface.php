@@ -2,10 +2,10 @@
 
 namespace App\Domain\Billing\Contracts;
 
-use App\Models\Bill;
-use App\Models\TableSession;
+use App\Domain\Billing\DTOs\BillData;
+use App\Models\Order;
 
 interface BillGeneratorInterface
 {
-    public function generateForSession(TableSession $session, int $generatedBy): Bill;
+    public function generateForOrder(Order $order): BillData;
 }

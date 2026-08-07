@@ -9,6 +9,7 @@ class Bill extends Model
     protected $table = 'bills';
 
     protected $fillable = [
+        'bill_number',
         'session_id',
         'generated_by',
         'status',
