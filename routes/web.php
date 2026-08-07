@@ -34,10 +34,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::prefix('users')
     ->name('users')
+    ->middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::post('/', [UserController::class, 'store'])->name('.store');
         Route::patch('/{user}', [UserController::class, 'update'])->name('.update');
+        Route::patch('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('.toggle-status');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('.destroy');
     });
 
@@ -70,6 +72,8 @@ Route::prefix('tables')
         Route::get('/', [TableController::class, 'index']);
         Route::post('/', [TableController::class, 'store'])->name('.store');
         Route::patch('/{table}', [TableController::class, 'update'])->name('.update');
+        Route::get('/{table}/qr-image', [TableController::class, 'qrImage'])->name('.qr-image');
+        Route::post('/{table}/regenerate-qr', [TableController::class, 'regenerateQr'])->name('.regenerate-qr');
         Route::delete('/{table}', [TableController::class, 'destroy'])->name('.destroy');
     });
 
@@ -79,6 +83,13 @@ Route::prefix('table-sessions')
         Route::get('/{table}', [TableSessionController::class, 'show'])->name('.show');
         Route::post('/{table}/close', [TableSessionController::class, 'close'])->name('.close');
     });
+
+Route::patch('/orders/{order}/status', [\App\Http\Controllers\OrderController::class, 'transition'])
+    ->middleware(['auth'])
+    ->name('orders.status.update');
+
+Route::get('/session/{table}', [TableSessionController::class, 'show'])->name('session.entry');
+Route::get('/orders/{order}/track', [\App\Http\Controllers\CustomerOrderController::class, 'track'])->name('orders.track');
 
 Route::prefix('bills')
     ->name('bills')

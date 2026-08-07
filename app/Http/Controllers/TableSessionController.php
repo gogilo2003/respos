@@ -4,59 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\Repositories\TableRepositoryInterface;
 use App\Interfaces\Repositories\TableSessionRepositoryInterface;
-use App\Services\QRCodeService;
+use App\Models\RestaurantTable;
+use App\Models\TableSession;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TableSessionController extends Controller
 {
-    protected TableSessionRepositoryInterface $sessionRepository;
-
-    protected TableRepositoryInterface $tableRepository;
-
-    protected QRCodeService $qrCodeService;
-
     public function __construct(
-        TableSessionRepositoryInterface $sessionRepository,
-        TableRepositoryInterface $tableRepository,
-        QRCodeService $qrCodeService
+        protected TableSessionRepositoryInterface $sessionRepository,
+        protected TableRepositoryInterface $tableRepository
     ) {
-        $this->sessionRepository = $sessionRepository;
-        $this->tableRepository = $tableRepository;
-        $this->qrCodeService = $qrCodeService;
     }
 
     public function show(Request $request, string $identifier)
     {
-        $tableId = null;
-
-        if (str_contains($identifier, '|')) {
-            $validated = $this->qrCodeService->validatePayload($identifier);
-
-            if (! $validated || ! isset($validated['table'])) {
-                return Inertia::render('Tables/InvalidQr');
-            }
-
-            $tableId = (int) $validated['table_id'];
-        } else {
-            $tableId = (int) $identifier;
-        }
-
-        $table = $this->tableRepository->find($tableId);
+        $tableId = (int) $identifier;
+        $table = RestaurantTable::find($tableId);
 
         if (! $table || ! $table->is_active) {
             return Inertia::render('Tables/InvalidQr');
         }
 
-        $session = $this->qrCodeService->getOrCreateSession($tableId, 'customer_qr');
+        // Get open session or create a new active customer QR session
+        $session = TableSession::where('table_id', $table->id)
+            ->where('status', 'open')
+            ->first();
 
-        $baseUrl = url('/');
+        if (! $session) {
+            $session = TableSession::create([
+                'table_id' => $table->id,
+                'opened_by' => null,
+                'session_token' => \Illuminate\Support\Str::random(32),
+                'status' => 'open',
+                'opened_at' => now(),
+            ]);
+        }
+
+        // Store active session token & table number in session
+        session(['active_session_id' => $session->id, 'active_table_number' => $table->table_number]);
 
         return Inertia::render('Tables/Session', [
             'table' => $table,
             'session' => $session,
-            'qr_payload' => $this->qrCodeService->buildPayload($tableId, $baseUrl),
-            'menu_url' => route('welcome.menu'),
+            'menu_url' => route('menu'),
         ]);
     }
 

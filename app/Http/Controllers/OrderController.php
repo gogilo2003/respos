@@ -2,52 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOrderRequest;
-use App\Interfaces\Repositories\OrderRepositoryInterface;
-use App\Models\MenuItem;
-use App\Models\TableSession;
+use App\Models\Order;
+use App\Services\OrderTransitionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
-    public function __construct(protected OrderRepositoryInterface $orderRepository)
-    {
+    public function __construct(
+        protected OrderTransitionService $transitionService
+    ) {
     }
 
-    public function store(StoreOrderRequest $request)
+    public function transition(Request $request, Order $order)
     {
-        $validated = $request->validated();
+        Gate::authorize('transition', $order);
 
-        $session = TableSession::find($validated['table_session_id']);
-        if (! $session || $session->status !== 'open') {
-            return response()->json(['error' => 'Invalid table session'], 400);
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,accepted,preparing,ready,served,completed,cancelled',
+        ]);
+
+        $updatedOrder = $this->transitionService->transition($order, $validated['status']);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok' => true,
+                'order_id' => $updatedOrder->id,
+                'status' => $updatedOrder->status,
+            ]);
         }
 
-        $order = DB::transaction(function () use ($request, $session, $validated) {
-            $order = $this->orderRepository->createOrder([
-                'session_id' => $session->id,
-                'placed_by_role' => auth()->user()->role->name,
-                'placed_by_user' => auth()->id(),
-            ]);
-
-            foreach ($validated['items'] as $item) {
-                $menuItem = MenuItem::find($item['menu_item_id']);
-                if (! $menuItem) continue;
-
-                $this->orderRepository->addOrderItem([
-                    'order_id' => $order->id,
-                    'menu_item_id' => $menuItem->id,
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $menuItem->base_price,
-                ]);
-            }
-
-            return $order;
-        });
-
-        return response()->json([
-            'order_id' => $order->id,
-            'status' => 'created',
-        ]);
+        return redirect()->back()->with('message', "Order #{$order->id} status updated to {$validated['status']}.");
     }
 }

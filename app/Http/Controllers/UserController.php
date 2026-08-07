@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Interfaces\Repositories\RoleRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -47,6 +48,7 @@ class UserController extends Controller
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['is_active'] = true;
 
         $this->userRepository->create($validated);
 
@@ -68,12 +70,26 @@ class UserController extends Controller
 
         if (! empty($validated['password'])) {
             $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
         }
-        unset($validated['password']);
 
         $this->userRepository->update($id, $validated);
 
         return redirect()->back()->with('message', 'User updated successfully.');
+    }
+
+    public function toggleStatus(User $user)
+    {
+        Gate::authorize('admin');
+
+        $this->userRepository->update($user->id, [
+            'is_active' => ! $user->is_active,
+        ]);
+
+        $statusLabel = ! $user->is_active ? 'activated' : 'suspended';
+
+        return redirect()->back()->with('message', "User account {$statusLabel} successfully.");
     }
 
     public function destroy($id)

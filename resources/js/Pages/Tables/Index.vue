@@ -8,7 +8,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import type { RestaurantTable } from '@/interfaces/table';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -19,6 +19,9 @@ const confirmingTableDeletion = ref(false);
 const tableToDelete = ref<number | null>(null);
 const editingTable = ref<RestaurantTable | null>(null);
 const showTableModal = ref(false);
+
+const selectedQrTable = ref<RestaurantTable | null>(null);
+const showQrModal = ref(false);
 
 const form = useForm({
     table_number: '',
@@ -46,6 +49,20 @@ const openEditModal = (table: RestaurantTable) => {
     form.status = table.status;
     form.is_active = table.is_active;
     showTableModal.value = true;
+};
+
+const openQrModal = (table: RestaurantTable) => {
+    selectedQrTable.value = table;
+    showQrModal.value = true;
+};
+
+const regenerateQr = (table: RestaurantTable) => {
+    router.post(route('tables.regenerate-qr', table.id), {}, {
+        preserveScroll: true,
+        onSuccess: () => {
+            selectedQrTable.value = props.tables.find(t => t.id === table.id) || table;
+        },
+    });
 };
 
 const submit = () => {
@@ -101,102 +118,81 @@ const statusClass = (status: string) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
-                <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    Tables Management
-                </h2>
+                <div>
+                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                        Dining Tables &amp; QR Management
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-1">Manage restaurant floor tables and scannable QR ordering codes</p>
+                </div>
                 <PrimaryButton @click="openCreateModal">
-                    Add Table
+                    + Add Table
                 </PrimaryButton>
             </div>
         </template>
 
-        <div class="py-12">
-            <div class="mx-4 sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+        <div class="py-8">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-200">
                     <div class="overflow-x-auto p-6 text-gray-900">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Table Number
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Location
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Capacity
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Status
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                         QR Code
                                     </th>
-                                    <th
-                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                    >
+                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr v-for="table in tables" :key="table.id">
-                                    <td class="whitespace-nowrap px-6 py-4">
-                                        {{ table.table_number }}
+                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-gray-900">
+                                        Table {{ table.table_number }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4">
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
                                         {{ table.location || '-' }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4">
-                                        {{ table.capacity }}
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                                        👥 {{ table.capacity }} guests
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4">
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
                                         <span
                                             :class="statusClass(table.status)"
-                                            class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
+                                            class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize"
                                         >
                                             {{ table.status }}
                                         </span>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4">
-                                        <span
-                                            :class="
-                                                table.qr_code
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
-                                            "
-                                            class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
+                                        <button
+                                            @click="openQrModal(table)"
+                                            class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-900 bg-blue-50 px-2.5 py-1 rounded border border-blue-200"
                                         >
-                                            {{
-                                                table.qr_code
-                                                    ? 'Generated'
-                                                    : 'Not Generated'
-                                            }}
-                                        </span>
+                                            📱 View QR Code
+                                        </button>
                                     </td>
-                                    <td
-                                        class="space-x-2 whitespace-nowrap px-6 py-4 text-sm font-medium"
-                                    >
+                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                         <button
                                             @click="openEditModal(table)"
-                                            class="text-indigo-600 hover:text-indigo-900"
+                                            class="text-indigo-600 hover:text-indigo-900 mr-4"
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            @click="
-                                                confirmTableDeletion(table.id)
-                                            "
+                                            @click="confirmTableDeletion(table.id)"
                                             class="text-red-600 hover:text-red-900"
                                         >
                                             Delete
@@ -209,6 +205,47 @@ const statusClass = (status: string) => {
                 </div>
             </div>
         </div>
+
+        <!-- QR Code View Modal -->
+        <Modal :show="showQrModal" @close="showQrModal = false">
+            <div v-if="selectedQrTable" class="p-6 text-center">
+                <h2 class="text-lg font-bold text-gray-900">
+                    Table {{ selectedQrTable.table_number }} QR Code
+                </h2>
+                <p class="text-xs text-gray-500 mt-1">
+                    Location: {{ selectedQrTable.location || 'Main Floor' }} • Capacity: {{ selectedQrTable.capacity }} guests
+                </p>
+
+                <div class="mt-6 flex justify-center">
+                    <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-inner">
+                        <img
+                            :src="route('tables.qr-image', selectedQrTable.id)"
+                            :alt="`Table ${selectedQrTable.table_number} QR Code`"
+                            class="h-64 w-64 object-contain mx-auto"
+                        />
+                    </div>
+                </div>
+
+                <div class="mt-6 flex items-center justify-center gap-3">
+                    <a
+                        :href="route('tables.qr-image', selectedQrTable.id)"
+                        download
+                        class="rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-sm"
+                    >
+                        ⬇️ Download SVG
+                    </a>
+                    <button
+                        @click="regenerateQr(selectedQrTable)"
+                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-sm"
+                    >
+                        🔄 Regenerate QR Token
+                    </button>
+                    <SecondaryButton @click="showQrModal = false">
+                        Close
+                    </SecondaryButton>
+                </div>
+            </div>
+        </Modal>
 
         <!-- Table Modal -->
         <Modal :show="showTableModal" @close="closeModal">
@@ -228,10 +265,7 @@ const statusClass = (status: string) => {
                             required
                             maxlength="20"
                         />
-                        <InputError
-                            :message="form.errors.table_number"
-                            class="mt-2"
-                        />
+                        <InputError :message="form.errors.table_number" class="mt-2" />
                     </div>
 
                     <div>
@@ -245,10 +279,7 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             required
                         />
-                        <InputError
-                            :message="form.errors.capacity"
-                            class="mt-2"
-                        />
+                        <InputError :message="form.errors.capacity" class="mt-2" />
                     </div>
 
                     <div>
@@ -260,10 +291,7 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             maxlength="80"
                         />
-                        <InputError
-                            :message="form.errors.location"
-                            class="mt-2"
-                        />
+                        <InputError :message="form.errors.location" class="mt-2" />
                     </div>
 
                     <div>
@@ -284,10 +312,7 @@ const statusClass = (status: string) => {
                             <option value="cleaning">Cleaning</option>
                             <option value="reserved">Reserved</option>
                         </select>
-                        <InputError
-                            :message="form.errors.status"
-                            class="mt-2"
-                        />
+                        <InputError :message="form.errors.status" class="mt-2" />
                     </div>
 
                     <div class="flex items-center">
@@ -297,11 +322,7 @@ const statusClass = (status: string) => {
                             v-model="form.is_active"
                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                         />
-                        <label
-                            for="is_active"
-                            class="ml-2 block text-sm text-gray-900"
-                            >Active</label
-                        >
+                        <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
                     </div>
 
                     <div class="mt-6 flex justify-end">
