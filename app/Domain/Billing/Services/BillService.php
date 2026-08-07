@@ -101,8 +101,8 @@ final readonly class BillService
             grandTotal: $bill->grandTotal->amountInCents() / 100,
             status: BillStatus::Open,
             createdAt: $bill->createdAt,
-            sessionId: null,
-            generatedBy: null,
+            sessionId: $bill->sessionId,
+            generatedBy: $bill->generatedBy,
             discountApprovedBy: $bill->discountApprovedBy,
             discountReason: $bill->discountReason,
             voidedBy: $bill->voidedBy,
@@ -149,8 +149,8 @@ final readonly class BillService
             grandTotal: $bill->grandTotal->amountInCents() / 100,
             status: BillStatus::Paid,
             createdAt: $bill->createdAt,
-            sessionId: null,
-            generatedBy: null,
+            sessionId: $bill->sessionId,
+            generatedBy: $bill->generatedBy,
             discountApprovedBy: $bill->discountApprovedBy,
             discountReason: $bill->discountReason,
             voidedBy: $bill->voidedBy,
@@ -201,8 +201,8 @@ final readonly class BillService
             grandTotal: $bill->grandTotal->amountInCents() / 100,
             status: BillStatus::Voided,
             createdAt: $bill->createdAt,
-            sessionId: null,
-            generatedBy: null,
+            sessionId: $bill->sessionId,
+            generatedBy: $bill->generatedBy,
             discountApprovedBy: $bill->discountApprovedBy,
             discountReason: $bill->discountReason,
             voidedBy: $voidedBy,
@@ -234,7 +234,7 @@ final readonly class BillService
      */
     public function all(): Collection
     {
-        return $this->bills->all()->map(fn ($bill) => $this->toBillData($bill));
+        return $this->bills->findAll(\App\Domain\Billing\DTOs\BillFilter::from());
     }
 
     public function delete(int $billId): bool

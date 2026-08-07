@@ -86,6 +86,7 @@ Route::prefix('bills')
         Route::get('/', [BillController::class, 'index'])->name('.index');
         Route::post('/', [BillController::class, 'store'])->name('.store');
         Route::get('/{bill}', [BillController::class, 'show'])->name('.show');
+        Route::patch('/{bill}/void', [BillController::class, 'void'])->name('.void');
         Route::delete('/{bill}', [BillController::class, 'destroy'])->name('.destroy');
     });
 

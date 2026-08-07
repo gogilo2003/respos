@@ -31,7 +31,7 @@ final readonly class BillGenerator implements BillGeneratorInterface
             status: $bill->status,
             createdAt: $bill->createdAt,
             sessionId: $bill->sessionId,
-            generatedBy: null,
+            generatedBy: auth()->id() ?? $order->placed_by_user,
             discountApprovedBy: $bill->discountApprovedBy,
             discountReason: $bill->discountReason,
             voidedBy: $bill->voidedBy,

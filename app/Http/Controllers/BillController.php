@@ -46,6 +46,15 @@ class BillController extends Controller
         return (new BillResource($bill))->response()->setStatusCode(201);
     }
 
+    public function void(Bill $bill): JsonResponse
+    {
+        Gate::authorize('void', $bill);
+
+        $data = $this->billService->void($bill->id);
+
+        return (new BillResource($data))->response()->setStatusCode(200);
+    }
+
     public function destroy(Bill $bill): JsonResponse
     {
         Gate::authorize('delete', $bill);

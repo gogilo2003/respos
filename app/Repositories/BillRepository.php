@@ -117,11 +117,11 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
         }
 
         if ($filter->from) {
-            $query->whereDate('created_at', '>=', $filter->from);
+            $query->whereDate('generated_at', '>=', $filter->from);
         }
 
         if ($filter->to) {
-            $query->whereDate('created_at', '<=', $filter->to);
+            $query->whereDate('generated_at', '<=', $filter->to);
         }
 
         if ($filter->table) {
@@ -140,7 +140,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
             });
         }
 
-        return $query->get()->map(fn (Bill $bill) => $this->toDto($bill));
+        return new Collection($query->get()->map(fn (Bill $bill) => $this->toDto($bill))->all());
     }
 
     /**
@@ -148,7 +148,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
      */
     public function findOpenBills(): Collection
     {
-        return $this->model->whereIn('status', ['open', 'partially_paid'])->get()->map(fn (Bill $bill) => $this->toDto($bill));
+        return new Collection($this->model->whereIn('status', ['open', 'partially_paid'])->get()->map(fn (Bill $bill) => $this->toDto($bill))->all());
     }
 
     /**
@@ -156,7 +156,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
      */
     public function findPaidBills(): Collection
     {
-        return $this->model->where('status', 'paid')->get()->map(fn (Bill $bill) => $this->toDto($bill));
+        return new Collection($this->model->where('status', 'paid')->get()->map(fn (Bill $bill) => $this->toDto($bill))->all());
     }
 
     public function existsForOrder(int $orderId): bool
@@ -220,7 +220,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
             serviceCharge: (float) ($model->service_charge_amount ?? 0),
             grandTotal: (float) ($model->grand_total ?? 0),
             status: \App\Domain\Billing\Enums\BillStatus::from($model->status),
-            createdAt: $model->created_at ? $model->created_at->toDateTimeImmutable() : new \DateTimeImmutable(),
+            createdAt: $model->generated_at ? $model->generated_at->toDateTimeImmutable() : new \DateTimeImmutable(),
             sessionId: $model->session_id,
             generatedBy: $model->generated_by,
             discountApprovedBy: $model->discount_approved_by,
