@@ -44,6 +44,7 @@ const {
                 station="Kitchen"
                 :user-name="authUser?.name ?? 'Staff'"
                 :current-time="currentTime"
+                :refreshing="refreshing"
                 @refresh="refresh"
             />
         </template>

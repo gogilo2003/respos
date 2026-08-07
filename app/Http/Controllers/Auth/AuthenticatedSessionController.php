@@ -39,6 +39,10 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('waiter.dashboard', absolute: false));
         }
 
+        if ($user->hasRole('kitchen')) {
+            return redirect()->intended(route('kitchen.dashboard', absolute: false));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

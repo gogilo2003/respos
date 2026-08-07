@@ -191,19 +191,52 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
     }
 
     // -----------------------------------------------------------------------
-    // Auto-refresh (30-second interval)
+    // Auto-refresh (15-second interval, paused when hidden)
     // -----------------------------------------------------------------------
 
     let autoRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
-    onMounted(() => {
-        autoRefreshTimer = setInterval(refresh, 30_000);
-    });
+    const isTabVisible = () => typeof document !== 'undefined' && document.visibilityState === 'visible';
 
-    onBeforeUnmount(() => {
+    const startAutoRefresh = () => {
+        if (autoRefreshTimer !== null) return;
+
+        autoRefreshTimer = setInterval(() => {
+            if (isTabVisible()) {
+                refresh();
+            }
+        }, 15_000);
+    };
+
+    const stopAutoRefresh = () => {
         if (autoRefreshTimer !== null) {
             clearInterval(autoRefreshTimer);
             autoRefreshTimer = null;
+        }
+    };
+
+    const handleVisibilityChange = () => {
+        if (!isTabVisible()) {
+            stopAutoRefresh();
+        } else {
+            refresh();
+            startAutoRefresh();
+        }
+    };
+
+    onMounted(() => {
+        startAutoRefresh();
+
+        if (typeof document !== 'undefined') {
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+    });
+
+    onBeforeUnmount(() => {
+        stopAutoRefresh();
+
+        if (typeof document !== 'undefined') {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
         }
     });
 
