@@ -15,6 +15,7 @@ use App\Domain\Billing\Exceptions\InvalidPaymentException;
 use App\Models\Order;
 use App\Repositories\Contracts\BillRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 final readonly class BillService
 {
@@ -28,6 +29,12 @@ final readonly class BillService
     {
         $bill = $this->bills->create($bill);
 
+        Log::info('Bill created', [
+            'bill_number' => $bill->billNumber,
+            'status' => $bill->status->value,
+            'session_id' => $bill->sessionId,
+        ]);
+
         event(new BillCreated($bill));
 
         return $bill;
@@ -37,6 +44,13 @@ final readonly class BillService
     {
         $bill = $this->generator->generateForOrder($order);
         $bill = $this->bills->create($bill);
+
+        Log::info('Bill generated from order', [
+            'bill_number' => $bill->billNumber,
+            'status' => $bill->status->value,
+            'order_id' => $order->id,
+            'session_id' => $order->session_id,
+        ]);
 
         event(new BillCreated($bill));
 
@@ -72,6 +86,8 @@ final readonly class BillService
             throw new BillVoidedException('Bill is already voided.');
         }
 
+        $previousStatus = $bill->status;
+
         $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
             customer: $bill->customer,
@@ -95,6 +111,12 @@ final readonly class BillService
             voidedAt: $bill->voidedAt,
         ));
 
+        Log::info('Bill state changed', [
+            'bill_number' => $bill->billNumber,
+            'previous_status' => $previousStatus->value,
+            'new_status' => $bill->status->value,
+        ]);
+
         event(new BillOpened($bill));
 
         return $bill;
@@ -111,6 +133,8 @@ final readonly class BillService
         if ($bill->status === BillStatus::Voided) {
             throw new BillVoidedException('Bill is already voided.');
         }
+
+        $previousStatus = $bill->status;
 
         $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
@@ -135,6 +159,12 @@ final readonly class BillService
             voidedAt: $bill->voidedAt,
         ));
 
+        Log::info('Bill state changed', [
+            'bill_number' => $bill->billNumber,
+            'previous_status' => $previousStatus->value,
+            'new_status' => $bill->status->value,
+        ]);
+
         event(new BillClosed($bill));
 
         return $bill;
@@ -155,6 +185,8 @@ final readonly class BillService
         if ($bill->status === BillStatus::Voided) {
             throw new BillVoidedException('Bill is already voided.');
         }
+
+        $previousStatus = $bill->status;
 
         $bill = $this->bills->update(BillData::from(
             billNumber: $bill->billNumber,
@@ -178,6 +210,14 @@ final readonly class BillService
             paidAt: $bill->paidAt,
             voidedAt: new \DateTimeImmutable(),
         ));
+
+        Log::info('Bill voided', [
+            'bill_number' => $bill->billNumber,
+            'previous_status' => $previousStatus->value,
+            'new_status' => $bill->status->value,
+            'reason' => $reason,
+            'voided_by' => $voidedBy,
+        ]);
 
         event(new BillVoided($bill));
 
