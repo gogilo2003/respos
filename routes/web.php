@@ -48,6 +48,7 @@ Route::prefix('menu-categories')
         Route::get('/', [MenuCategoryController::class, 'index']);
         Route::post('/', [MenuCategoryController::class, 'store'])->name('.store');
         Route::patch('/{category}', [MenuCategoryController::class, 'update'])->name('.update');
+        Route::patch('/{category}/toggle-active', [MenuCategoryController::class, 'toggleActive'])->name('.toggle-active');
         Route::delete('/{category}', [MenuCategoryController::class, 'destroy'])->name('.destroy');
     });
 
@@ -58,6 +59,7 @@ Route::prefix('menu-items')
         Route::get('/', [MenuItemController::class, 'index']);
         Route::post('/', [MenuItemController::class, 'store'])->name('.store');
         Route::patch('/{item}', [MenuItemController::class, 'update'])->name('.update');
+        Route::patch('/{item}/toggle-availability', [MenuItemController::class, 'toggleAvailability'])->name('.toggle-availability');
         Route::delete('/{item}', [MenuItemController::class, 'destroy'])->name('.destroy');
     });
 

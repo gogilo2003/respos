@@ -4,8 +4,19 @@ export interface MenuCategory {
     description: string | null;
     sort_order: number;
     is_active: boolean;
-    created_at: string;
+    created_at?: string;
     menu_items_count?: number;
+}
+
+export interface ModifierOption {
+    name: string;
+    price: number;
+}
+
+export interface ModifierGroup {
+    name: string;
+    required: boolean;
+    options: ModifierOption[];
 }
 
 export interface MenuItem {
@@ -17,10 +28,10 @@ export interface MenuItem {
     tax_inclusive: boolean;
     prep_time_min: number;
     image_url: string | null;
-    modifier_groups: any[] | null;
+    modifier_groups: ModifierGroup[] | null;
     is_available: boolean;
     sort_order: number;
-    created_at: string;
-    updated_at: string;
+    created_at?: string;
+    updated_at?: string;
     category?: MenuCategory;
 }
