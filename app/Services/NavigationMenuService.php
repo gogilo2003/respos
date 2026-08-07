@@ -39,9 +39,9 @@ class NavigationMenuService
                 'label' => 'Dashboard',
                 'routeName' => 'dashboard',
                 'url' => $this->resolveUrl('dashboard'),
-                'activePattern' => 'dashboard',
+                'activePattern' => 'dashboard*',
                 'shortLabel' => 'D',
-                'roles' => ['admin', 'manager', 'cashier'],
+                'roles' => ['admin', 'manager', 'cashier', 'waiter', 'kitchen'],
             ],
             [
                 'key' => 'users',
@@ -87,24 +87,6 @@ class NavigationMenuService
                 'activePattern' => 'bills*',
                 'shortLabel' => 'B',
                 'roles' => ['admin', 'manager', 'cashier'],
-            ],
-            [
-                'key' => 'waiter-dashboard',
-                'label' => 'Waiter Dashboard',
-                'routeName' => 'waiter.dashboard',
-                'url' => $this->resolveUrl('waiter.dashboard'),
-                'activePattern' => 'waiter.dashboard*',
-                'shortLabel' => 'W',
-                'roles' => ['waiter', 'admin', 'manager'],
-            ],
-            [
-                'key' => 'kitchen-dashboard',
-                'label' => 'Kitchen Dashboard',
-                'routeName' => 'kitchen.dashboard',
-                'url' => $this->resolveUrl('kitchen.dashboard'),
-                'activePattern' => 'kitchen.dashboard*',
-                'shortLabel' => 'K',
-                'roles' => ['kitchen', 'admin', 'manager'],
             ],
         ];
     }

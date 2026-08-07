@@ -25,7 +25,7 @@ test('admin user receives full admin navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toContain('dashboard', 'users', 'menu-categories', 'menu-items', 'tables', 'bills');
+    expect($keys)->toBe(['dashboard', 'users', 'menu-categories', 'menu-items', 'tables', 'bills']);
 });
 
 test('manager user receives manager navigation menu', function () {
@@ -36,8 +36,7 @@ test('manager user receives manager navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toContain('dashboard', 'menu-categories', 'menu-items', 'tables', 'bills');
-    expect($keys)->not->toContain('users');
+    expect($keys)->toBe(['dashboard', 'menu-categories', 'menu-items', 'tables', 'bills']);
 });
 
 test('cashier user receives cashier navigation menu', function () {
@@ -48,11 +47,10 @@ test('cashier user receives cashier navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toContain('dashboard', 'bills');
-    expect($keys)->not->toContain('users', 'tables', 'menu-items');
+    expect($keys)->toBe(['dashboard', 'bills']);
 });
 
-test('waiter user receives waiter dashboard navigation menu', function () {
+test('waiter user receives dashboard navigation menu', function () {
     $role = Role::firstOrCreate(['name' => 'waiter']);
     $user = User::factory()->make(['role_id' => $role->id]);
     $user->setRelation('role', $role);
@@ -60,11 +58,10 @@ test('waiter user receives waiter dashboard navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toContain('waiter-dashboard');
-    expect($keys)->not->toContain('users', 'tables');
+    expect($keys)->toBe(['dashboard']);
 });
 
-test('kitchen user receives kitchen dashboard navigation menu', function () {
+test('kitchen user receives dashboard navigation menu', function () {
     $role = Role::firstOrCreate(['name' => 'kitchen']);
     $user = User::factory()->make(['role_id' => $role->id]);
     $user->setRelation('role', $role);
@@ -72,6 +69,5 @@ test('kitchen user receives kitchen dashboard navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toContain('kitchen-dashboard');
-    expect($keys)->not->toContain('users', 'tables');
+    expect($keys)->toBe(['dashboard']);
 });
