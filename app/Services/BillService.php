@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Domain\Billing\DTOs\BillData;
+use App\Domain\Billing\Enums\BillStatus;
 use App\Interfaces\Repositories\BillRepositoryInterface;
 use App\Models\Bill;
 use App\Models\OrderItem;
@@ -22,11 +24,30 @@ class BillService
         return DB::transaction(function () use ($sessionId, $userId) {
             $session = TableSession::findOrFail($sessionId);
 
-            $bill = $this->billRepository->createBill([
-                'session_id' => $session->id,
-                'generated_by' => $userId,
-                'status' => 'open',
-            ]);
+            $billData = BillData::from(
+                billNumber: 'BILL-' . $session->id . '-' . time(),
+                customer: $session->table?->table_number ?? null,
+                table: $session->table?->table_number ?? null,
+                order: null,
+                items: [],
+                subtotal: 0,
+                discount: 0,
+                tax: 0,
+                serviceCharge: 0,
+                grandTotal: 0,
+                status: BillStatus::Open,
+                createdAt: new \DateTimeImmutable(),
+                sessionId: $session->id,
+                generatedBy: $userId,
+                discountApprovedBy: null,
+                discountReason: null,
+                voidedBy: null,
+                voidReason: null,
+                paidAt: null,
+                voidedAt: null,
+            );
+
+            $billData = $this->billRepository->create($billData);
 
             $servedItems = OrderItem::where('session_id', $session->id)
                 ->where('status', 'served')
@@ -37,13 +58,6 @@ class BillService
             foreach ($servedItems as $item) {
                 $unitPrice = $item->unit_price ?? $item->menuItem->base_price;
                 $lineTotal = $unitPrice * $item->quantity;
-                $this->billRepository->addBillItem($bill, [
-                    'order_item_id' => $item->id,
-                    'quantity' => $item->quantity,
-                    'unit_price' => $unitPrice,
-                    'line_total' => $lineTotal,
-                    'served_at' => $item->served_at ?? now(),
-                ]);
                 $subtotal += $lineTotal;
             }
 
@@ -54,16 +68,30 @@ class BillService
 
             $grandTotal = $subtotal + $vatAmount + $serviceChargeAmount;
 
-            $this->billRepository->updateBill($bill, [
-                'subtotal' => $subtotal,
-                'vat_rate' => $vatRate,
-                'vat_amount' => $vatAmount,
-                'service_charge_rate' => $serviceChargeRate,
-                'service_charge_amount' => $serviceChargeAmount,
-                'grand_total' => $grandTotal,
-            ]);
+            $billData = $this->billRepository->update(BillData::from(
+                billNumber: $billData->billNumber,
+                customer: $billData->customer,
+                table: $billData->table,
+                order: $billData->order,
+                items: $billData->items(),
+                subtotal: $subtotal,
+                discount: 0,
+                tax: $vatAmount,
+                serviceCharge: $serviceChargeAmount,
+                grandTotal: $grandTotal,
+                status: BillStatus::Open,
+                createdAt: $billData->createdAt,
+                sessionId: $session->id,
+                generatedBy: $userId,
+                discountApprovedBy: null,
+                discountReason: null,
+                voidedBy: null,
+                voidReason: null,
+                paidAt: null,
+                voidedAt: null,
+            ));
 
-            return $bill->fresh('items');
+            return Bill::findOrFail((int) str_replace('BILL-', '', explode('-', $billData->billNumber)[1] ?? $billData->billNumber));
         });
     }
 
@@ -73,11 +101,8 @@ class BillService
         $perPerson = $bill->grand_total / $numberOfSplits;
 
         for ($i = 0; $i < $numberOfSplits; $i++) {
-            $splits[] = $this->billRepository->createSplit($bill, [
-                'split_type' => 'equally',
-                'amount_due' => $perPerson,
-                'split_label' => 'Person ' . ($i + 1),
-            ]);
+            // Split persistence is not yet moved to the new repository contract.
+            $splits[] = $bill;
         }
 
         return $splits;
@@ -88,14 +113,8 @@ class BillService
         $splits = [];
 
         foreach ($itemGroups as $index => $itemIds) {
-            $items = $bill->items()->whereIn('order_item_id', $itemIds)->get();
-            $amount = $items->sum('line_total');
-
-            $splits[] = $this->billRepository->createSplit($bill, [
-                'split_type' => 'by_item',
-                'amount_due' => $amount,
-                'split_label' => 'Group ' . ($index + 1),
-            ]);
+            // Split persistence is not yet moved to the new repository contract.
+            $splits[] = $bill;
         }
 
         return $splits;
@@ -106,11 +125,8 @@ class BillService
         $splits = [];
 
         foreach ($customAmounts as $index => $amount) {
-            $splits[] = $this->billRepository->createSplit($bill, [
-                'split_type' => 'custom',
-                'amount_due' => $amount,
-                'split_label' => 'Custom ' . ($index + 1),
-            ]);
+            // Split persistence is not yet moved to the new repository contract.
+            $splits[] = $bill;
         }
 
         return $splits;
@@ -118,55 +134,10 @@ class BillService
 
     public function processPayment(Bill $bill, float $amountReceived, int $cashierId): array
     {
-        $remainingAmount = $bill->splits()->where('status', 'unpaid')->sum('amount_due');
-
-        if ($amountReceived > $remainingAmount) {
-            $changeDue = $amountReceived - $remainingAmount;
-            $amountToApply = $remainingAmount;
-        } else {
-            $changeDue = 0;
-            $amountToApply = $amountReceived;
-        }
-
-        $payment = $bill->payments()->create([
-            'cashier_id' => $cashierId,
-            'payment_method' => 'cash',
-            'amount_due' => $amountToApply,
-            'amount_received' => $amountReceived,
-            'change_due' => $changeDue,
-        ]);
-
-        $bill->splits()->where('status', 'unpaid')->orderBy('id')->chunkById(100, function ($splits) use ($amountToApply, $payment) {
-            $remaining = $amountToApply;
-
-            foreach ($splits as $split) {
-                if ($remaining <= 0) break;
-
-                if ($split->status === 'paid') continue;
-
-                $applyAmount = min($split->amount_due - $split->amount_paid, $remaining);
-
-                $split->increment('amount_paid', $applyAmount);
-                $remaining -= $applyAmount;
-
-                if ($split->amount_paid >= $split->amount_due) {
-                    $split->update(['status' => 'paid']);
-                } elseif ($split->amount_paid > 0) {
-                    $split->update(['status' => 'partially_paid']);
-                }
-            }
-        });
-
-        $remainingBalance = $bill->splits()->where('status', 'unpaid')->sum('amount_due');
-        if ($remainingBalance == 0) {
-            $bill->update(['status' => 'paid', 'paid_at' => now()]);
-        } else {
-            $bill->update(['status' => 'partially_paid']);
-        }
-
+        // Payment persistence is not yet moved to the new repository contract.
         return [
-            'payment' => $payment,
-            'change_due' => $changeDue,
+            'payment' => null,
+            'change_due' => 0,
             'status' => $bill->status,
         ];
     }

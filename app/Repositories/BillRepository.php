@@ -2,58 +2,160 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\BillRepositoryInterface;
+use App\Domain\Billing\DTOs\BillData;
 use App\Models\Bill;
-use App\Models\BillItem;
-use App\Models\BillSplit;
 use Illuminate\Database\Eloquent\Collection;
 
-class BillRepository extends BaseRepository implements BillRepositoryInterface
+class BillRepository extends BaseRepository implements \App\Repositories\Contracts\BillRepositoryInterface
 {
     public function __construct()
     {
         parent::__construct(new Bill());
     }
 
-    public function findBySessionId(int $sessionId): ?Bill
+    public function create(BillData $bill): BillData
     {
-        return $this->model->where('session_id', $sessionId)->first();
+        $model = $this->model->create($this->toEloquentArray($bill));
+
+        return $this->toDto($model);
     }
 
-    public function findWithItems(int $billId): ?Bill
+    public function update(BillData $bill): BillData
     {
-        return $this->model->with('items.orderItem.menuItem', 'splits.items.billItem.orderItem.menuItem')
-            ->find($billId);
+        $model = $this->find($bill->billNumber);
+
+        if (! $model) {
+            throw new \InvalidArgumentException('Bill not found for update.');
+        }
+
+        $model->update($this->toEloquentArray($bill));
+
+        return $this->toDto($model->fresh());
     }
 
-    public function getOpenBills(): Collection
+    public function save(BillData $bill): BillData
     {
-        return $this->model->open()->get();
+        if ($this->find($bill->billNumber)) {
+            return $this->update($bill);
+        }
+
+        return $this->create($bill);
     }
 
-    public function getDraftBills(): Collection
+    public function delete(int $billId): bool
     {
-        return $this->model->where('status', 'draft')->get();
+        $model = $this->find($billId);
+
+        if (! $model) {
+            return false;
+        }
+
+        return $model->delete();
     }
 
-    public function createBill(array $data): Bill
+    public function find(int $billId): ?BillData
     {
-        return $this->model->create($data);
+        $model = $this->model->find($billId);
+
+        if (! $model) {
+            return null;
+        }
+
+        return $this->toDto($model);
     }
 
-    public function updateBill(Bill $bill, array $data): Bill
+    public function findByNumber(string $billNumber): ?BillData
     {
-        $bill->update($data);
-        return $bill->fresh();
+        $model = $this->model->find((int) $billNumber);
+
+        if (! $model) {
+            return null;
+        }
+
+        return $this->toDto($model);
     }
 
-    public function addBillItem(Bill $bill, array $data): BillItem
+    public function findByOrder(int $orderId): ?BillData
     {
-        return $bill->items()->create($data);
+        $model = $this->model->whereHas('items', function ($query) use ($orderId) {
+            $query->where('order_item_id', $orderId);
+        })->first();
+
+        if (! $model) {
+            return null;
+        }
+
+        return $this->toDto($model);
     }
 
-    public function createSplit(Bill $bill, array $data): BillSplit
+    /**
+     * @return Collection<int, BillData>
+     */
+    public function findOpenBills(): Collection
     {
-        return $bill->splits()->create($data);
+        return $this->model->whereIn('status', ['open', 'partially_paid'])->get()->map(fn (Bill $bill) => $this->toDto($bill));
+    }
+
+    /**
+     * @return Collection<int, BillData>
+     */
+    public function findPaidBills(): Collection
+    {
+        return $this->model->where('status', 'paid')->get()->map(fn (Bill $bill) => $this->toDto($bill));
+    }
+
+    public function existsForOrder(int $orderId): bool
+    {
+        return $this->model->whereHas('items', function ($query) use ($orderId) {
+            $query->where('order_item_id', $orderId);
+        })->exists();
+    }
+
+    private function toEloquentArray(BillData $dto): array
+    {
+        return [
+            'session_id' => $dto->sessionId,
+            'generated_by' => $dto->generatedBy,
+            'status' => $dto->status->value,
+            'subtotal' => $dto->subtotal->amountInCents() / 100,
+            'discount_amount' => $dto->discount->amountInCents() / 100,
+            'discount_reason' => $dto->discountReason,
+            'discount_approved_by' => $dto->discountApprovedBy,
+            'grand_total' => $dto->grandTotal->amountInCents() / 100,
+            'paid_at' => $dto->paidAt,
+            'voided_at' => $dto->voidedAt,
+            'voided_by' => $dto->voidedBy,
+            'void_reason' => $dto->voidReason,
+        ];
+    }
+
+    private function toDto(Bill $model): BillData
+    {
+        $customer = $model->session?->table?->customer ?? null;
+        $table = $model->session?->table?->table_number ?? null;
+        $order = $model->session?->table?->order ?? null;
+
+        return BillData::from(
+            billNumber: 'BILL-' . $model->id,
+            customer: $customer,
+            table: $table,
+            order: $order,
+            items: [],
+            subtotal: (float) ($model->subtotal ?? 0),
+            discount: (float) ($model->discount_amount ?? 0),
+            tax: (float) ($model->vat_amount ?? 0),
+            serviceCharge: (float) ($model->service_charge_amount ?? 0),
+            grandTotal: (float) ($model->grand_total ?? 0),
+            status: \App\Domain\Billing\Enums\BillStatus::from($model->status),
+            createdAt: $model->created_at ? $model->created_at->toDateTimeImmutable() : new \DateTimeImmutable(),
+            sessionId: $model->session_id,
+            generatedBy: $model->generated_by,
+            discountApprovedBy: $model->discount_approved_by,
+            discountReason: $model->discount_reason,
+            voidedBy: $model->voided_by,
+            voidReason: $model->void_reason,
+            paidAt: $model->paid_at ? $model->paid_at->toDateTimeImmutable() : null,
+            voidedAt: $model->voided_at ? $model->voided_at->toDateTimeImmutable() : null,
+        );
     }
 }

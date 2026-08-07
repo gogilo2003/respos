@@ -17,9 +17,9 @@ final readonly class BillData
      */
     private function __construct(
         public string $billNumber,
-        public string $customer,
-        public string $table,
-        public string $order,
+        public ?string $customer,
+        public ?string $table,
+        public ?string $order,
         public array $items,
         public Money $subtotal,
         public Money $discount,
@@ -27,7 +27,15 @@ final readonly class BillData
         public Money $serviceCharge,
         public Money $grandTotal,
         public BillStatus $status,
+        public ?int $sessionId,
+        public ?int $generatedBy,
+        public ?int $discountApprovedBy,
+        public ?string $discountReason,
+        public ?int $voidedBy,
+        public ?string $voidReason,
         public \DateTimeImmutable $createdAt,
+        public ?\DateTimeImmutable $paidAt,
+        public ?\DateTimeImmutable $voidedAt,
     ) {
     }
 
@@ -41,9 +49,9 @@ final readonly class BillData
      */
     public static function from(
         string $billNumber,
-        string $customer,
-        string $table,
-        string $order,
+        ?string $customer,
+        ?string $table,
+        ?string $order,
         array $items,
         float $subtotal,
         float $discount,
@@ -51,7 +59,15 @@ final readonly class BillData
         float $serviceCharge,
         float $grandTotal,
         BillStatus $status,
+        ?int $sessionId,
+        ?int $generatedBy,
+        ?int $discountApprovedBy,
+        ?string $discountReason,
+        ?int $voidedBy,
+        ?string $voidReason,
         \DateTimeImmutable $createdAt,
+        ?\DateTimeImmutable $paidAt,
+        ?\DateTimeImmutable $voidedAt,
     ): self {
         return new self(
             $billNumber,
@@ -65,7 +81,15 @@ final readonly class BillData
             Money::from($serviceCharge),
             Money::from($grandTotal),
             $status,
+            $sessionId,
+            $generatedBy,
+            $discountApprovedBy,
+            $discountReason,
+            $voidedBy,
+            $voidReason,
             $createdAt,
+            $paidAt,
+            $voidedAt,
         );
     }
 
