@@ -20,21 +20,21 @@ class HomeController extends Controller
         $this->menuService = $menuService;
     }
 
-    public function welcome()
+    public function welcome(Request $request)
     {
-        $menuItems = $this->menuService->getMenuItems();
+        $menuItems = $this->menuService->getMenuItems($request->user());
 
         return Inertia::render('Welcome', ['menuItems' => $menuItems]);
     }
 
-    public function categories()
+    public function categories(Request $request)
     {
-        return Inertia::render('Categories', ['categories' => $this->menuService->getMenuCategories()]);
+        return Inertia::render('Categories', ['categories' => $this->menuService->getMenuCategories($request->user())]);
     }
 
-    public function menu()
+    public function menu(Request $request)
     {
-        $menuItems = $this->menuService->getMenuItems();
+        $menuItems = $this->menuService->getMenuItems($request->user());
 
         return Inertia::render('Menu', ['menuItems' => $menuItems]);
     }

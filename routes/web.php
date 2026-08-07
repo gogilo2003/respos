@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\MenuCategoryController;
@@ -29,9 +30,7 @@ Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
 // Complete the order - no separate page needed
 Route::post('/cart/complete', [HomeController::class, 'completeOrder'])->name('cart.complete');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::prefix('users')
     ->name('users')

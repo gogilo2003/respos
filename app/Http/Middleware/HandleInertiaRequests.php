@@ -2,11 +2,16 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\NavigationMenuService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+    public function __construct(protected NavigationMenuService $navigationMenuService)
+    {
+    }
+
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -41,6 +46,7 @@ class HandleInertiaRequests extends Middleware
                     'role' => $request->user()->role?->name,
                 ] : null,
             ],
+            'navigationMenu' => $this->navigationMenuService->getNavigationMenu($request->user()),
         ];
     }
 }

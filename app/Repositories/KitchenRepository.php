@@ -78,11 +78,20 @@ class KitchenRepository extends BaseRepository implements KitchenRepositoryInter
             ->first();
 
         // Average preparation time (accepted → ready) for items completed today.
-        $avgSeconds = OrderItem::whereNotNull('accepted_at')
-            ->whereNotNull('ready_at')
-            ->where('ready_at', '>=', $today)
-            ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, accepted_at, ready_at)) AS avg_seconds')
-            ->value('avg_seconds');
+        $driver = DB::connection()->getDriverName();
+        if ($driver === 'sqlite') {
+            $avgSeconds = OrderItem::whereNotNull('accepted_at')
+                ->whereNotNull('ready_at')
+                ->where('ready_at', '>=', $today)
+                ->selectRaw('AVG(CAST((strftime(\'%s\', ready_at) - strftime(\'%s\', accepted_at)) AS INTEGER)) AS avg_seconds')
+                ->value('avg_seconds');
+        } else {
+            $avgSeconds = OrderItem::whereNotNull('accepted_at')
+                ->whereNotNull('ready_at')
+                ->where('ready_at', '>=', $today)
+                ->selectRaw('AVG(TIMESTAMPDIFF(SECOND, accepted_at, ready_at)) AS avg_seconds')
+                ->value('avg_seconds');
+        }
 
         return [
             'pending_items'    => (int) ($counts->pending_items ?? 0),

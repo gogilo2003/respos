@@ -2,38 +2,80 @@
 
 namespace App\Services;
 
-use App\Interfaces\Repositories\MenuItemRepositoryInterface;
+use App\Http\Resources\MenuCategoryResource;
+use App\Http\Resources\MenuItemResource;
 use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
-use App\Models\MenuItem;
+use App\Interfaces\Repositories\MenuItemRepositoryInterface;
+use App\Models\User;
 
 class MenuService
 {
-    protected MenuCategoryRepositoryInterface $menuCategoryRepository;
-    protected MenuItemRepositoryInterface $menuItemRepository;
-
-    public function __construct(MenuCategoryRepositoryInterface $menuCategoryRepository, MenuItemRepositoryInterface $menuItemRepository)
-    {
-        $this->menuCategoryRepository = $menuCategoryRepository;
-        $this->menuItemRepository = $menuItemRepository;
+    public function __construct(
+        protected MenuCategoryRepositoryInterface $menuCategoryRepository,
+        protected MenuItemRepositoryInterface $menuItemRepository
+    ) {
     }
 
-    public function getMenuItems()
+    /**
+     * Resolve role string from User model or fallback to guest/customer.
+     */
+    public function resolveUserRole(?User $user): string
     {
-        return $this->menuItemRepository->getAvailableItems()->map(function (MenuItem $item) {
-            return [
-                'id' => $item->id,
-                'title' => $item->name,
-                'description' => $item->description,
-                'price' => (float) $item->base_price,
-                'image' => $item->image_url,
-            ];
+        if (! $user) {
+            return 'guest';
+        }
+
+        return $user->role?->name ?? 'customer';
+    }
+
+    /**
+     * Get centralized menu (categories with nested items) filtered by role.
+     *
+     * @param User|null $user
+     * @return array
+     */
+    public function getCentralizedMenu(?User $user = null): array
+    {
+        $role = $this->resolveUserRole($user);
+        $categories = $this->menuCategoryRepository->getCategoriesForRole($role);
+        $allItems = $this->menuItemRepository->getItemsForRole($role);
+
+        $groupedItems = $allItems->groupBy('category_id');
+
+        return $categories->map(function ($category) use ($groupedItems) {
+            $items = $groupedItems->get($category->id, collect());
+            $category->setRelation('menuItems', $items);
+
+            return (new MenuCategoryResource($category))->resolve();
         })->toArray();
     }
 
-    public function getMenuCategories()
+    /**
+     * Get menu items filtered by role.
+     *
+     * @param User|null $user
+     * @param int|null $categoryId
+     * @return array
+     */
+    public function getMenuItems(?User $user = null, ?int $categoryId = null): array
     {
-        $categories = $this->menuCategoryRepository->getActiveCategories();
+        $role = $this->resolveUserRole($user);
+        $items = $this->menuItemRepository->getItemsForRole($role, $categoryId);
 
-        return $categories;
+        return MenuItemResource::collection($items)->resolve();
+    }
+
+    /**
+     * Get menu categories filtered by role.
+     *
+     * @param User|null $user
+     * @return array
+     */
+    public function getMenuCategories(?User $user = null): array
+    {
+        $role = $this->resolveUserRole($user);
+        $categories = $this->menuCategoryRepository->getCategoriesForRole($role);
+
+        return MenuCategoryResource::collection($categories)->resolve();
     }
 }

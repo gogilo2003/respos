@@ -33,4 +33,26 @@ class MenuItemRepository extends BaseRepository implements MenuItemRepositoryInt
             ->orderBy('sort_order')
             ->get();
     }
+
+    public function getItemsForRole(string $role, ?int $categoryId = null)
+    {
+        $query = $this->model->with('category');
+
+        if ($categoryId !== null) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if (in_array($role, ['customer', 'guest'], true)) {
+            $query->where('is_available', true)
+                ->whereHas('category', function ($q) {
+                    $q->where('is_active', true);
+                });
+        } elseif (in_array($role, ['waiter', 'cashier', 'kitchen'], true)) {
+            $query->whereHas('category', function ($q) {
+                $q->where('is_active', true);
+            });
+        }
+
+        return $query->orderBy('sort_order')->get();
+    }
 }
