@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BillItem extends Model
 {
+    public $timestamps = false;
+
     protected $table = 'bill_items';
 
     protected $fillable = [

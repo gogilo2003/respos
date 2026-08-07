@@ -6,11 +6,13 @@ use App\Domain\Billing\DTOs\BillData;
 use App\Models\Bill;
 use Illuminate\Database\Eloquent\Collection;
 
-class BillRepository extends BaseRepository implements \App\Repositories\Contracts\BillRepositoryInterface
+class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterface
 {
+    protected Bill $model;
+
     public function __construct()
     {
-        parent::__construct(new Bill());
+        $this->model = new Bill();
     }
 
     public function create(BillData $bill): BillData
@@ -22,7 +24,7 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
 
     public function update(BillData $bill): BillData
     {
-        $model = $this->find($bill->billNumber);
+        $model = $this->model->where('bill_number', $bill->billNumber)->first();
 
         if (! $model) {
             throw new \InvalidArgumentException('Bill not found for update.');
@@ -35,7 +37,7 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
 
     public function save(BillData $bill): BillData
     {
-        if ($this->find($bill->billNumber)) {
+        if ($this->findByNumber($bill->billNumber)) {
             return $this->update($bill);
         }
 
@@ -44,7 +46,7 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
 
     public function delete(int $billId): bool
     {
-        $model = $this->find($billId);
+        $model = $this->model->find($billId);
 
         if (! $model) {
             return false;
@@ -66,7 +68,7 @@ class BillRepository extends BaseRepository implements \App\Repositories\Contrac
 
     public function findByNumber(string $billNumber): ?BillData
     {
-        $model = $this->model->find((int) $billNumber);
+        $model = $this->model->where('bill_number', $billNumber)->first();
 
         if (! $model) {
             return null;
