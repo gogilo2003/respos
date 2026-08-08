@@ -7,6 +7,7 @@ use App\Http\Requests\StoreBillRequest;
 use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use App\Models\TableSession;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -69,6 +70,16 @@ class BillController extends Controller
         Gate::authorize('void', $bill);
 
         $data = $this->billService->void($bill->id);
+
+        app(AuditLogService::class)->log(
+            'bill_voided',
+            'Bill',
+            $bill->id,
+            ['status' => $bill->status],
+            ['status' => 'voided'],
+            $request->input('reason', 'Bill voided by staff')
+        );
+
         $resource = new BillResource($data);
 
         if ($request->wantsJson() && ! $request->header('X-Inertia')) {

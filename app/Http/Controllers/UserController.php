@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Interfaces\Repositories\RoleRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Models\User;
+use App\Services\AuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -86,6 +87,15 @@ class UserController extends Controller
         $this->userRepository->update($user->id, [
             'is_active' => ! $user->is_active,
         ]);
+
+        app(AuditLogService::class)->log(
+            'user_status_toggled',
+            'User',
+            $user->id,
+            ['is_active' => $user->is_active],
+            ['is_active' => ! $user->is_active],
+            'User account active status toggled by admin'
+        );
 
         $statusLabel = ! $user->is_active ? 'activated' : 'suspended';
 
