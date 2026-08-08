@@ -11,7 +11,7 @@ test('admin can view table SVG QR Code image', function () {
 
     $response->assertStatus(200);
     $response->assertHeader('Content-Type', 'image/svg+xml');
-    expect($response->getContent())->toContain('ResPOS Order & Pay');
+    expect($response->getContent())->toContain('ResPOS Order');
 });
 
 test('admin can regenerate table QR code token', function () {

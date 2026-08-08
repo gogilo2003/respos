@@ -38,7 +38,6 @@ class UserFactory extends Factory
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [
-            'is_active' => false,
             'email_verified_at' => null,
         ]);
     }
