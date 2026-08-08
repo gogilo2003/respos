@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\NotificationService;
 use App\Services\OrderTransitionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -22,6 +23,16 @@ class OrderController extends Controller
         ]);
 
         $updatedOrder = $this->transitionService->transition($order, $validated['status']);
+
+        // Dispatch notifications to waiter & customer
+        app(NotificationService::class)->notifyRole('waiter', 'order_status_updated', $order->session_id, [
+            'order_id' => $order->id,
+            'status' => $validated['status'],
+        ]);
+        app(NotificationService::class)->notifyRole('customer', 'order_status_updated', $order->session_id, [
+            'order_id' => $order->id,
+            'status' => $validated['status'],
+        ]);
 
         if ($request->wantsJson()) {
             return response()->json([

@@ -2,9 +2,12 @@
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import Sidebar from '@/Components/Sidebar.vue';
+import { usePolling } from '@/Composables/usePolling';
 import { ref } from 'vue';
 
 const sidebarRef = ref<InstanceType<typeof Sidebar> | null>(null);
+
+const { unreadCount, notifications, markRead } = usePolling(8000);
 
 const toggleSidebar = () => {
     sidebarRef.value?.toggle();
@@ -47,7 +50,59 @@ const toggleSidebar = () => {
                                 </div>
                             </div>
 
-                            <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            <div class="hidden sm:ms-6 sm:flex sm:items-center space-x-3">
+                                <!-- Notification Dropdown -->
+                                <div class="relative">
+                                    <Dropdown align="right" width="80">
+                                        <template #trigger>
+                                            <button
+                                                type="button"
+                                                class="relative p-2 text-gray-500 hover:text-gray-700 transition rounded-full hover:bg-gray-100"
+                                            >
+                                                🔔
+                                                <span
+                                                    v-if="unreadCount > 0"
+                                                    class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow"
+                                                >
+                                                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                                                </span>
+                                            </button>
+                                        </template>
+
+                                        <template #content>
+                                            <div class="p-3 border-b border-gray-100 font-semibold text-xs text-gray-700 flex justify-between items-center">
+                                                <span>Notifications</span>
+                                                <span class="text-gray-400 font-normal">{{ notifications.length }} new</span>
+                                            </div>
+                                            <div class="max-h-64 overflow-y-auto divide-y divide-gray-100">
+                                                <div
+                                                    v-for="item in notifications"
+                                                    :key="item.id"
+                                                    class="p-3 text-xs hover:bg-gray-50 flex justify-between items-start"
+                                                >
+                                                    <div>
+                                                        <div class="font-bold text-gray-900 capitalize">{{ item.event_type.replace('_', ' ') }}</div>
+                                                        <div class="text-gray-500 text-[11px] mt-0.5" v-if="item.payload">
+                                                            {{ item.payload.table_number ? `Table ${item.payload.table_number}` : '' }}
+                                                            {{ item.payload.order_id ? `Order #${item.payload.order_id}` : '' }}
+                                                        </div>
+                                                        <div class="text-[10px] text-gray-400 mt-1">{{ item.time_ago }}</div>
+                                                    </div>
+                                                    <button
+                                                        @click="markRead(item.id)"
+                                                        class="text-[10px] text-blue-600 hover:underline"
+                                                    >
+                                                        Dismiss
+                                                    </button>
+                                                </div>
+                                                <div v-if="notifications.length === 0" class="p-4 text-center text-xs text-gray-400">
+                                                    No new notifications
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </Dropdown>
+                                </div>
+
                                 <!-- Settings Dropdown -->
                                 <div class="relative ms-3">
                                     <Dropdown align="right" width="48">

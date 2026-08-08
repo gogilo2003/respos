@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
 use App\Services\MenuService;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -107,6 +108,16 @@ class HomeController extends Controller
 
         // Clear cart session
         $request->session()->forget('cart');
+
+        // Dispatch notifications for kitchen and waiter
+        app(NotificationService::class)->notifyRole('kitchen', 'order_placed', $session->id, [
+            'order_id' => $order->id,
+            'table_number' => $session->table?->table_number ?? 'N/A',
+        ]);
+        app(NotificationService::class)->notifyRole('waiter', 'order_placed', $session->id, [
+            'order_id' => $order->id,
+            'table_number' => $session->table?->table_number ?? 'N/A',
+        ]);
 
         return response()->json([
             'ok' => true,

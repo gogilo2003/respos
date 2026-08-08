@@ -8,6 +8,8 @@ class Notification extends Model
 {
     protected $table = 'notifications';
 
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'target_role',
         'target_user_id',
