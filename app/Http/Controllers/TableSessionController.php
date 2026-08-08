@@ -7,6 +7,7 @@ use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Models\RestaurantTable;
 use App\Models\TableSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class TableSessionController extends Controller
@@ -14,8 +15,7 @@ class TableSessionController extends Controller
     public function __construct(
         protected TableSessionRepositoryInterface $sessionRepository,
         protected TableRepositoryInterface $tableRepository
-    ) {
-    }
+    ) {}
 
     public function show(Request $request, string $identifier)
     {
@@ -35,7 +35,8 @@ class TableSessionController extends Controller
             $session = TableSession::create([
                 'table_id' => $table->id,
                 'opened_by' => null,
-                'session_token' => \Illuminate\Support\Str::random(32),
+                'session_token' => Str::random(32),
+                'token_expires_at' => now()->addHours(6),
                 'status' => 'open',
                 'opened_at' => now(),
             ]);
