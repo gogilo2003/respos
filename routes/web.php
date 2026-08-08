@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\PollingController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CashReconciliationController;
 use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -130,6 +133,24 @@ Route::prefix('waiter')
     });
 
 Route::get('/t/{payload}', [TableSessionController::class, 'show'])->name('table.entry');
+
+Route::prefix('api/v1/polling')->group(function () {
+    Route::get('/updates', [PollingController::class, 'updates'])->name('api.polling.updates');
+    Route::post('/notifications/{id}/read', [PollingController::class, 'markRead'])->name('api.polling.mark-read');
+});
+
+Route::prefix('reconciliations')
+    ->name('reconciliations')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/', [CashReconciliationController::class, 'index'])->name('.index');
+        Route::post('/', [CashReconciliationController::class, 'store'])->name('.store');
+        Route::post('/{id}/approve', [CashReconciliationController::class, 'approve'])->name('.approve');
+    });
+
+Route::get('/audit-logs', [AuditLogController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('audit-logs.index');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

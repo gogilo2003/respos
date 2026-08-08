@@ -87,6 +87,24 @@ class NavigationMenuService
                 'shortLabel' => 'B',
                 'roles' => ['admin', 'manager', 'cashier'],
             ],
+            [
+                'key' => 'reconciliations',
+                'label' => 'Reconciliation',
+                'routeName' => 'reconciliations.index',
+                'url' => $this->resolveUrl('reconciliations.index'),
+                'activePattern' => 'reconciliations*',
+                'shortLabel' => 'R',
+                'roles' => ['admin', 'manager', 'cashier'],
+            ],
+            [
+                'key' => 'audit-logs',
+                'label' => 'Audit Logs',
+                'routeName' => 'audit-logs.index',
+                'url' => $this->resolveUrl('audit-logs.index'),
+                'activePattern' => 'audit-logs*',
+                'shortLabel' => 'A',
+                'roles' => ['admin'],
+            ],
         ];
     }
 

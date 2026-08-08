@@ -25,7 +25,7 @@ test('admin user receives full admin navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toBe(['dashboard', 'users', 'menu-categories', 'menu-items', 'tables', 'bills']);
+    expect($keys)->toBe(['dashboard', 'users', 'menu-categories', 'menu-items', 'tables', 'bills', 'reconciliations', 'audit-logs']);
 });
 
 test('manager user receives manager navigation menu', function () {
@@ -36,7 +36,7 @@ test('manager user receives manager navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toBe(['dashboard', 'menu-categories', 'menu-items', 'tables', 'bills']);
+    expect($keys)->toBe(['dashboard', 'menu-categories', 'menu-items', 'tables', 'bills', 'reconciliations']);
 });
 
 test('cashier user receives cashier navigation menu', function () {
@@ -47,7 +47,7 @@ test('cashier user receives cashier navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toBe(['dashboard', 'bills']);
+    expect($keys)->toBe(['dashboard', 'bills', 'reconciliations']);
 });
 
 test('waiter user receives dashboard navigation menu', function () {
