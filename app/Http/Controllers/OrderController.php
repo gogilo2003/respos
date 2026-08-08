@@ -11,8 +11,7 @@ class OrderController extends Controller
 {
     public function __construct(
         protected OrderTransitionService $transitionService
-    ) {
-    }
+    ) {}
 
     public function transition(Request $request, Order $order)
     {

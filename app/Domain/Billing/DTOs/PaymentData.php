@@ -16,8 +16,7 @@ final readonly class PaymentData
         public string $bill,
         public \DateTimeImmutable $paidAt,
         public PaymentStatus $status,
-    ) {
-    }
+    ) {}
 
     public static function from(
         PaymentMethod|string $paymentMethod,

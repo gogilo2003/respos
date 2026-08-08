@@ -9,7 +9,9 @@ use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 class WaiterStatisticsService
 {
     protected TableRepositoryInterface $tableRepository;
+
     protected OrderRepositoryInterface $orderRepository;
+
     protected WaiterStatisticsRepositoryInterface $waiterStatisticsRepository;
 
     public function __construct(

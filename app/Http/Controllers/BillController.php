@@ -13,9 +13,7 @@ use Inertia\Inertia;
 
 class BillController extends Controller
 {
-    public function __construct(private BillService $billService)
-    {
-    }
+    public function __construct(private BillService $billService) {}
 
     public function index(Request $request)
     {

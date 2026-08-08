@@ -21,8 +21,7 @@ final readonly class ReceiptData
         public Money $tax,
         public Money $discount,
         public \DateTimeImmutable $printedAt,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<int, array{

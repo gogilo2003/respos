@@ -2,20 +2,20 @@
 
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\MenuCategoryController;
 use App\Http\Controllers\MenuItemController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TableSessionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WaiterController;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'welcome']);
 
@@ -84,12 +84,12 @@ Route::prefix('table-sessions')
         Route::post('/{table}/close', [TableSessionController::class, 'close'])->name('.close');
     });
 
-Route::patch('/orders/{order}/status', [\App\Http\Controllers\OrderController::class, 'transition'])
+Route::patch('/orders/{order}/status', [OrderController::class, 'transition'])
     ->middleware(['auth'])
     ->name('orders.status.update');
 
 Route::get('/session/{table}', [TableSessionController::class, 'show'])->name('session.entry');
-Route::get('/orders/{order}/track', [\App\Http\Controllers\CustomerOrderController::class, 'track'])->name('orders.track');
+Route::get('/orders/{order}/track', [CustomerOrderController::class, 'track'])->name('orders.track');
 
 Route::prefix('bills')
     ->name('bills')
@@ -137,4 +137,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

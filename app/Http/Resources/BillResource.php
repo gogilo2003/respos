@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Domain\Billing\DTOs\BillData;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BillResource extends JsonResource

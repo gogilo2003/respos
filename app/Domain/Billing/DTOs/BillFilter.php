@@ -14,8 +14,7 @@ final readonly class BillFilter
         public ?int $table,
         public ?int $cashierId,
         public ?string $billNumber,
-    ) {
-    }
+    ) {}
 
     public static function from(
         ?BillStatus $status = null,

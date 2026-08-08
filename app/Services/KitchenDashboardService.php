@@ -26,10 +26,10 @@ class KitchenDashboardService
     public function getDashboardData(): array
     {
         return [
-            'pending_orders'   => $this->shapeOrders($this->kitchenRepository->getPendingOrders()),
+            'pending_orders' => $this->shapeOrders($this->kitchenRepository->getPendingOrders()),
             'preparing_orders' => $this->shapeOrders($this->kitchenRepository->getPreparingOrders()),
-            'ready_orders'     => $this->shapeOrders($this->kitchenRepository->getReadyOrders()),
-            'statistics'       => $this->shapeStatistics($this->kitchenRepository->getDailyStatistics()),
+            'ready_orders' => $this->shapeOrders($this->kitchenRepository->getReadyOrders()),
+            'statistics' => $this->shapeStatistics($this->kitchenRepository->getDailyStatistics()),
         ];
     }
 
@@ -43,20 +43,20 @@ class KitchenDashboardService
             $items = $order->items->map(fn ($item) => $this->shapeItem($item))->values();
 
             $counts = [
-                'pending'   => $order->items->whereIn('status', ['pending', 'accepted'])->count(),
+                'pending' => $order->items->whereIn('status', ['pending', 'accepted'])->count(),
                 'preparing' => $order->items->where('status', 'preparing')->count(),
-                'ready'     => $order->items->where('status', 'ready')->count(),
-                'served'    => $order->items->where('status', 'served')->count(),
+                'ready' => $order->items->where('status', 'ready')->count(),
+                'served' => $order->items->where('status', 'served')->count(),
             ];
 
             return [
-                'order_id'    => $order->id,
-                'session'     => [
+                'order_id' => $order->id,
+                'session' => [
                     'table_session_id' => $order->session->id,
-                    'table_number'     => $order->session->table->table_number ?? null,
+                    'table_number' => $order->session->table->table_number ?? null,
                 ],
-                'placed_at'   => $order->placed_at,
-                'items'       => $items,
+                'placed_at' => $order->placed_at,
+                'items' => $items,
                 'item_counts' => $counts,
             ];
         })->values()->all();
@@ -68,12 +68,12 @@ class KitchenDashboardService
     private function shapeItem($item): array
     {
         return [
-            'order_item_id'   => $item->id,
-            'menu_item_id'    => $item->menu_item_id,
-            'name'            => $item->menuItem->name ?? null,
-            'quantity'        => $item->quantity,
-            'status'          => $item->status,
-            'unit_price'      => $item->unit_price,
+            'order_item_id' => $item->id,
+            'menu_item_id' => $item->menu_item_id,
+            'name' => $item->menuItem->name ?? null,
+            'quantity' => $item->quantity,
+            'status' => $item->status,
+            'unit_price' => $item->unit_price,
             'sla_seconds_total' => ($item->ready_at && $item->accepted_at)
                 ? $item->ready_at->diffInSeconds($item->accepted_at)
                 : null,
@@ -88,11 +88,11 @@ class KitchenDashboardService
         $avgSeconds = $raw['avg_prep_seconds'];
 
         return [
-            'pending_items'    => $raw['pending_items'],
-            'preparing_items'  => $raw['preparing_items'],
-            'ready_items'      => $raw['ready_items'],
+            'pending_items' => $raw['pending_items'],
+            'preparing_items' => $raw['preparing_items'],
+            'ready_items' => $raw['ready_items'],
             'avg_prep_seconds' => $avgSeconds,
-            'avg_prep_label'   => $avgSeconds !== null
+            'avg_prep_label' => $avgSeconds !== null
                 ? $this->formatSeconds($avgSeconds)
                 : null,
         ];

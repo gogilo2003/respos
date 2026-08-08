@@ -9,7 +9,6 @@ class NavigationMenuService
     /**
      * Get role-filtered navigation menu items for the authenticated user.
      *
-     * @param User|null $user
      * @return array<int, array<string, mixed>>
      */
     public function getNavigationMenu(?User $user): array
@@ -97,10 +96,10 @@ class NavigationMenuService
             try {
                 return route($routeName);
             } catch (\Throwable $e) {
-                return '/' . str_replace('.', '/', $routeName);
+                return '/'.str_replace('.', '/', $routeName);
             }
         }
 
-        return '/' . str_replace('.', '/', $routeName);
+        return '/'.str_replace('.', '/', $routeName);
     }
 }

@@ -14,8 +14,7 @@ class TableController extends Controller
     public function __construct(
         protected TableRepositoryInterface $tableRepository,
         protected QrCodeService $qrCodeService
-    ) {
-    }
+    ) {}
 
     public function index()
     {

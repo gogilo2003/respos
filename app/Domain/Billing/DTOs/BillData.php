@@ -36,8 +36,7 @@ final readonly class BillData
         public \DateTimeImmutable $createdAt,
         public ?\DateTimeImmutable $paidAt,
         public ?\DateTimeImmutable $voidedAt,
-    ) {
-    }
+    ) {}
 
     /**
      * @param array<int, array{

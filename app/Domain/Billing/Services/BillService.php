@@ -4,6 +4,7 @@ namespace App\Domain\Billing\Services;
 
 use App\Domain\Billing\Contracts\BillGeneratorInterface;
 use App\Domain\Billing\DTOs\BillData;
+use App\Domain\Billing\DTOs\BillFilter;
 use App\Domain\Billing\Enums\BillStatus;
 use App\Domain\Billing\Events\BillClosed;
 use App\Domain\Billing\Events\BillCreated;
@@ -22,8 +23,7 @@ final readonly class BillService
     public function __construct(
         private BillRepositoryInterface $bills,
         private BillGeneratorInterface $generator,
-    ) {
-    }
+    ) {}
 
     public function generate(BillData $bill): BillData
     {
@@ -155,7 +155,7 @@ final readonly class BillService
             discountReason: $bill->discountReason,
             voidedBy: $bill->voidedBy,
             voidReason: $bill->voidReason,
-            paidAt: new \DateTimeImmutable(),
+            paidAt: new \DateTimeImmutable,
             voidedAt: $bill->voidedAt,
         ));
 
@@ -208,7 +208,7 @@ final readonly class BillService
             voidedBy: $voidedBy,
             voidReason: $reason,
             paidAt: $bill->paidAt,
-            voidedAt: new \DateTimeImmutable(),
+            voidedAt: new \DateTimeImmutable,
         ));
 
         Log::info('Bill voided', [
@@ -234,7 +234,7 @@ final readonly class BillService
      */
     public function all(): Collection
     {
-        return $this->bills->findAll(\App\Domain\Billing\DTOs\BillFilter::from());
+        return $this->bills->findAll(BillFilter::from());
     }
 
     public function delete(int $billId): bool
@@ -245,7 +245,7 @@ final readonly class BillService
     private function toBillData(Bill $bill): BillData
     {
         return BillData::from(
-            billNumber: $bill->bill_number ?? 'BILL-' . $bill->id,
+            billNumber: $bill->bill_number ?? 'BILL-'.$bill->id,
             customer: $bill->session?->table?->customer ?? null,
             table: $bill->session?->table?->table_number ?? null,
             order: $bill->session?->table?->order ?? null,
@@ -256,7 +256,7 @@ final readonly class BillService
             serviceCharge: (float) ($bill->service_charge_amount ?? 0),
             grandTotal: (float) ($bill->grand_total ?? 0),
             status: BillStatus::from($bill->status),
-            createdAt: $bill->created_at?->toDateTimeImmutable() ?? new \DateTimeImmutable(),
+            createdAt: $bill->created_at?->toDateTimeImmutable() ?? new \DateTimeImmutable,
             sessionId: $bill->session_id,
             generatedBy: $bill->generated_by,
             discountApprovedBy: $bill->discount_approved_by,

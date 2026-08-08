@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Bill;
 use App\Services\BillService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class PaymentController extends Controller

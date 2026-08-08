@@ -25,7 +25,7 @@ class BillService
             $session = TableSession::findOrFail($sessionId);
 
             $billData = BillData::from(
-                billNumber: 'BILL-' . $session->id . '-' . time(),
+                billNumber: 'BILL-'.$session->id.'-'.time(),
                 customer: $session->table?->table_number ?? null,
                 table: $session->table?->table_number ?? null,
                 order: null,
@@ -36,7 +36,7 @@ class BillService
                 serviceCharge: 0,
                 grandTotal: 0,
                 status: BillStatus::Open,
-                createdAt: new \DateTimeImmutable(),
+                createdAt: new \DateTimeImmutable,
                 sessionId: $session->id,
                 generatedBy: $userId,
                 discountApprovedBy: null,
@@ -146,18 +146,18 @@ class BillService
     {
         $receiptLines = [];
         $receiptLines[] = '===== Restaurant Receipt =====';
-        $receiptLines[] = 'Bill: #' . $bill->id;
-        $receiptLines[] = 'Table: ' . ($bill->session?->table?->table_number ?? 'N/A');
-        $receiptLines[] = 'Date: ' . $bill->generated_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i');
+        $receiptLines[] = 'Bill: #'.$bill->id;
+        $receiptLines[] = 'Table: '.($bill->session?->table?->table_number ?? 'N/A');
+        $receiptLines[] = 'Date: '.$bill->generated_at?->format('Y-m-d H:i') ?? now()->format('Y-m-d H:i');
         $receiptLines[] = 'Items:';
         foreach ($bill->items as $item) {
-            $receiptLines[] = '- ' . $item->orderItem->menuItem->name . ' (' . $item->quantity . ') @ ' . $item->unit_price;
+            $receiptLines[] = '- '.$item->orderItem->menuItem->name.' ('.$item->quantity.') @ '.$item->unit_price;
         }
-        $receiptLines[] = 'Subtotal: ' . number_format($bill->subtotal, 2);
-        $receiptLines[] = 'VAT: ' . number_format($bill->vat_amount, 2);
-        $receiptLines[] = 'Service Charge: ' . number_format($bill->service_charge_amount, 2);
-        $receiptLines[] = 'Discount: ' . number_format($bill->discount_amount, 2);
-        $receiptLines[] = 'Total: ' . number_format($bill->grand_total, 2);
+        $receiptLines[] = 'Subtotal: '.number_format($bill->subtotal, 2);
+        $receiptLines[] = 'VAT: '.number_format($bill->vat_amount, 2);
+        $receiptLines[] = 'Service Charge: '.number_format($bill->service_charge_amount, 2);
+        $receiptLines[] = 'Discount: '.number_format($bill->discount_amount, 2);
+        $receiptLines[] = 'Total: '.number_format($bill->grand_total, 2);
         $receiptLines[] = '===== Thank You! =====';
 
         return implode("\n", $receiptLines);

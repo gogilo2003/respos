@@ -28,7 +28,7 @@ final readonly class BillFactory
             billNumber: self::placeholderBillNumber($order),
             customer: $table?->customer ?? null,
             table: $table?->table_number ?? null,
-            order: 'Order #' . $order->id,
+            order: 'Order #'.$order->id,
             items: $items,
             subtotal: 0,
             discount: 0,
@@ -36,7 +36,7 @@ final readonly class BillFactory
             serviceCharge: 0,
             grandTotal: 0,
             status: BillStatus::Draft,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: $order->session_id,
             generatedBy: null,
             discountApprovedBy: null,
@@ -50,6 +50,6 @@ final readonly class BillFactory
 
     private static function placeholderBillNumber(Order $order): string
     {
-        return 'BILL-ORDER-' . $order->id . '-DRAFT';
+        return 'BILL-ORDER-'.$order->id.'-DRAFT';
     }
 }

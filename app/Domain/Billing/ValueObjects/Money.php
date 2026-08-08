@@ -5,16 +5,12 @@ namespace App\Domain\Billing\ValueObjects;
 final readonly class Money
 {
     /**
-     * @param int $amountInCents Amount stored in minor currency units (cents).
+     * @param  int  $amountInCents  Amount stored in minor currency units (cents).
      */
-    private function __construct(private int $amountInCents)
-    {
-    }
+    private function __construct(private int $amountInCents) {}
 
     /**
      * Create from a decimal string or float, converting to cents safely.
-     *
-     * @param string|float|int $amount
      */
     public static function from(string|float|int $amount): self
     {
@@ -77,7 +73,7 @@ final readonly class Money
             $whole = (int) $parts[0];
             $fraction = str_pad($parts[1], 2, '0');
             $fraction = substr($fraction, 0, 2);
-            $scaled = (int) ($parts[0] . $fraction);
+            $scaled = (int) ($parts[0].$fraction);
 
             $result = (int) round(($this->amountInCents * $scaled) / 100);
         }
@@ -102,7 +98,7 @@ final readonly class Money
             $parts = explode('.', $normalized, 2);
             $fraction = str_pad($parts[1], 2, '0');
             $fraction = substr($fraction, 0, 2);
-            $scaled = (int) ($parts[0] . $fraction);
+            $scaled = (int) ($parts[0].$fraction);
 
             $result = (int) round(($this->amountInCents * 100) / $scaled);
         }

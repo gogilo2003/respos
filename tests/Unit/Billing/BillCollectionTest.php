@@ -23,7 +23,7 @@ final class BillCollectionTest extends TestCase
             serviceCharge: 0,
             grandTotal: 0,
             status: $status,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: 1,
             generatedBy: null,
             discountApprovedBy: null,
@@ -97,7 +97,7 @@ final class BillCollectionTest extends TestCase
         ]);
 
         $mapped = $collection->map(fn (BillData $bill) => BillData::from(
-            billNumber: $bill->billNumber . '-MAPPED',
+            billNumber: $bill->billNumber.'-MAPPED',
             customer: $bill->customer,
             table: $bill->table,
             order: $bill->order,

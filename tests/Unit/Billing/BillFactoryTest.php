@@ -5,8 +5,6 @@ namespace Tests\Unit\Billing;
 use App\Domain\Billing\DTOs\BillData;
 use App\Domain\Billing\Enums\BillStatus;
 use App\Domain\Billing\Services\BillFactory;
-use App\Domain\Billing\Services\BillGenerator;
-use App\Domain\Billing\Services\BillNumberGenerator;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -22,25 +20,25 @@ final class BillFactoryTest extends TestCase
     {
         parent::setUp();
 
-        $this->order = new Order();
+        $this->order = new Order;
         $this->order->id = 1;
         $this->order->session_id = 1;
 
-        $table = new RestaurantTable();
+        $table = new RestaurantTable;
         $table->table_number = 'A1';
         $table->customer = 'John Doe';
 
-        $session = new TableSession();
+        $session = new TableSession;
         $session->id = 1;
         $session->setRelation('table', $table);
 
         $this->order->setRelation('session', $session);
 
-        $menuItem = new MenuItem();
+        $menuItem = new MenuItem;
         $menuItem->name = 'Pasta';
         $menuItem->base_price = 10.00;
 
-        $orderItem = new OrderItem();
+        $orderItem = new OrderItem;
         $orderItem->quantity = 2;
         $orderItem->unit_price = 10.00;
         $orderItem->setRelation('menuItem', $menuItem);
@@ -74,12 +72,12 @@ final class BillFactoryTest extends TestCase
 
     public function test_it_handles_missing_menu_item(): void
     {
-        $orderItem = new OrderItem();
+        $orderItem = new OrderItem;
         $orderItem->quantity = 1;
         $orderItem->unit_price = null;
         $orderItem->setRelation('menuItem', null);
 
-        $order = new Order();
+        $order = new Order;
         $order->id = 2;
         $order->session_id = 1;
         $order->setRelation('session', $this->order->session);

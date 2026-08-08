@@ -7,15 +7,16 @@ use App\Domain\Billing\DTOs\BillFilter;
 use App\Domain\Billing\Enums\BillStatus;
 use App\Models\Bill;
 use App\Models\BillItem;
+use App\Models\MenuCategory;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\RestaurantTable;
+use App\Models\Role;
 use App\Models\TableSession;
+use App\Models\User;
 use App\Repositories\BillRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Framework\TestCase;
 use Tests\TestCase as LaravelTestCase;
 
 final class BillRepositoryTest extends LaravelTestCase
@@ -23,7 +24,8 @@ final class BillRepositoryTest extends LaravelTestCase
     use RefreshDatabase;
 
     private BillRepository $repository;
-    private \App\Models\User $user;
+
+    private User $user;
 
     protected function setUp(): void
     {
@@ -31,7 +33,7 @@ final class BillRepositoryTest extends LaravelTestCase
         $this->billCounter = 0;
 
         $this->user = $this->createUser();
-        $this->repository = new BillRepository();
+        $this->repository = new BillRepository;
     }
 
     public function test_it_can_create_a_bill(): void
@@ -209,7 +211,7 @@ final class BillRepositoryTest extends LaravelTestCase
             serviceCharge: 0,
             grandTotal: 0,
             status: BillStatus::Open,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: $session->id,
             generatedBy: $bill->generated_by,
             discountApprovedBy: null,
@@ -253,7 +255,7 @@ final class BillRepositoryTest extends LaravelTestCase
     private function createTable(array $attributes = []): RestaurantTable
     {
         return RestaurantTable::create(array_merge([
-            'table_number' => 'T' . RestaurantTable::count() + 1,
+            'table_number' => 'T'.RestaurantTable::count() + 1,
             'capacity' => 4,
             'location' => 'Main Floor',
             'status' => 'available',
@@ -261,10 +263,10 @@ final class BillRepositoryTest extends LaravelTestCase
         ], $attributes));
     }
 
-    private function createUser(array $attributes = []): \App\Models\User
+    private function createUser(array $attributes = []): User
     {
-        return \App\Models\User::create(array_merge([
-            'role_id' => \App\Models\Role::where('name', 'cashier')->first()?->id ?? 1,
+        return User::create(array_merge([
+            'role_id' => Role::where('name', 'cashier')->first()?->id ?? 1,
             'name' => 'Test User',
             'username' => 'testuser',
             'email' => 'test@example.com',
@@ -277,7 +279,7 @@ final class BillRepositoryTest extends LaravelTestCase
     {
         return TableSession::create(array_merge([
             'table_id' => $tableId,
-            'session_token' => 'token-' . uniqid(),
+            'session_token' => 'token-'.uniqid(),
             'status' => 'open',
             'token_expires_at' => now()->addHours(2),
         ], $attributes));
@@ -295,7 +297,7 @@ final class BillRepositoryTest extends LaravelTestCase
 
     private function createMenuItem(array $attributes = []): MenuItem
     {
-        $category = \App\Models\MenuCategory::create([
+        $category = MenuCategory::create([
             'name' => 'Test Category',
             'description' => 'Test',
             'sort_order' => 1,
@@ -327,7 +329,7 @@ final class BillRepositoryTest extends LaravelTestCase
     private function createBill(int $sessionId, array $attributes = []): Bill
     {
         $this->billCounter++;
-        $attributes['billNumber'] = $attributes['billNumber'] ?? 'BILL-2026-' . str_pad((string) $this->billCounter, 6, '0', STR_PAD_LEFT);
+        $attributes['billNumber'] = $attributes['billNumber'] ?? 'BILL-2026-'.str_pad((string) $this->billCounter, 6, '0', STR_PAD_LEFT);
         $attributes['sessionId'] = $sessionId;
         $billData = $this->makeBillData(...$attributes);
         $result = $this->repository->create($billData);
@@ -360,7 +362,7 @@ final class BillRepositoryTest extends LaravelTestCase
             serviceCharge: 0,
             grandTotal: 0,
             status: $status,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: $sessionId,
             generatedBy: $generatedBy ?? $this->user->id,
             discountApprovedBy: null,

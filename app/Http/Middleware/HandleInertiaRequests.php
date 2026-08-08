@@ -8,9 +8,7 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    public function __construct(protected NavigationMenuService $navigationMenuService)
-    {
-    }
+    public function __construct(protected NavigationMenuService $navigationMenuService) {}
 
     /**
      * The root template that is loaded on the first page visit.

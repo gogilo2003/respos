@@ -15,7 +15,7 @@ class RestaurantTableFactory extends Factory
     public function definition(): array
     {
         return [
-            'table_number' => 'T' . fake()->unique()->numberBetween(1, 9999),
+            'table_number' => 'T'.fake()->unique()->numberBetween(1, 9999),
             'capacity' => 4,
             'location' => 'Main Floor',
             'status' => 'available',

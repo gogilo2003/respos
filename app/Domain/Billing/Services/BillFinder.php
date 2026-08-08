@@ -10,9 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 final readonly class BillFinder
 {
-    public function __construct(private BillRepositoryInterface $bills)
-    {
-    }
+    public function __construct(private BillRepositoryInterface $bills) {}
 
     public function findById(int $billId): ?BillData
     {

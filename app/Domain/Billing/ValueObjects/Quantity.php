@@ -4,9 +4,7 @@ namespace App\Domain\Billing\ValueObjects;
 
 final readonly class Quantity
 {
-    private function __construct(private int $value)
-    {
-    }
+    private function __construct(private int $value) {}
 
     public static function from(int $value): self
     {

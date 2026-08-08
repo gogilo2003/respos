@@ -18,8 +18,7 @@ class MenuItemController extends Controller
         protected MenuItemRepositoryInterface $itemRepository,
         protected MenuCategoryRepositoryInterface $categoryRepository,
         protected ImageUploadService $imageUploadService
-    ) {
-    }
+    ) {}
 
     public function index()
     {

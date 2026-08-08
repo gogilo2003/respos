@@ -15,7 +15,7 @@ final class BillStatusServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new BillStatusService();
+        $this->service = new BillStatusService;
     }
 
     public function test_it_allows_draft_to_open(): void

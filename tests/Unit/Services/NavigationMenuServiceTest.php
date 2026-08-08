@@ -8,7 +8,7 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-    $this->service = new NavigationMenuService();
+    $this->service = new NavigationMenuService;
 });
 
 test('null user receives empty navigation menu', function () {

@@ -2,6 +2,4 @@
 
 namespace App\Domain\Billing\Exceptions;
 
-class InvalidSplitException extends BillingException
-{
-}
+class InvalidSplitException extends BillingException {}

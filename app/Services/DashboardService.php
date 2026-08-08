@@ -11,13 +11,11 @@ class DashboardService
         protected CashierDashboardService $cashierDashboardService,
         protected WaiterStatisticsService $waiterStatisticsService,
         protected KitchenDashboardService $kitchenDashboardService
-    ) {
-    }
+    ) {}
 
     /**
      * Determine component name and props payload for the user's role dashboard.
      *
-     * @param User|null $user
      * @return array{redirect?: string, component?: string, props?: array<string, mixed>}
      */
     public function getDashboardPayload(?User $user): array

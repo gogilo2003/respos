@@ -11,8 +11,6 @@ class MenuItemSeeder extends Seeder
 {
     /**
      * Seed menu items with images downloaded from free stock sources.
-     *
-     * @return void
      */
     public function run(): void
     {

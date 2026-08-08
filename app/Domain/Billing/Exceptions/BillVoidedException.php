@@ -2,6 +2,4 @@
 
 namespace App\Domain\Billing\Exceptions;
 
-class BillVoidedException extends BillingException
-{
-}
+class BillVoidedException extends BillingException {}

@@ -9,10 +9,7 @@ use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\TableRepositoryInterface;
 use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Models\AssistanceRequest;
-use App\Models\MenuItem;
-use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\TableSession;
 use App\Services\OrderService;
 use App\Services\WaiterStatisticsService;
 use Illuminate\Http\Request;
@@ -30,8 +27,7 @@ class WaiterController extends Controller
         protected MenuItemRepositoryInterface $menuItemRepository,
         protected WaiterStatisticsService $waiterStatisticsService,
         protected OrderService $orderService,
-    ) {
-    }
+    ) {}
 
     public function dashboard()
     {

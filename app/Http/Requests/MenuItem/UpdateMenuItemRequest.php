@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\MenuItem;
 
+use App\Models\MenuItem;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMenuItemRequest extends FormRequest
@@ -9,8 +10,8 @@ class UpdateMenuItemRequest extends FormRequest
     public function authorize(): bool
     {
         $item = $this->route('item');
-        if (! ($item instanceof \App\Models\MenuItem)) {
-            $item = \App\Models\MenuItem::find($item);
+        if (! ($item instanceof MenuItem)) {
+            $item = MenuItem::find($item);
         }
 
         return $item ? ($this->user()?->can('update', $item) ?? false) : false;

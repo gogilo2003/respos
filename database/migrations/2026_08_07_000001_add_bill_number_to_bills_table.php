@@ -15,9 +15,9 @@ return new class extends Migration
         $prefix = 'BILL';
         $year = now()->year;
 
-        \DB::table('bills')->orderBy('id')->get()->each(function ($bill) use ($prefix, $year) {
+        DB::table('bills')->orderBy('id')->get()->each(function ($bill) use ($prefix, $year) {
             $sequence = str_pad((string) $bill->id, 6, '0', STR_PAD_LEFT);
-            \DB::table('bills')->where('id', $bill->id)->update([
+            DB::table('bills')->where('id', $bill->id)->update([
                 'bill_number' => "{$prefix}-{$year}-{$sequence}",
             ]);
         });

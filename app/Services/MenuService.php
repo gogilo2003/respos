@@ -13,8 +13,7 @@ class MenuService
     public function __construct(
         protected MenuCategoryRepositoryInterface $menuCategoryRepository,
         protected MenuItemRepositoryInterface $menuItemRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Resolve role string from User model or fallback to guest/customer.
@@ -30,9 +29,6 @@ class MenuService
 
     /**
      * Get centralized menu (categories with nested items) filtered by role.
-     *
-     * @param User|null $user
-     * @return array
      */
     public function getCentralizedMenu(?User $user = null): array
     {
@@ -52,10 +48,6 @@ class MenuService
 
     /**
      * Get menu items filtered by role.
-     *
-     * @param User|null $user
-     * @param int|null $categoryId
-     * @return array
      */
     public function getMenuItems(?User $user = null, ?int $categoryId = null): array
     {
@@ -67,9 +59,6 @@ class MenuService
 
     /**
      * Get menu categories filtered by role.
-     *
-     * @param User|null $user
-     * @return array
      */
     public function getMenuCategories(?User $user = null): array
     {

@@ -3,8 +3,6 @@
 namespace Tests\Unit\Billing;
 
 use App\Domain\Billing\DTOs\BillItemData;
-use App\Domain\Billing\ValueObjects\Money;
-use App\Domain\Billing\ValueObjects\Quantity;
 use PHPUnit\Framework\TestCase;
 
 final class BillItemDataTest extends TestCase

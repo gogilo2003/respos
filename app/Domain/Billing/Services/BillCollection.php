@@ -12,9 +12,7 @@ final readonly class BillCollection implements Countable, IteratorAggregate
     /**
      * @param  array<int, BillData>  $items
      */
-    private function __construct(private array $items)
-    {
-    }
+    private function __construct(private array $items) {}
 
     public static function from(array $items): self
     {

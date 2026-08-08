@@ -5,13 +5,12 @@ namespace App\Repositories;
 use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 use App\Models\Order;
 use App\Models\TableSession;
-use Illuminate\Support\Collection;
 
 class WaiterStatisticsRepository extends BaseRepository implements WaiterStatisticsRepositoryInterface
 {
     public function __construct()
     {
-        parent::__construct(new TableSession());
+        parent::__construct(new TableSession);
     }
 
     public function getOccupiedTableCount(): int

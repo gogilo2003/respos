@@ -2,6 +2,4 @@
 
 namespace App\Domain\Billing\Exceptions;
 
-class InvalidTaxException extends BillingException
-{
-}
+class InvalidTaxException extends BillingException {}

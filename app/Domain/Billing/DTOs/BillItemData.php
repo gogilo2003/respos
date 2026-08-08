@@ -15,8 +15,7 @@ final readonly class BillItemData
         public Money $tax,
         public Money $lineTotal,
         public ?string $specialNotes,
-    ) {
-    }
+    ) {}
 
     public static function from(
         string $menuItem,

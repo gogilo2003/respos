@@ -2,6 +2,4 @@
 
 namespace App\Domain\Billing\Exceptions;
 
-class InvalidPaymentException extends BillingException
-{
-}
+class InvalidPaymentException extends BillingException {}

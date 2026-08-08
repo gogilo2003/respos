@@ -59,7 +59,7 @@ class QrCodeService
     {
         // Standalone SVG rendering encoding QR payload & direct session target
         $targetUrl = route('table-sessions.show', ['table' => $this->extractTableId($payload)]);
-        
+
         $encodedUrl = htmlspecialchars($targetUrl, ENT_QUOTES, 'UTF-8');
 
         // Pure SVG template with embedded barcode/matrix & quick-scan URL

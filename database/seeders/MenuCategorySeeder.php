@@ -10,8 +10,6 @@ class MenuCategorySeeder extends Seeder
 {
     /**
      * Seed categories with cover images downloaded from free stock sources.
-     *
-     * @return void
      */
     public function run(): void
     {

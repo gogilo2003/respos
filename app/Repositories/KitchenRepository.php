@@ -14,7 +14,7 @@ class KitchenRepository extends BaseRepository implements KitchenRepositoryInter
 {
     public function __construct()
     {
-        parent::__construct(new Order());
+        parent::__construct(new Order);
     }
 
     // -------------------------------------------------------------------------
@@ -94,9 +94,9 @@ class KitchenRepository extends BaseRepository implements KitchenRepositoryInter
         }
 
         return [
-            'pending_items'    => (int) ($counts->pending_items ?? 0),
-            'preparing_items'  => (int) ($counts->preparing_items ?? 0),
-            'ready_items'      => (int) ($counts->ready_items ?? 0),
+            'pending_items' => (int) ($counts->pending_items ?? 0),
+            'preparing_items' => (int) ($counts->preparing_items ?? 0),
+            'ready_items' => (int) ($counts->ready_items ?? 0),
             'avg_prep_seconds' => $avgSeconds !== null ? (int) round($avgSeconds) : null,
         ];
     }

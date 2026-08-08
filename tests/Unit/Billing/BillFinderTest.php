@@ -27,7 +27,7 @@ final class BillFinderTest extends TestCase
             serviceCharge: 0,
             grandTotal: 0,
             status: BillStatus::Open,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: 1,
             generatedBy: null,
             discountApprovedBy: null,
@@ -60,14 +60,14 @@ final class BillFinderTest extends TestCase
             serviceCharge: 0,
             grandTotal: 0,
             status: BillStatus::Paid,
-            createdAt: new \DateTimeImmutable(),
+            createdAt: new \DateTimeImmutable,
             sessionId: 2,
             generatedBy: null,
             discountApprovedBy: null,
             discountReason: null,
             voidedBy: null,
             voidReason: null,
-            paidAt: new \DateTimeImmutable(),
+            paidAt: new \DateTimeImmutable,
             voidedAt: null,
         ));
 
@@ -116,14 +116,14 @@ final class BillFinderTest extends TestCase
                 serviceCharge: 0,
                 grandTotal: 0,
                 status: BillStatus::Paid,
-                createdAt: new \DateTimeImmutable(),
+                createdAt: new \DateTimeImmutable,
                 sessionId: 1,
                 generatedBy: 3,
                 discountApprovedBy: null,
                 discountReason: null,
                 voidedBy: null,
                 voidReason: null,
-                paidAt: new \DateTimeImmutable(),
+                paidAt: new \DateTimeImmutable,
                 voidedAt: null,
             ),
         ]));
@@ -139,4 +139,3 @@ final class BillFinderTest extends TestCase
         $this->assertSame('BILL-2026-000001', $result->first()->billNumber);
     }
 }
-

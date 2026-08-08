@@ -4,14 +4,11 @@ namespace App\Domain\Billing\Services;
 
 use App\Domain\Billing\Contracts\BillGeneratorInterface;
 use App\Domain\Billing\DTOs\BillData;
-use App\Domain\Billing\Services\BillFactory;
 use App\Models\Order;
 
 final readonly class BillGenerator implements BillGeneratorInterface
 {
-    public function __construct(private BillNumberGenerator $numbers)
-    {
-    }
+    public function __construct(private BillNumberGenerator $numbers) {}
 
     public function generateForOrder(Order $order): BillData
     {

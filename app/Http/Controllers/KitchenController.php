@@ -33,7 +33,7 @@ class KitchenController extends Controller
 
         $validated = $request->validated();
 
-        $order   = $orderItem->order;
+        $order = $orderItem->order;
         $session = $order->session;
 
         if (! $session || $session->status !== 'open') {
@@ -41,13 +41,13 @@ class KitchenController extends Controller
         }
 
         $currentStatus = $orderItem->status;
-        $newStatus     = $validated['status'];
+        $newStatus = $validated['status'];
 
         $validTransitions = [
-            'pending'  => ['accepted'],
+            'pending' => ['accepted'],
             'accepted' => ['preparing'],
             'preparing' => ['ready'],
-            'ready'    => [],
+            'ready' => [],
         ];
 
         if (! in_array($newStatus, $validTransitions[$currentStatus] ?? [])) {
@@ -56,15 +56,15 @@ class KitchenController extends Controller
 
         DB::transaction(function () use ($orderItem, $newStatus, $order) {
             $orderItem->update([
-                'status'       => $newStatus,
-                'accepted_at'  => $newStatus === 'accepted'  ? now() : $orderItem->accepted_at,
+                'status' => $newStatus,
+                'accepted_at' => $newStatus === 'accepted' ? now() : $orderItem->accepted_at,
                 'preparing_at' => $newStatus === 'preparing' ? now() : $orderItem->preparing_at,
-                'ready_at'     => $newStatus === 'ready'     ? now() : $orderItem->ready_at,
+                'ready_at' => $newStatus === 'ready' ? now() : $orderItem->ready_at,
             ]);
 
             $order = $this->kitchenRepository->refreshOrderItems($order);
 
-            $allReady     = $order->items->every(fn ($i) => in_array($i->status, ['ready', 'served']));
+            $allReady = $order->items->every(fn ($i) => in_array($i->status, ['ready', 'served']));
             $anyPreparing = $order->items->contains(fn ($i) => $i->status === 'preparing');
 
             if ($allReady) {

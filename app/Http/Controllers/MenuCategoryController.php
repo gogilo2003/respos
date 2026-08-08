@@ -14,8 +14,7 @@ class MenuCategoryController extends Controller
 {
     public function __construct(
         protected MenuCategoryRepositoryInterface $categoryRepository
-    ) {
-    }
+    ) {}
 
     public function index()
     {

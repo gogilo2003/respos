@@ -3,16 +3,19 @@
 namespace App\Repositories;
 
 use App\Domain\Billing\DTOs\BillData;
+use App\Domain\Billing\DTOs\BillFilter;
+use App\Domain\Billing\Enums\BillStatus;
 use App\Models\Bill;
+use App\Repositories\Contracts\BillRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
-class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterface
+class BillRepository implements BillRepositoryInterface
 {
     protected Bill $model;
 
     public function __construct()
     {
-        $this->model = new Bill();
+        $this->model = new Bill;
     }
 
     public function create(BillData $bill): BillData
@@ -90,7 +93,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
         return $this->toDto($model);
     }
 
-    public function findByStatus(\App\Domain\Billing\Enums\BillStatus $status): ?BillData
+    public function findByStatus(BillStatus $status): ?BillData
     {
         $model = $this->model->where('status', $status->value)->first();
 
@@ -104,7 +107,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
     /**
      * @return Collection<int, BillData>
      */
-    public function findAll(\App\Domain\Billing\DTOs\BillFilter $filter): Collection
+    public function findAll(BillFilter $filter): Collection
     {
         $query = $this->model->query();
 
@@ -113,7 +116,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
         }
 
         if ($filter->billNumber) {
-            $query->where('bill_number', 'like', '%' . $filter->billNumber . '%');
+            $query->where('bill_number', 'like', '%'.$filter->billNumber.'%');
         }
 
         if ($filter->from) {
@@ -136,7 +139,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
 
         if ($filter->customer) {
             $query->whereHas('session.table', function ($q) use ($filter) {
-                $q->where('customer', 'like', '%' . $filter->customer . '%');
+                $q->where('customer', 'like', '%'.$filter->customer.'%');
             });
         }
 
@@ -209,7 +212,7 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
         $order = $model->session?->table?->order ?? null;
 
         return BillData::from(
-            billNumber: $model->bill_number ?? 'BILL-' . $model->id,
+            billNumber: $model->bill_number ?? 'BILL-'.$model->id,
             customer: $customer,
             table: $table,
             order: $order,
@@ -219,8 +222,8 @@ class BillRepository implements \App\Repositories\Contracts\BillRepositoryInterf
             tax: (float) ($model->vat_amount ?? 0),
             serviceCharge: (float) ($model->service_charge_amount ?? 0),
             grandTotal: (float) ($model->grand_total ?? 0),
-            status: \App\Domain\Billing\Enums\BillStatus::from($model->status),
-            createdAt: $model->generated_at ? $model->generated_at->toDateTimeImmutable() : new \DateTimeImmutable(),
+            status: BillStatus::from($model->status),
+            createdAt: $model->generated_at ? $model->generated_at->toDateTimeImmutable() : new \DateTimeImmutable,
             sessionId: $model->session_id,
             generatedBy: $model->generated_by,
             discountApprovedBy: $model->discount_approved_by,

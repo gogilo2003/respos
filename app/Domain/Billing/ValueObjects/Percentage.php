@@ -5,11 +5,10 @@ namespace App\Domain\Billing\ValueObjects;
 final readonly class Percentage
 {
     private const MIN = 0;
+
     private const MAX = 100;
 
-    private function __construct(private int $value)
-    {
-    }
+    private function __construct(private int $value) {}
 
     public static function fromDecimal(float $decimal): self
     {
