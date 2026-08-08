@@ -8,7 +8,7 @@ class QrCode extends Model
 {
     protected $table = 'qr_codes';
 
-    const UPDATED_AT = null;
+    public $timestamps = false;
 
     protected $fillable = [
         'table_id',
