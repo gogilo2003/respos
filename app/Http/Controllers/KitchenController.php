@@ -2,69 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KitchenUpdateItemRequest;
+use App\Interfaces\Repositories\KitchenRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\TableSession;
-use Illuminate\Http\Request;
+use App\Services\KitchenDashboardService;
+use App\Services\OrderService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class KitchenController extends Controller
 {
+    public function __construct(
+        protected KitchenDashboardService $kitchenDashboardService,
+        protected KitchenRepositoryInterface $kitchenRepository,
+        protected OrderService $orderService,
+    ) {}
+
     public function dashboard()
     {
         Gate::authorize('kitchen');
 
-        $orders = Order::with(['session.table', 'items.menuItem'])
-            ->whereHas('session', fn ($q) => $q->where('status', 'open'))
-            ->whereHas('items', fn ($q) => $q->whereIn('status', ['pending', 'accepted', 'preparing']))
-            ->orderBy('placed_at')
-            ->get()
-            ->map(function ($order) {
-                $items = $order->items->map(function ($item) {
-                    return [
-                        'order_item_id' => $item->id,
-                        'menu_item_id' => $item->menu_item_id,
-                        'name' => $item->menuItem->name ?? null,
-                        'quantity' => $item->quantity,
-                        'status' => $item->status,
-                        'unit_price' => $item->unit_price,
-                        'sla_seconds_total' => $item->ready_at && $item->accepted_at
-                            ? $item->ready_at->diffInSeconds($item->accepted_at)
-                            : null,
-                    ];
-                });
-
-                $counts = [
-                    'pending' => $order->items->where('status', 'pending')->count(),
-                    'accepted' => $order->items->where('status', 'accepted')->count(),
-                    'preparing' => $order->items->where('status', 'preparing')->count(),
-                    'ready' => $order->items->where('status', 'ready')->count(),
-                ];
-
-                return [
-                    'order_id' => $order->id,
-                    'session' => [
-                        'table_session_id' => $order->session->id,
-                        'table_number' => $order->session->table->table_number ?? null,
-                    ],
-                    'placed_at' => $order->placed_at,
-                    'items' => $items,
-                    'item_counts' => $counts,
-                ];
-            });
-
-        return Inertia::render('Kitchen/Dashboard', ['orders' => $orders]);
+        return Inertia::render('Kitchen/Dashboard', $this->kitchenDashboardService->getDashboardData());
     }
 
-    public function updateItemStatus(Request $request, OrderItem $orderItem)
+    public function updateItemStatus(KitchenUpdateItemRequest $request, OrderItem $orderItem)
     {
         Gate::authorize('kitchen');
 
-        $validated = $request->validate([
-            'status' => ['required', 'in:accepted,preparing,ready'],
-        ]);
+        $validated = $request->validated();
 
         $order = $orderItem->order;
         $session = $order->session;
@@ -95,16 +62,43 @@ class KitchenController extends Controller
                 'ready_at' => $newStatus === 'ready' ? now() : $orderItem->ready_at,
             ]);
 
+            $order = $this->kitchenRepository->refreshOrderItems($order);
+
             $allReady = $order->items->every(fn ($i) => in_array($i->status, ['ready', 'served']));
             $anyPreparing = $order->items->contains(fn ($i) => $i->status === 'preparing');
 
             if ($allReady) {
-                $order->update(['status' => 'ready']);
+                $this->orderService->markOrderReady($order);
             } elseif ($anyPreparing) {
-                $order->update(['status' => 'preparing']);
+                $this->kitchenRepository->setOrderStatus($order, 'preparing');
             }
         });
 
         return response()->json(['item' => $orderItem->fresh()]);
+    }
+
+    public function markOrderReady(Order $order)
+    {
+        Gate::authorize('kitchen');
+
+        $session = $order->session;
+
+        if (! $session || $session->status !== 'open') {
+            return response()->json(['error' => 'Session not active'], 422);
+        }
+
+        $order = $this->kitchenRepository->refreshOrderItems($order);
+
+        $allItemsReady = $order->items->every(
+            fn ($i) => in_array($i->status, ['ready', 'served'])
+        );
+
+        if (! $allItemsReady) {
+            return response()->json(['error' => 'Not all items are ready'], 422);
+        }
+
+        $this->orderService->markOrderReady($order);
+
+        return response()->json(['order' => $order->fresh()]);
     }
 }

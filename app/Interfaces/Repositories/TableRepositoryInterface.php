@@ -7,4 +7,6 @@ interface TableRepositoryInterface extends RepositoryInterface
     public function getActiveTables();
 
     public function findWithQrCode(int $id);
+
+    public function getActiveTablesWithSessions();
 }

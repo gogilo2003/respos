@@ -9,4 +9,6 @@ interface MenuItemRepositoryInterface extends RepositoryInterface
     public function getItemsByCategory($categoryId);
 
     public function getItemsWithCategory();
+
+    public function getItemsForRole(string $role, ?int $categoryId = null);
 }

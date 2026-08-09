@@ -2,76 +2,69 @@
 
 namespace App\Services;
 
+use App\Http\Resources\MenuCategoryResource;
+use App\Http\Resources\MenuItemResource;
 use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
-use App\Repositories\MenuCategoryRepository;
+use App\Interfaces\Repositories\MenuItemRepositoryInterface;
+use App\Models\User;
 
 class MenuService
 {
-    protected MenuCategoryRepository $menuCategoryRepository;
+    public function __construct(
+        protected MenuCategoryRepositoryInterface $menuCategoryRepository,
+        protected MenuItemRepositoryInterface $menuItemRepository
+    ) {}
+
     /**
-     * Create a new class instance.
+     * Resolve role string from User model or fallback to guest/customer.
      */
-    public function __construct(MenuCategoryRepositoryInterface $menuCategoryRepository)
+    public function resolveUserRole(?User $user): string
     {
-        $this->menuCategoryRepository = $menuCategoryRepository;
+        if (! $user) {
+            return 'guest';
+        }
+
+        return $user->role?->name ?? 'customer';
     }
 
-    public function getMenuItems()
+    /**
+     * Get centralized menu (categories with nested items) filtered by role.
+     */
+    public function getCentralizedMenu(?User $user = null): array
     {
-        // Dummy meals for now (replace with DB query later)
-        $data = [
-            [
-                'id' => 1,
-                'title' => 'Bread',
-                'description' => 'Freshly baked bread served warm.',
-                'image' => 'https://images.unsplash.com/photo-1549931319-a545dc4b1f3b?auto=format&fit=crop&w=800&q=60',
-                'price' => 234,
-            ],
-            [
-                'id' => 2,
-                'title' => 'Cake',
-                'description' => 'Soft and sweet cake slice with rich flavor.',
-                'image' => 'https://images.unsplash.com/photo-1542826438-bd32f4e0d5a4?auto=format&fit=crop&w=800&q=60',
-                'price' => 675,
-            ],
-            [
-                'id' => 3,
-                'title' => 'Beef Stew',
-                'description' => 'Slow-cooked beef stew with vegetables.',
-                'image' => 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60',
-                'price' => 100,
-            ],
-            [
-                'id' => 4,
-                'title' => 'Chicken Salad',
-                'description' => 'Crisp greens with grilled chicken and house dressing.',
-                'image' => 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=60',
-                'price' => 250,
-            ],
-            [
-                'id' => 5,
-                'title' => 'Pasta Alfredo',
-                'description' => 'Creamy Alfredo sauce with perfectly cooked pasta.',
-                'image' => 'https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?auto=format&fit=crop&w=800&q=60',
-                'price' => 320,
-            ],
-            [
-                'id' => 6,
-                'title' => 'Iced Coffee',
-                'description' => 'Chilled coffee with a smooth, refreshing taste.',
-                'image' => 'https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=800&q=60',
-                'price' => 180,
-            ],
-        ];
+        $role = $this->resolveUserRole($user);
+        $categories = $this->menuCategoryRepository->getCategoriesForRole($role);
+        $allItems = $this->menuItemRepository->getItemsForRole($role);
 
-        return $data;
+        $groupedItems = $allItems->groupBy('category_id');
+
+        return $categories->map(function ($category) use ($groupedItems) {
+            $items = $groupedItems->get($category->id, collect());
+            $category->setRelation('menuItems', $items);
+
+            return (new MenuCategoryResource($category))->resolve();
+        })->toArray();
     }
 
-    public function getMenuCategories()
+    /**
+     * Get menu items filtered by role.
+     */
+    public function getMenuItems(?User $user = null, ?int $categoryId = null): array
     {
-        // Dummy categories for now (replace with DB query later)
-        $categories = $this->menuCategoryRepository->getActiveCategories();
+        $role = $this->resolveUserRole($user);
+        $items = $this->menuItemRepository->getItemsForRole($role, $categoryId);
 
-        return $categories;
+        return MenuItemResource::collection($items)->resolve();
+    }
+
+    /**
+     * Get menu categories filtered by role.
+     */
+    public function getMenuCategories(?User $user = null): array
+    {
+        $role = $this->resolveUserRole($user);
+        $categories = $this->menuCategoryRepository->getCategoriesForRole($role);
+
+        return MenuCategoryResource::collection($categories)->resolve();
     }
 }

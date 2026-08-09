@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MenuItem\StoreMenuItemRequest;
+use App\Http\Requests\MenuItem\UpdateMenuItemRequest;
 use App\Interfaces\Repositories\MenuCategoryRepositoryInterface;
 use App\Interfaces\Repositories\MenuItemRepositoryInterface;
+use App\Models\MenuItem;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -11,47 +14,25 @@ use Inertia\Inertia;
 
 class MenuItemController extends Controller
 {
-    protected MenuItemRepositoryInterface $itemRepository;
-
-    protected MenuCategoryRepositoryInterface $categoryRepository;
-
-    protected ImageUploadService $imageUploadService;
-
     public function __construct(
-        MenuItemRepositoryInterface $itemRepository,
-        MenuCategoryRepositoryInterface $categoryRepository,
-        ImageUploadService $imageUploadService
-    ) {
-        $this->itemRepository = $itemRepository;
-        $this->categoryRepository = $categoryRepository;
-        $this->imageUploadService = $imageUploadService;
-    }
+        protected MenuItemRepositoryInterface $itemRepository,
+        protected MenuCategoryRepositoryInterface $categoryRepository,
+        protected ImageUploadService $imageUploadService
+    ) {}
 
     public function index()
     {
-        Gate::authorize('admin');
+        Gate::authorize('viewAny', MenuItem::class);
 
-        return Inertia::render('MenuItems/Index', [
+        return Inertia::render('Menu/Index', [
             'items' => $this->itemRepository->getItemsWithCategory(),
             'categories' => $this->categoryRepository->getActiveCategories(),
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreMenuItemRequest $request)
     {
-        Gate::authorize('admin');
-
-        $validated = $request->validate([
-            'category_id' => 'required|exists:menu_categories,id',
-            'name' => 'required|string|max:80',
-            'description' => 'nullable|string|max:200',
-            'base_price' => 'required|numeric|min:0',
-            'tax_inclusive' => 'required|boolean',
-            'prep_time_min' => 'required|integer|min:1|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'is_available' => 'required|boolean',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
+        $validated = $request->validated();
 
         if ($request->hasFile('image')) {
             $validated['image_url'] = $this->imageUploadService->uploadMenuItemImage($request->file('image'));
@@ -62,24 +43,15 @@ class MenuItemController extends Controller
         return redirect()->back()->with('message', 'Menu item created successfully.');
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateMenuItemRequest $request, int $id)
     {
-        Gate::authorize('admin');
-
-        $validated = $request->validate([
-            'category_id' => 'required|exists:menu_categories,id',
-            'name' => 'required|string|max:80',
-            'description' => 'nullable|string|max:200',
-            'base_price' => 'required|numeric|min:0',
-            'tax_inclusive' => 'required|boolean',
-            'prep_time_min' => 'required|integer|min:1|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-            'is_available' => 'required|boolean',
-            'sort_order' => 'nullable|integer|min:0',
-        ]);
-
         $item = $this->itemRepository->find($id);
-        $oldImageUrl = $item?->image_url;
+        if (! $item) {
+            abort(404);
+        }
+
+        $validated = $request->validated();
+        $oldImageUrl = $item->image_url;
 
         if ($request->hasFile('image')) {
             $validated['image_url'] = $this->imageUploadService->uploadMenuItemImage($request->file('image'));
@@ -93,12 +65,32 @@ class MenuItemController extends Controller
         return redirect()->back()->with('message', 'Menu item updated successfully.');
     }
 
-    public function destroy($id)
+    public function toggleAvailability(Request $request, int $id)
     {
-        Gate::authorize('admin');
-
         $item = $this->itemRepository->find($id);
-        if ($item && $item->image_url) {
+        if (! $item) {
+            abort(404);
+        }
+
+        Gate::authorize('toggleAvailability', $item);
+
+        $this->itemRepository->update($id, [
+            'is_available' => ! $item->is_available,
+        ]);
+
+        return redirect()->back()->with('message', 'Menu item availability updated successfully.');
+    }
+
+    public function destroy(int $id)
+    {
+        $item = $this->itemRepository->find($id);
+        if (! $item) {
+            abort(404);
+        }
+
+        Gate::authorize('delete', $item);
+
+        if ($item->image_url) {
             $this->imageUploadService->deleteMenuItemImage($item->image_url);
         }
 

@@ -7,4 +7,6 @@ interface MenuCategoryRepositoryInterface extends RepositoryInterface
     public function getActiveCategories();
 
     public function getCategoriesWithItemCount();
+
+    public function getCategoriesForRole(string $role);
 }

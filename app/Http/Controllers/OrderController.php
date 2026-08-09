@@ -3,49 +3,45 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\MenuItem;
-use App\Models\TableSession;
+use App\Services\NotificationService;
+use App\Services\OrderTransitionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class OrderController extends Controller
 {
-    public function store(Request $request)
+    public function __construct(
+        protected OrderTransitionService $transitionService
+    ) {}
+
+    public function transition(Request $request, Order $order)
     {
-        $request->validate([
-            'table_session_id' => 'required|exists:table_sessions,id',
-            'items' => 'required|array',
-            'items.*.menu_item_id' => 'required|exists:menu_items,id',
-            'items.*.quantity' => 'required|integer|min:1',
+        Gate::authorize('transition', $order);
+
+        $validated = $request->validate([
+            'status' => 'required|string|in:pending,accepted,preparing,ready,served,completed,cancelled',
         ]);
 
-        $session = TableSession::find($request->table_session_id);
-        if (! $session || $session->status !== 'open') {
-            return response()->json(['error' => 'Invalid table session'], 400);
-        }
+        $updatedOrder = $this->transitionService->transition($order, $validated['status']);
 
-        $order = Order::create([
-            'table_session_id' => $session->id,
+        // Dispatch notifications to waiter & customer
+        app(NotificationService::class)->notifyRole('waiter', 'order_status_updated', $order->session_id, [
+            'order_id' => $order->id,
+            'status' => $validated['status'],
+        ]);
+        app(NotificationService::class)->notifyRole('customer', 'order_status_updated', $order->session_id, [
+            'order_id' => $order->id,
+            'status' => $validated['status'],
         ]);
 
-        foreach ($request->items as $item) {
-            $menuItem = MenuItem::find($item['menu_item_id']);
-            if (! $menuItem) continue;
-
-            $unitPrice = $menuItem->price;
-            $quantity = $item['quantity'];
-
-            $orderItem = OrderItem::create([
-                'order_id' => $order->id,
-                'menu_item_id' => $menuItem->id,
-                'quantity' => $quantity,
-                'unit_price' => $unitPrice,
+        if ($request->wantsJson()) {
+            return response()->json([
+                'ok' => true,
+                'order_id' => $updatedOrder->id,
+                'status' => $updatedOrder->status,
             ]);
         }
 
-        return response()->json([
-            'order_id' => $order->id,
-            'status' => 'created',
-        ]);
+        return redirect()->back()->with('message', "Order #{$order->id} status updated to {$validated['status']}.");
     }
 }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps<{
@@ -31,39 +31,26 @@ const scrollToCategory = () => {
 </script>
 
 <template>
-
     <WebLayout title="Menu categories">
-        <pre>{{ categories }}</pre>
-        <div class="relative min-h-screen overflow-hidden bg-[#D2A679]">
-
-            <section id="menu-categories" class="bg-white py-12">
+        <div class="relative min-h-screen overflow-hidden">
+            <section id="menu-categories" class="py-12">
                 <div class="mx-auto max-w-7xl px-4">
                     <div class="mb-8">
-                        <h2 class="text-2xl font-bold text-gray-900">
+                        <h2 class="text-2xl font-bold text-gray-200">
                             Food Categories
                         </h2>
-                        <p class="mt-1 text-sm text-gray-600">
+                        <p class="mt-1 text-sm text-gray-300">
                             Choose a category
                         </p>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                        <article
-                            v-for="category in categories"
-                            :key="category.title"
-                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
-                        >
+                        <article v-for="category in categories" :key="category.name"
+                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                             <div class="h-48 bg-gray-100">
-                                <img
-                                    v-if="category.image"
-                                    :src="category.image"
-                                    :alt="category.title"
-                                    class="h-full w-full object-cover"
-                                />
-                                <div
-                                    v-else
-                                    class="flex h-full w-full items-center justify-center text-gray-400"
-                                >
+                                <img v-if="category.image" :src="category.image" :alt="category.name"
+                                    class="h-full w-full object-cover" />
+                                <div v-else class="flex h-full w-full items-center justify-center text-gray-400">
                                     No image
                                 </div>
                             </div>
@@ -76,12 +63,10 @@ const scrollToCategory = () => {
                                     {{ category.description }}
                                 </p>
 
-<Link
-                                :href="route('menu')"
-                                class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
-                            >
-                                View
-                            </Link>
+                                <Link :href="route('menu')"
+                                    class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800">
+                                    View
+                                </Link>
                             </div>
                         </article>
                     </div>

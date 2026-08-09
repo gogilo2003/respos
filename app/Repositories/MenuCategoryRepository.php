@@ -25,4 +25,15 @@ class MenuCategoryRepository extends BaseRepository implements MenuCategoryRepos
             ->orderBy('sort_order')
             ->get();
     }
+
+    public function getCategoriesForRole(string $role)
+    {
+        $query = $this->model->newQuery();
+
+        if (! in_array($role, ['admin', 'manager'], true)) {
+            $query->where('is_active', true);
+        }
+
+        return $query->orderBy('sort_order')->get();
+    }
 }

@@ -20,7 +20,19 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [x] `MenuItemRepository`
 - [x] `TableRepository`
 - [/] `OrderRepository`
+    - [ ] Create OrderRepositoryInterface
+    - [ ] Implement OrderRepository with Eloquent
+    - [ ] Add relationship methods to Order model
+    - [ ] Write Pest tests for OrderRepository
+    - [ ] Create OrderRepositoryInterface
+    - [ ] Implement OrderRepository with Eloquent
+    - [ ] Add relationship methods to Order model
+    - [ ] Write Pest tests for OrderRepository
 - [ ] `BillRepository`
+    - [ ] Create BillRepositoryInterface
+    - [ ] Implement BillRepository with Eloquent
+    - [ ] Add relationship methods to Bill model
+    - [ ] Write Pest tests for BillRepository
 
 ## Milestone 2: Authentication & User Management (Admin + Staff)
 - [x] Staff Login/Auth implementation (Supports email/username and password_hash).
@@ -47,15 +59,19 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 
 ## Milestone 6: Waiter Interface
 - [x] Waiter Dashboard (Table grid).
-- [ ] Manual order entry for waiters.
-- [ ] Assistance request handling.
+- [x] Manual order entry for waiters.
+- [x] Assistance request handling.
 
 ##
 # Milestone 7: Kitchen Interface
 - [x] Kitchen Dashboard (Order queue)
 - [x] Item-level status updates (Accepted → Preparing → Ready)
 - [x] SLA timestamp tracking [timestamps stored in OrderItem]
-- [ ] Real-time polling / synchronization (Frontend)
+- [/] Real-time polling / synchronization (Frontend)
+    - [ ] Implement frontend polling mechanism using Vue composable
+    - [ ] Create backend API endpoint for fetching order status
+    - [ ] Handle pagination and error states
+    - [ ] Write pest tests for polling functionality
 
 ## Milestone 8: Cashier, Billing & Payments (Cash Only)
 - [ ] Bill Generation (Served items only).
@@ -69,9 +85,9 @@ This TODO list tracks the progress of the Phase 1 (Cash-First Release) implement
 - [ ] Real-time UI listeners.
 
 ## Milestone 10: Reporting, Reconciliation & Admin Polish
-- [ ] Sales Reports & Analytics.
-- [ ] End-of-Day Cash Reconciliation.
-- [ ] Audit Logging for sensitive actions.
+- [/] Sales Reports & Analytics.
+- [/] End-of-Day Cash Reconciliation.
+- [/] Audit Logging for sensitive actions.
 
 ## Milestone 11: Testing, Error Handling, Polish & Deployment
 - [ ] Write Pest Feature Tests for critical flows.

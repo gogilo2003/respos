@@ -2,7 +2,16 @@
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+interface NavigationItem {
+    key: string;
+    label: string;
+    routeName: string;
+    url: string;
+    activePattern: string;
+    shortLabel: string;
+}
 
 const isCollapsed = ref(false);
 const isOpen = ref(false);
@@ -22,7 +31,11 @@ defineExpose({
     isCollapsed,
 });
 
-const appName = ref(usePage().props.appName || 'Laravel');
+const page = usePage();
+const appName = computed(() => (page.props.appName as string) || 'Laravel');
+const navigationMenu = computed<NavigationItem[]>(
+    () => (page.props.navigationMenu as NavigationItem[]) || [],
+);
 </script>
 
 <template>
@@ -62,7 +75,9 @@ const appName = ref(usePage().props.appName || 'Laravel');
                         type="button"
                         @click="toggle"
                         class="inline-flex items-center justify-center rounded-md p-2 text-gray-300 transition duration-150 ease-in-out hover:bg-gray-700 hover:text-white focus:bg-gray-700 focus:text-white focus:outline-none"
-                        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+                        :aria-label="
+                            isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'
+                        "
                         :aria-expanded="!isCollapsed"
                     >
                         <svg
@@ -85,55 +100,20 @@ const appName = ref(usePage().props.appName || 'Laravel');
                     :class="isCollapsed ? 'items-center pl-0' : ''"
                 >
                     <NavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
-                        :title="isCollapsed ? 'Dashboard' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
+                        v-for="item in navigationMenu"
+                        :key="item.key"
+                        :href="item.url"
+                        :active="route().current(item.activePattern)"
+                        :title="isCollapsed ? item.label : undefined"
+                        :class="
+                            isCollapsed ? 'w-10 justify-center !pl-0 !pr-0' : ''
+                        "
                     >
-                        <span v-if="!isCollapsed">Dashboard</span>
-                        <span v-else class="text-lg font-bold">D</span>
+                        <span v-if="!isCollapsed">{{ item.label }}</span>
+                        <span v-else class="text-lg font-bold">{{
+                            item.shortLabel
+                        }}</span>
                     </NavLink>
-                    <NavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('users')"
-                        :active="route().current('users*')"
-                        :title="isCollapsed ? 'Users' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
-                    >
-                        <span v-if="!isCollapsed">Users</span>
-                        <span v-else class="text-lg font-bold">U</span>
-                    </NavLink>
-                    <NavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('menu-categories')"
-                        :active="route().current('menu-categories*')"
-                        :title="isCollapsed ? 'Menu Categories' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
-                    >
-                        <span v-if="!isCollapsed">Menu Categories</span>
-                        <span v-else class="text-lg font-bold">C</span>
-                    </NavLink>
-                    <NavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('menu-items')"
-                        :active="route().current('menu-items*')"
-                        :title="isCollapsed ? 'Menu Items' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
-                    >
-                        <span v-if="!isCollapsed">Menu Items</span>
-                        <span v-else class="text-lg font-bold">M</span>
-                    </NavLink>
-                    <NavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('tables')"
-                        :active="route().current('tables*')"
-                        :title="isCollapsed ? 'Tables' : undefined"
-                        :class="isCollapsed ? 'w-10 justify-center !pr-0 !pl-0' : ''"
-                    >
-                        <span v-if="!isCollapsed">Tables</span>
-                        <span v-else class="text-lg font-bold">T</span>
-                    </NavLink>
-                    <!-- Add more navigation links here -->
                 </nav>
             </div>
         </div>
@@ -200,45 +180,14 @@ const appName = ref(usePage().props.appName || 'Laravel');
             <div class="mt-5 h-0 flex-1 overflow-y-auto">
                 <nav class="space-y-1 px-2">
                     <ResponsiveNavLink
-                        :href="route('dashboard')"
-                        :active="route().current('dashboard')"
+                        v-for="item in navigationMenu"
+                        :key="item.key"
+                        :href="item.url"
+                        :active="route().current(item.activePattern)"
                         @click="close"
                     >
-                        Dashboard
+                        {{ item.label }}
                     </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('users')"
-                        :active="route().current('users*')"
-                        @click="close"
-                    >
-                        Users
-                    </ResponsiveNavLink>
-                    <ResponsiveNavLink
-                        v-if="$page.props.auth.user.role === 'admin'"
-                        :href="route('menu-categories')"
-                        :active="route().current('menu-categories*')"
-                        @click="close"
-                    >
-                        Menu Ctegories
-                    </ResponsiveNavLink>
-<ResponsiveNavLink
-                            v-if="$page.props.auth.user.role === 'admin'"
-                            :href="route('menu-items')"
-                            :active="route().current('menu-items*')"
-                            @click="close"
-                        >
-                            Menu Items
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink
-                            v-if="$page.props.auth.user.role === 'admin'"
-                            :href="route('tables')"
-                            :active="route().current('tables*')"
-                            @click="close"
-                        >
-                            Tables
-                        </ResponsiveNavLink>
-                        <!-- Add more navigation links here -->
                 </nav>
             </div>
         </div>

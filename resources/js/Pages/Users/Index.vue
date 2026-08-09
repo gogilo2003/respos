@@ -8,7 +8,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import type { Role, UserListItem as User } from '@/interfaces/user';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
+import { Head, router, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const props = defineProps<{
@@ -60,6 +60,16 @@ const submit = () => {
             onSuccess: () => closeModal(),
         });
     }
+};
+
+const toggleUserStatus = (user: User) => {
+    router.patch(
+        route('users.toggle-status', user.id),
+        {},
+        {
+            preserveScroll: true,
+        },
+    );
 };
 
 const closeModal = () => {
@@ -146,20 +156,18 @@ const deleteUser = () => {
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4">
-                                        <span
+                                        <button
+                                            @click="toggleUserStatus(user)"
+                                            class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition"
                                             :class="
                                                 user.is_active
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                                                    : 'bg-red-100 text-red-800 hover:bg-red-200'
                                             "
-                                            class="inline-flex rounded-full px-2 text-xs font-semibold leading-5"
                                         >
-                                            {{
-                                                user.is_active
-                                                    ? 'Active'
-                                                    : 'Inactive'
-                                            }}
-                                        </span>
+                                            <span class="h-1.5 w-1.5 rounded-full" :class="user.is_active ? 'bg-green-600' : 'bg-red-600'"></span>
+                                            {{ user.is_active ? 'Active' : 'Suspended' }}
+                                        </button>
                                     </td>
                                     <td
                                         class="space-x-2 whitespace-nowrap px-6 py-4 text-sm font-medium"
@@ -169,6 +177,12 @@ const deleteUser = () => {
                                             class="text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit
+                                        </button>
+                                        <button
+                                            @click="toggleUserStatus(user)"
+                                            class="text-amber-600 hover:text-amber-900"
+                                        >
+                                            {{ user.is_active ? 'Suspend' : 'Activate' }}
                                         </button>
                                         <button
                                             @click="
