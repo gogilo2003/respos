@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\NavigationMenuService;
+use App\Services\PermissionRegistry;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,6 +43,9 @@ class HandleInertiaRequests extends Middleware
                     'email' => $request->user()->email,
                     'username' => $request->user()->username,
                     'role' => $request->user()->role?->name,
+                    'permissions' => $request->user()->hasRole('admin')
+                        ? array_column(app(PermissionRegistry::class)->getAllPermissions(), 'key')
+                        : ($request->user()->role?->permissions ?? app(PermissionRegistry::class)->getDefaultPermissionsForRole($request->user()->role?->name ?? '')),
                 ] : null,
             ],
             'navigationMenu' => $this->navigationMenuService->getNavigationMenu($request->user()),

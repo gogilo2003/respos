@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
+use App\Services\PermissionRegistry;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -12,6 +13,8 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        $registry = new PermissionRegistry;
+
         $roles = [
             'customer',
             'waiter',
@@ -21,8 +24,12 @@ class RoleSeeder extends Seeder
             'admin',
         ];
 
-        foreach ($roles as $role) {
-            Role::firstOrCreate(['name' => $role]);
+        foreach ($roles as $roleName) {
+            $permissions = $registry->getDefaultPermissionsForRole($roleName);
+
+            $role = Role::firstOrNew(['name' => $roleName]);
+            $role->permissions = $permissions;
+            $role->save();
         }
     }
 }

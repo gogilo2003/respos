@@ -14,6 +14,7 @@ use App\Http\Controllers\MenuItemController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\TableSessionController;
 use App\Http\Controllers\UserController;
@@ -37,13 +38,21 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::prefix('users')
     ->name('users')
-    ->middleware(['auth', 'verified', 'role:admin'])
+    ->middleware(['auth', 'verified', 'permission:users.index'])
     ->group(function () {
         Route::get('/', [UserController::class, 'index']);
         Route::post('/', [UserController::class, 'store'])->name('.store');
         Route::patch('/{user}', [UserController::class, 'update'])->name('.update');
         Route::patch('/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('.toggle-status');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('.destroy');
+    });
+
+Route::prefix('roles')
+    ->name('roles')
+    ->middleware(['auth', 'verified', 'permission:roles.index'])
+    ->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('.index');
+        Route::patch('/{role}', [RoleController::class, 'update'])->name('.update');
     });
 
 Route::prefix('menu-categories')

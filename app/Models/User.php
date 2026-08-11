@@ -69,4 +69,16 @@ class User extends Authenticatable implements MustVerifyEmailContract
     {
         return $this->role && $this->role->name === $role;
     }
+
+    /**
+     * Check if user has a specific permission.
+     */
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->hasRole('admin')) {
+            return true; // Super-Admin override
+        }
+
+        return $this->role ? $this->role->hasPermission($permission) : false;
+    }
 }
