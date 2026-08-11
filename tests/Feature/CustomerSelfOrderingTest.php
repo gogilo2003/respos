@@ -48,3 +48,29 @@ test('customer can place a self-order with modifiers and special instructions', 
         'special_instructions' => 'No onions please',
     ]);
 });
+
+test('customer ordering from web browser without scanned QR can select table number during checkout', function () {
+    $table = RestaurantTable::factory()->create(['is_active' => true]);
+    $menuItem = MenuItem::factory()->create(['base_price' => 12.00]);
+
+    $response = $this->postJson(route('cart.complete'), [
+        'table_id' => $table->id,
+        'items' => [
+            [
+                'menu_item_id' => $menuItem->id,
+                'quantity' => 1,
+            ],
+        ],
+    ]);
+
+    $response->assertStatus(200)
+        ->assertJsonPath('ok', true);
+
+    $this->assertDatabaseHas('table_sessions', [
+        'table_id' => $table->id,
+        'status' => 'open',
+    ]);
+    $this->assertDatabaseHas('orders', [
+        'placed_by_role' => 'customer',
+    ]);
+});

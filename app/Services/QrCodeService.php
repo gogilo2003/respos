@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\QrCode;
 use App\Models\RestaurantTable;
+use App\Models\TableSession;
+use App\Repositories\TableSessionRepository;
 use Illuminate\Support\Str;
 
 class QrCodeService
@@ -110,6 +112,28 @@ class QrCodeService
     <text x="150" y="310" font-family="sans-serif" font-size="10" font-weight="bold" fill="#2563eb" text-anchor="middle">{$encodedUrl}</text>
 </svg>
 SVG;
+    }
+
+    public function getOrCreateSession(int $tableId, string $openSource = 'customer_qr', ?int $openedBy = null): TableSession
+    {
+        $sessionRepository = app(TableSessionRepository::class);
+        $activeSession = $sessionRepository->findActiveByTable($tableId);
+
+        if ($activeSession) {
+            return $activeSession;
+        }
+
+        $token = Str::random(32);
+        $expiresAt = now()->addHours(6);
+
+        return $sessionRepository->openSession([
+            'table_id' => $tableId,
+            'session_token' => $token,
+            'open_source' => $openSource,
+            'status' => 'open',
+            'opened_by' => $openedBy,
+            'token_expires_at' => $expiresAt,
+        ]);
     }
 
     private function extractTableId(string $payload): int

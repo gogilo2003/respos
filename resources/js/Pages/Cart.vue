@@ -1,18 +1,40 @@
 <script lang="ts" setup>
 import WebLayout from '@/Layouts/WebLayout.vue';
 import { useCartStore } from '@/Stores/cartStore';
+import { formatCurrency } from '@/utils/currency';
 import { Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
 
-import { formatCurrency } from '@/utils/currency';
+interface TableOption {
+    id: number;
+    table_number: string;
+    location?: string;
+}
+
+interface ActiveSessionData {
+    id: number;
+    table_id: number;
+    table_number: string;
+}
+
+const props = defineProps<{
+    tables?: TableOption[];
+    activeSession?: ActiveSessionData | null;
+}>();
 
 const cartStore = useCartStore();
+const selectedTableId = ref<number | ''>(props.activeSession?.table_id || '');
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
 
 const handleCheckout = async () => {
     if (cartStore.isEmpty) return;
+
+    if (!props.activeSession && !selectedTableId.value) {
+        submitError.value = 'Please select your table number before submitting your order.';
+        return;
+    }
 
     isSubmitting.value = true;
     submitError.value = null;
@@ -25,9 +47,17 @@ const handleCheckout = async () => {
             special_instructions: item.special_instructions || '',
         }));
 
-        const res = await axios.post(route('cart.complete'), {
+        const payload: Record<string, any> = {
             items: itemsPayload,
-        });
+        };
+
+        if (props.activeSession?.id) {
+            payload.session_id = props.activeSession.id;
+        } else if (selectedTableId.value) {
+            payload.table_id = selectedTableId.value;
+        }
+
+        const res = await axios.post(route('cart.complete'), payload);
 
         if (res.data?.ok && res.data?.track_url) {
             cartStore.clearCart();
@@ -38,7 +68,7 @@ const handleCheckout = async () => {
     } catch (e: any) {
         submitError.value =
             e?.response?.data?.message ||
-            'Failed to place order. Please scan table QR code if not already checked in.';
+            'Failed to place order. Please select your table number or scan table QR code.';
     } finally {
         isSubmitting.value = false;
     }
@@ -58,6 +88,48 @@ const handleClearCart = () => {
                 <h1 class="mb-6 text-3xl font-bold text-gray-900">
                     Your Shopping Cart
                 </h1>
+
+                <!-- Active Session Banner or Table Selector -->
+                <div v-if="!cartStore.isEmpty" class="mb-6 rounded-xl bg-white p-5 shadow-sm border border-gray-200">
+                    <div v-if="props.activeSession" class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-800 font-bold text-base">
+                                🪑
+                            </span>
+                            <div>
+                                <h3 class="text-sm font-bold text-gray-900">Seated at Table {{ props.activeSession.table_number }}</h3>
+                                <p class="text-xs text-gray-500">Active table session in progress</p>
+                            </div>
+                        </div>
+                        <span class="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">Active Session</span>
+                    </div>
+
+                    <div v-else class="space-y-2">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-lg">📍</span>
+                            <label for="table_select" class="text-sm font-bold text-gray-900">
+                                Select Your Table Number:
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500">
+                            No QR code scanned. Choose your table number to route your order to the kitchen.
+                        </p>
+                        <select
+                            id="table_select"
+                            v-model="selectedTableId"
+                            class="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm font-medium"
+                        >
+                            <option value="" disabled>-- Select a Table --</option>
+                            <option
+                                v-for="table in props.tables"
+                                :key="table.id"
+                                :value="table.id"
+                            >
+                                Table {{ table.table_number }} {{ table.location ? `(${table.location})` : '' }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
 
                 <div v-if="submitError" class="mb-6 rounded-lg bg-red-50 p-4 border border-red-200 text-sm text-red-700">
                     {{ submitError }}

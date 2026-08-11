@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\MenuItem;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\RestaurantTable;
 use App\Models\TableSession;
 use App\Services\MenuService;
 use App\Services\NotificationService;
+use App\Services\QrCodeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -47,15 +49,42 @@ class HomeController extends Controller
 
     public function cart()
     {
-        return Inertia::render('Cart');
+        $tables = RestaurantTable::where('is_active', true)
+            ->orderBy('table_number')
+            ->get(['id', 'table_number', 'location']);
+
+        $activeSessionId = session('active_session_id');
+        $activeSession = null;
+        if ($activeSessionId) {
+            $session = TableSession::with('table')->find($activeSessionId);
+            if ($session && $session->status === 'open') {
+                $activeSession = [
+                    'id' => $session->id,
+                    'table_id' => $session->table_id,
+                    'table_number' => $session->table?->table_number ?? 'N/A',
+                ];
+            }
+        }
+
+        return Inertia::render('Cart', [
+            'tables' => $tables,
+            'activeSession' => $activeSession,
+        ]);
     }
 
     public function completeOrder(Request $request)
     {
         $sessionId = $request->input('session_id') ?: session('active_session_id');
+        $tableId = $request->input('table_id');
+
+        if (! $sessionId && $tableId) {
+            $session = app(QrCodeService::class)->getOrCreateSession((int) $tableId, 'customer_qr');
+            $sessionId = $session->id;
+            session(['active_session_id' => $sessionId]);
+        }
 
         if (! $sessionId) {
-            return response()->json(['message' => 'No active table session found. Please scan table QR code first.'], 422);
+            return response()->json(['message' => 'No active table session found. Please select a table or scan table QR code.'], 422);
         }
 
         $request->validate([
