@@ -42,6 +42,7 @@ return new class extends Migration
             $table->timestamp('first_ready_at')->nullable();
             $table->timestamp('fully_served_at')->nullable();
             $table->string('notes', 255)->nullable();
+            $table->timestamp('ready_at')->nullable();
             $table->timestamps();
 
             $table->foreign('session_id')->references('id')->on('table_sessions')->cascadeOnDelete();
