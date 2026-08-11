@@ -26,7 +26,7 @@ class DashboardService
 
         $role = $user->role?->name;
 
-        return match ($role) {
+        $data = match ($role) {
             'admin', 'manager' => [
                 'component' => 'Dashboard/Admin',
                 'props' => $this->adminDashboardService->getDashboardData(),
@@ -39,6 +39,9 @@ class DashboardService
                 'component' => 'Waiter/Dashboard',
                 'props' => [
                     'statistics' => $this->waiterStatisticsService->getDashboardStatistics(),
+                    'tables' => [],
+                    'orders'=>[],
+                    'assistance_requests'=>[]
                 ],
             ],
             'kitchen' => [
@@ -49,5 +52,7 @@ class DashboardService
                 'redirect' => route('menu'),
             ],
         };
+        // dd($data);
+        return $data;
     }
 }

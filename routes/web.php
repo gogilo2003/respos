@@ -20,6 +20,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\WaiterController;
 use Illuminate\Support\Facades\Route;
 
+
 Route::get('/', [HomeController::class, 'welcome']);
 
 // Optional split pages (same landing data)

@@ -34,7 +34,7 @@ const scrollToCategory = () => {
     <WebLayout title="Menu categories">
         <div class="relative min-h-screen overflow-hidden">
             <section id="menu-categories" class="py-12">
-                <div class="mx-auto max-w-7xl px-4">
+                <div class="mx-auto  px-4">
                     <div class="mb-8">
                         <h2 class="text-2xl font-bold text-gray-200">
                             Food Categories

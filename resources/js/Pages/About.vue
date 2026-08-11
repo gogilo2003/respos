@@ -27,7 +27,7 @@ const features = [
     <WebLayout title="About ResPos">
         <div class="min-h-screen text-gray-50">
             <header class="py-16">
-                <div class="mx-auto max-w-7xl px-4">
+                <div class="mx-auto px-4">
                     <h1 class="text-4xl font-extrabold text-gray-100">
                         About ResPos
                     </h1>

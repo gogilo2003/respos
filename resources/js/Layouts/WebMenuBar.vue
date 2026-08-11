@@ -45,7 +45,7 @@ onUnmounted(() => {
         height so content doesn't start out hidden behind it.
     -->
     <header class="fixed inset-x-0 top-0 z-50 flex justify-center px-4">
-        <div class="flex w-full max-w-7xl items-center justify-between rounded-full px-8 py-3 transition-all duration-300"
+        <div class="flex w-full items-center justify-between rounded-full px-8 py-3 transition-all duration-300"
             :class="isScrolled
                 ? 'bg-gray-800/90 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10'
                 : 'bg-transparent'">

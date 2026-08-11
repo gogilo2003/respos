@@ -69,7 +69,7 @@ const approve = (id: number) => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
                 <!-- Submit Reconciliation Form -->
                 <div class="overflow-hidden bg-white p-6 shadow-sm sm:rounded-lg border border-gray-200">
                     <h3 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3 mb-4">

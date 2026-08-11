@@ -222,7 +222,7 @@ const formatPrice = (price: string | number) => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto px-4 sm:px-6 lg:px-8">
                 <!-- Filters Bar -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div class="flex flex-col sm:flex-row items-center gap-3 w-full max-w-lg">

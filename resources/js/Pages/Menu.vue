@@ -43,7 +43,7 @@ const addToCart = async (item: { id?: number }) => {
 <template>
     <WebLayout title="Menu">
         <div class="min-h-screen">
-            <div class="mx-auto max-w-7xl px-4 py-10">
+            <div class="mx-auto px-4 py-10">
                 <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-200">

@@ -19,7 +19,7 @@ defineProps<{
         </div>
     </div>
     <footer class="bg-gray-900 text-gray-50 py-8 z-20 relative">
-        <div class="mx-auto max-w-7xl px-4">
+        <div class="mx-auto px-4">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div class="text-sm font-semibold">
                     © {{ new Date().getFullYear() }} ResPos. All rights

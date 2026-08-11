@@ -62,7 +62,7 @@ const openDetails = (log: AuditLog) => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+            <div class="mx-autopx-4 sm:px-6 lg:px-8 space-y-6">
                 <!-- Search Filter Bar -->
                 <div class="overflow-hidden bg-white p-4 shadow-sm sm:rounded-lg border border-gray-200 flex items-center justify-between">
                     <div class="w-full max-w-md">

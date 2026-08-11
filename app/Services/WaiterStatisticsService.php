@@ -48,6 +48,7 @@ class WaiterStatisticsService
             'ready_orders' => $readyOrders,
             'completed_today' => $completedToday,
             'assistance_requests' => $assistanceRequests,
+            'tables'=>[]
         ];
     }
 }

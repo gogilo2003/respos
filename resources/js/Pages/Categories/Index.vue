@@ -120,7 +120,7 @@ const deleteCategory = () => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto  px-4 sm:px-6 lg:px-8">
                 <!-- Search & Filters Bar -->
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div class="relative max-w-xs w-full">
@@ -129,6 +129,8 @@ const deleteCategory = () => {
                             type="text"
                             placeholder="Search categories..."
                             class="w-full pl-9 text-sm"
+
+                            
                         />
                         <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
                     </div>
