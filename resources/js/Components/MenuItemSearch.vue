@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { formatCurrency } from '@/utils/currency';
-import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 interface MenuItem {
     id: number;
@@ -31,15 +31,18 @@ const query = ref(props.modelValue ?? '');
 const activeCategoryId = ref<number | ''>('');
 const selectedIndex = ref(0);
 
-watch(() => props.modelValue, (value) => {
-    query.value = value ?? '';
-});
+watch(
+    () => props.modelValue,
+    (value) => {
+        query.value = value ?? '';
+    },
+);
 
 watch(
     () => [query.value, activeCategoryId.value] as const,
     () => {
         selectedIndex.value = 0;
-    }
+    },
 );
 
 const filteredMenuItems = computed(() => {
@@ -47,7 +50,11 @@ const filteredMenuItems = computed(() => {
     let items = props.menuItems;
 
     if (activeCategoryId.value !== '') {
-        items = items.filter((item) => (item.category_id ?? item.category?.id) === activeCategoryId.value);
+        items = items.filter(
+            (item) =>
+                (item.category_id ?? item.category?.id) ===
+                activeCategoryId.value,
+        );
     }
 
     if (!term) {
@@ -79,7 +86,10 @@ const setCategory = (categoryId: number | '') => {
 const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        selectedIndex.value = Math.min(selectedIndex.value + 1, Math.max(visibleItems.value.length - 1, 0));
+        selectedIndex.value = Math.min(
+            selectedIndex.value + 1,
+            Math.max(visibleItems.value.length - 1, 0),
+        );
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
         selectedIndex.value = Math.max(selectedIndex.value - 1, 0);
@@ -116,11 +126,18 @@ onBeforeUnmount(() => {
             />
         </div>
 
-        <div v-if="categories && categories.length > 0" class="flex flex-wrap gap-2">
+        <div
+            v-if="categories && categories.length > 0"
+            class="flex flex-wrap gap-2"
+        >
             <button
                 type="button"
                 class="rounded-full border px-3 py-1.5 text-sm font-medium transition"
-                :class="activeCategoryId === '' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
+                :class="
+                    activeCategoryId === ''
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                "
                 @click="setCategory('')"
             >
                 All
@@ -130,7 +147,11 @@ onBeforeUnmount(() => {
                 :key="category.id"
                 type="button"
                 class="rounded-full border px-3 py-1.5 text-sm font-medium transition"
-                :class="activeCategoryId === category.id ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
+                :class="
+                    activeCategoryId === category.id
+                        ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                        : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                "
                 @click="setCategory(category.id)"
             >
                 {{ category.name }}
@@ -143,7 +164,11 @@ onBeforeUnmount(() => {
                 :key="item.id"
                 type="button"
                 class="flex w-full items-center justify-between px-3 py-2 text-sm text-gray-700 transition"
-                :class="selectedIndex === index ? 'bg-indigo-50' : 'hover:bg-gray-50'"
+                :class="
+                    selectedIndex === index
+                        ? 'bg-indigo-50'
+                        : 'hover:bg-gray-50'
+                "
                 @click="selectItem(item)"
                 @mouseenter="selectedIndex = index"
             >

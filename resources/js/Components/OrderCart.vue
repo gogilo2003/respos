@@ -21,16 +21,14 @@ const emit = defineEmits<{
 }>();
 
 const totalQuantity = computed(() =>
-    props.items.reduce((sum, item) => sum + item.quantity, 0)
+    props.items.reduce((sum, item) => sum + item.quantity, 0),
 );
 
 const subtotal = computed(() =>
-    props.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
+    props.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
 );
 
-const formattedSubtotal = computed(() =>
-    formatCurrency(subtotal.value)
-);
+const formattedSubtotal = computed(() => formatCurrency(subtotal.value));
 </script>
 
 <template>
@@ -39,7 +37,10 @@ const formattedSubtotal = computed(() =>
             <h3 class="text-sm font-semibold text-gray-900">Your Order</h3>
         </div>
 
-        <div v-if="items.length === 0" class="p-6 text-center text-sm text-gray-500">
+        <div
+            v-if="items.length === 0"
+            class="p-6 text-center text-sm text-gray-500"
+        >
             No items in your order yet.
         </div>
 
@@ -49,8 +50,10 @@ const formattedSubtotal = computed(() =>
                 :key="item.id"
                 class="flex items-center justify-between gap-4 px-4 py-3"
             >
-                <div class="flex-1 min-w-0">
-                    <p class="truncate text-sm font-medium text-gray-900">{{ item.name }}</p>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-gray-900">
+                        {{ item.name }}
+                    </p>
                     <p class="text-xs text-gray-500">
                         {{ formatCurrency(item.unitPrice) }} each
                     </p>
@@ -59,7 +62,9 @@ const formattedSubtotal = computed(() =>
                 <QuantitySelector
                     :model-value="item.quantity"
                     :min="1"
-                    @update:model-value="emit('update:quantity', item.id, $event)"
+                    @update:model-value="
+                        emit('update:quantity', item.id, $event)
+                    "
                 />
 
                 <div class="w-24 text-right text-sm font-medium text-gray-900">
@@ -77,13 +82,19 @@ const formattedSubtotal = computed(() =>
         </div>
 
         <div v-if="items.length > 0" class="border-t border-gray-200 px-4 py-3">
-            <div class="flex items-center justify-between text-sm text-gray-600">
+            <div
+                class="flex items-center justify-between text-sm text-gray-600"
+            >
                 <span>Total Items</span>
-                <span class="font-medium text-gray-900">{{ totalQuantity }}</span>
+                <span class="font-medium text-gray-900">{{
+                    totalQuantity
+                }}</span>
             </div>
             <div class="mt-1 flex items-center justify-between text-sm">
                 <span class="font-medium text-gray-900">Subtotal</span>
-                <span class="font-semibold text-gray-900">{{ formattedSubtotal }}</span>
+                <span class="font-semibold text-gray-900">{{
+                    formattedSubtotal
+                }}</span>
             </div>
         </div>
     </div>

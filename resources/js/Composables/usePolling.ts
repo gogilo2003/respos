@@ -18,7 +18,10 @@ export interface PollingResponse {
     server_time: string;
 }
 
-export function usePolling(intervalMs: number = 8000, onUpdate?: (data: PollingResponse) => void) {
+export function usePolling(
+    intervalMs: number = 8000,
+    onUpdate?: (data: PollingResponse) => void,
+) {
     const unreadCount = ref<number>(0);
     const notifications = ref<NotificationItem[]>([]);
     const summary = ref<Record<string, number>>({});
@@ -31,7 +34,10 @@ export function usePolling(intervalMs: number = 8000, onUpdate?: (data: PollingR
         isPolling.value = true;
 
         try {
-            const url = new URL(route('api.polling.updates'), window.location.origin);
+            const url = new URL(
+                route('api.polling.updates'),
+                window.location.origin,
+            );
             if (lastPollTime.value) {
                 url.searchParams.append('since', lastPollTime.value);
             }
@@ -70,10 +76,17 @@ export function usePolling(intervalMs: number = 8000, onUpdate?: (data: PollingR
                 headers: {
                     'Content-Type': 'application/json',
                     Accept: 'application/json',
-                    'X-CSRF-TOKEN': (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content || '',
+                    'X-CSRF-TOKEN':
+                        (
+                            document.querySelector(
+                                'meta[name="csrf-token"]',
+                            ) as HTMLMetaElement
+                        )?.content || '',
                 },
             });
-            notifications.value = notifications.value.filter((n) => n.id !== id);
+            notifications.value = notifications.value.filter(
+                (n) => n.id !== id,
+            );
             if (unreadCount.value > 0) {
                 unreadCount.value--;
             }

@@ -1,6 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
 import KitchenStatusBadge from '@/Components/KitchenStatusBadge.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('KitchenStatusBadge', () => {
     it('renders the status text', () => {

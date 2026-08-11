@@ -19,7 +19,10 @@ const statusClass = (priority: string) => {
 
 <template>
     <span
-        :class="['inline-flex rounded-full px-2 text-xs font-semibold leading-5', statusClass(priority)]"
+        :class="[
+            'inline-flex rounded-full px-2 text-xs font-semibold leading-5',
+            statusClass(priority),
+        ]"
     >
         {{ priority }}
     </span>

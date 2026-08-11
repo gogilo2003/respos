@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { onBeforeUnmount, onMounted } from 'vue';
 
 interface Props {
     station: string;
@@ -32,16 +32,26 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div
+        class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+    >
         <div>
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
                 Kitchen Dashboard
             </h2>
-            <div class="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-600">
+            <div
+                class="mt-1 flex flex-wrap items-center gap-3 text-sm text-gray-600"
+            >
                 <span>Station: {{ station }}</span>
-                <span class="hidden h-4 w-px bg-gray-300 sm:inline" aria-hidden="true" />
+                <span
+                    class="hidden h-4 w-px bg-gray-300 sm:inline"
+                    aria-hidden="true"
+                />
                 <span>User: {{ userName }}</span>
-                <span class="hidden h-4 w-px bg-gray-300 sm:inline" aria-hidden="true" />
+                <span
+                    class="hidden h-4 w-px bg-gray-300 sm:inline"
+                    aria-hidden="true"
+                />
                 <span>{{ currentTime }}</span>
             </div>
         </div>

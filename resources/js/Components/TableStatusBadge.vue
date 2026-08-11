@@ -19,7 +19,10 @@ const statusClass = (status: string) => {
 
 <template>
     <span
-        :class="['inline-flex rounded-full px-2 text-xs font-semibold leading-5', statusClass(status)]"
+        :class="[
+            'inline-flex rounded-full px-2 text-xs font-semibold leading-5',
+            statusClass(status),
+        ]"
     >
         {{ status }}
     </span>

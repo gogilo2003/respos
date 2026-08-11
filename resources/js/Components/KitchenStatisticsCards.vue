@@ -45,7 +45,9 @@ const cards = computed(() => [
             class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
         >
             <p class="text-sm font-medium text-gray-500">{{ card.label }}</p>
-            <p class="mt-2 text-3xl font-bold" :class="card.color">{{ card.value }}</p>
+            <p class="mt-2 text-3xl font-bold" :class="card.color">
+                {{ card.value }}
+            </p>
         </div>
     </div>
 </template>

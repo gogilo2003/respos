@@ -20,15 +20,21 @@ const emit = defineEmits<{
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-500">Table</p>
-                <p class="mt-1 text-2xl font-bold text-gray-900">{{ tableNumber }}</p>
+                <p class="mt-1 text-2xl font-bold text-gray-900">
+                    {{ tableNumber }}
+                </p>
             </div>
             <div class="text-right">
                 <p class="text-sm font-medium text-gray-500">Capacity</p>
-                <p class="mt-1 text-lg font-semibold text-gray-900">{{ capacity }}</p>
+                <p class="mt-1 text-lg font-semibold text-gray-900">
+                    {{ capacity }}
+                </p>
             </div>
         </div>
         <div class="mt-4">
-            <span class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800">
+            <span
+                class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-800"
+            >
                 {{ status }}
             </span>
         </div>

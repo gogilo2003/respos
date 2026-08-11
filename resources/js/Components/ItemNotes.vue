@@ -15,13 +15,18 @@ const emit = defineEmits<{
 
 const internal = ref(props.modelValue ?? '');
 
-watch(() => props.modelValue, (value) => {
-    internal.value = value ?? '';
-});
+watch(
+    () => props.modelValue,
+    (value) => {
+        internal.value = value ?? '';
+    },
+);
 
 const onInput = (event: Event) => {
     const target = event.target as HTMLTextAreaElement;
-    const next = props.maxLength ? target.value.slice(0, props.maxLength) : target.value;
+    const next = props.maxLength
+        ? target.value.slice(0, props.maxLength)
+        : target.value;
     internal.value = next;
     emit('update:modelValue', next);
 };
@@ -29,7 +34,9 @@ const onInput = (event: Event) => {
 
 <template>
     <div>
-        <label v-if="label" class="block text-sm font-medium text-gray-700">{{ label }}</label>
+        <label v-if="label" class="block text-sm font-medium text-gray-700">{{
+            label
+        }}</label>
         <textarea
             :value="internal"
             rows="3"

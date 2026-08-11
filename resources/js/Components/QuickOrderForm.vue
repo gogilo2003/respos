@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { formatCurrency } from '@/utils/currency';
-import { computed, ref } from 'vue';
-import { useForm } from '@inertiajs/vue3';
-import InputError from '@/Components/InputError.vue';
 import ToastContainer from '@/Components/ToastContainer.vue';
+import { formatCurrency } from '@/utils/currency';
+import { useForm } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 interface MenuItem {
     id: number;
@@ -25,10 +24,12 @@ interface Props {
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
-    submit: [data: {
-        tableSessionId: number;
-        items: SelectedItem[];
-    }];
+    submit: [
+        data: {
+            tableSessionId: number;
+            items: SelectedItem[];
+        },
+    ];
 }>();
 
 const selectedTableId = ref<number | ''>('');
@@ -44,13 +45,13 @@ const filteredMenuItems = computed(() => {
     }
 
     return props.menuItems.filter((item) =>
-        item.name.toLowerCase().includes(query)
+        item.name.toLowerCase().includes(query),
     );
 });
 
 const addMenuItem = (item: MenuItem) => {
     const existing = selectedItems.value.find(
-        (entry) => entry.menuItemId === item.id
+        (entry) => entry.menuItemId === item.id,
     );
 
     if (existing) {
@@ -68,13 +69,13 @@ const addMenuItem = (item: MenuItem) => {
 const updateQuantity = (menuItemId: number, quantity: number) => {
     if (quantity <= 0) {
         selectedItems.value = selectedItems.value.filter(
-            (item) => item.menuItemId !== menuItemId
+            (item) => item.menuItemId !== menuItemId,
         );
         return;
     }
 
     const item = selectedItems.value.find(
-        (entry) => entry.menuItemId === menuItemId
+        (entry) => entry.menuItemId === menuItemId,
     );
 
     if (item) {
@@ -84,7 +85,7 @@ const updateQuantity = (menuItemId: number, quantity: number) => {
 
 const removeItem = (menuItemId: number) => {
     selectedItems.value = selectedItems.value.filter(
-        (item) => item.menuItemId !== menuItemId
+        (item) => item.menuItemId !== menuItemId,
     );
 };
 
@@ -149,7 +150,9 @@ const submitOrder = () => {
                 placeholder="Search menu..."
             />
 
-            <div class="mt-2 max-h-48 overflow-y-auto rounded-md border border-gray-200">
+            <div
+                class="mt-2 max-h-48 overflow-y-auto rounded-md border border-gray-200"
+            >
                 <button
                     v-for="item in filteredMenuItems"
                     :key="item.id"
@@ -180,7 +183,9 @@ const submitOrder = () => {
                     class="flex items-center justify-between rounded-md border border-gray-200 px-3 py-2"
                 >
                     <div>
-                        <p class="text-sm font-medium text-gray-900">{{ item.name }}</p>
+                        <p class="text-sm font-medium text-gray-900">
+                            {{ item.name }}
+                        </p>
                         <p class="text-xs text-gray-500">
                             {{ formatCurrency(item.unitPrice) }}
                         </p>
@@ -192,7 +197,15 @@ const submitOrder = () => {
                             :value="item.quantity"
                             min="1"
                             class="w-16 rounded-md border border-gray-300 px-2 py-1 text-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                            @input="updateQuantity(item.menuItemId, Number(($event.target as HTMLInputElement).value))"
+                            @input="
+                                updateQuantity(
+                                    item.menuItemId,
+                                    Number(
+                                        ($event.target as HTMLInputElement)
+                                            .value,
+                                    ),
+                                )
+                            "
                         />
                         <button
                             type="button"
@@ -216,7 +229,11 @@ const submitOrder = () => {
         <button
             type="submit"
             class="w-full rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-50"
-            :disabled="selectedTableId === '' || selectedItems.length === 0 || form.processing"
+            :disabled="
+                selectedTableId === '' ||
+                selectedItems.length === 0 ||
+                form.processing
+            "
         >
             {{ form.processing ? 'Submitting...' : 'Submit Order' }}
         </button>
@@ -224,4 +241,3 @@ const submitOrder = () => {
 
     <ToastContainer ref="toastRef" />
 </template>
-

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 
 const features = [
     {
@@ -22,16 +22,17 @@ const features = [
 </script>
 
 <template>
-
     <Head title="About" />
     <WebLayout title="About ResPos">
         <div class="min-h-screen text-gray-50">
             <header class="py-16">
-                <div class="mx-auto max-w-7xl px-4">
+                <div class="px-4">
                     <h1 class="text-4xl font-extrabold text-gray-100">
                         About ResPos
                     </h1>
-                    <p class="mt-3 max-w-2xl text-sm text-gray-100 sm:text-base">
+                    <p
+                        class="mt-3 max-w-2xl text-sm text-gray-100 sm:text-base"
+                    >
                         ResPos is a QR-based restaurant ordering and billing
                         system built to make operations simpler—for customers,
                         waiters, and the kitchen.
@@ -57,13 +58,24 @@ const features = [
                 </p>
 
                 <div class="social-icons">
-                    <a href="https://www.instagram.com/respos/" target="_blank" rel="noopener noreferrer">
+                    <a
+                        href="https://www.instagram.com/respos/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
                         <img src="" alt="Instagram icon" class="social-icon" />
                     </a>
 
-                    <a href="https://www.facebook.com/respos/" target="_blank" rel="noopener noreferrer">
-                        <img src="https://tse3.mm.bing.net/th/id/OIP.7Xv7HE8tc1bESoiRSrGm3gHaEl?cb=thfvnextfalcon4&rs=1&pid=ImgDetMain&o=7&rm=3"
-                            alt="Facebook icon" class="social-icon" />
+                    <a
+                        href="https://www.facebook.com/respos/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img
+                            src="https://tse3.mm.bing.net/th/id/OIP.7Xv7HE8tc1bESoiRSrGm3gHaEl?cb=thfvnextfalcon4&rs=1&pid=ImgDetMain&o=7&rm=3"
+                            alt="Facebook icon"
+                            class="social-icon"
+                        />
                     </a>
                 </div>
             </div>

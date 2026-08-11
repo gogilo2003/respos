@@ -26,10 +26,15 @@ const selected = ref(props.activeFilter ?? '');
             :key="filter.value"
             type="button"
             class="rounded-full border px-3 py-1.5 text-sm font-medium transition"
-            :class="selected === filter.value
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
-            @click="selected = filter.value; emit('update:activeFilter', filter.value)"
+            :class="
+                selected === filter.value
+                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            "
+            @click="
+                selected = filter.value;
+                emit('update:activeFilter', filter.value);
+            "
         >
             {{ filter.label }}
         </button>

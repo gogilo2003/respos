@@ -56,8 +56,10 @@ const handleAddToCart = (item: {
 <template>
     <WebLayout title="Menu">
         <div class="min-h-screen">
-            <div class="mx-auto max-w-7xl px-4 py-10">
-                <div class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div class="px-4 py-10">
+                <div
+                    class="mb-6 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"
+                >
                     <div>
                         <h2 class="text-2xl font-bold text-gray-200">
                             Food Menu
@@ -66,43 +68,75 @@ const handleAddToCart = (item: {
                             Add items to your cart
                         </p>
                     </div>
-                    <div class="text-sm text-gray-200 font-semibold bg-gray-800/80 px-3 py-1.5 rounded-full border border-gray-700">
-                        Cart items: <span class="text-yellow-400 font-bold">{{ cartStore.totalCount }}</span>
+                    <div
+                        class="rounded-full border border-gray-700 bg-gray-800/80 px-3 py-1.5 text-sm font-semibold text-gray-200"
+                    >
+                        Cart items:
+                        <span class="font-bold text-yellow-400">{{
+                            cartStore.totalCount
+                        }}</span>
                     </div>
                 </div>
 
-                <div v-if="addSuccessMessage" class="mb-6 rounded-lg bg-green-50 p-4 border border-green-200 text-sm text-green-700 font-medium">
+                <div
+                    v-if="addSuccessMessage"
+                    class="mb-6 rounded-lg border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-700"
+                >
                     {{ addSuccessMessage }}
                 </div>
 
-                <div v-if="!props.menuItems || props.menuItems.length === 0"
-                    class="rounded-2xl border border-gray-200 bg-gray-50 p-6 text-sm text-gray-600">
+                <div
+                    v-if="!props.menuItems || props.menuItems.length === 0"
+                    class="rounded-2xl border border-gray-200 bg-gray-50 p-6 text-sm text-gray-600"
+                >
                     No menu items found.
                 </div>
 
-                <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <article v-for="item in props.menuItems" :key="item.id ?? item.title"
-                        class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm flex flex-col justify-between">
+                <div
+                    v-else
+                    class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                    <article
+                        v-for="item in props.menuItems"
+                        :key="item.id ?? item.title"
+                        class="flex flex-col justify-between overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                    >
                         <div>
                             <div class="h-44 bg-gray-100">
-                                <img v-if="item.image" :src="item.image" :alt="item.title"
-                                    class="h-full w-full object-cover" />
-                                <div v-else class="flex h-full w-full items-center justify-center text-gray-400">
+                                <img
+                                    v-if="item.image"
+                                    :src="item.image"
+                                    :alt="item.title"
+                                    class="h-full w-full object-cover"
+                                />
+                                <div
+                                    v-else
+                                    class="flex h-full w-full items-center justify-center text-gray-400"
+                                >
                                     No image
                                 </div>
                             </div>
 
                             <div class="p-4">
-                                <div class="flex items-start justify-between gap-4">
-                                    <h3 class="text-base font-bold text-gray-900">
+                                <div
+                                    class="flex items-start justify-between gap-4"
+                                >
+                                    <h3
+                                        class="text-base font-bold text-gray-900"
+                                    >
                                         {{ item.title }}
                                     </h3>
-                                    <div class="text-sm font-semibold text-gray-900 font-mono">
+                                    <div
+                                        class="font-mono text-sm font-semibold text-gray-900"
+                                    >
                                         {{ formatCurrency(item.price) }}
                                     </div>
                                 </div>
 
-                                <p v-if="item.description" class="mt-2 text-sm text-gray-600">
+                                <p
+                                    v-if="item.description"
+                                    class="mt-2 text-sm text-gray-600"
+                                >
                                     {{ item.description }}
                                 </p>
                                 <p v-else class="mt-2 text-sm text-gray-500">
@@ -114,11 +148,16 @@ const handleAddToCart = (item: {
                         <div class="p-4 pt-0">
                             <button
                                 class="w-full rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 disabled:opacity-60"
-                                :disabled="!item.id" @click="handleAddToCart(item)">
+                                :disabled="!item.id"
+                                @click="handleAddToCart(item)"
+                            >
                                 Add to cart
                             </button>
 
-                            <p v-if="addError" class="mt-3 text-xs text-red-600">
+                            <p
+                                v-if="addError"
+                                class="mt-3 text-xs text-red-600"
+                            >
                                 {{ addError }}
                             </p>
                         </div>
@@ -126,7 +165,10 @@ const handleAddToCart = (item: {
                 </div>
 
                 <div class="mt-10 flex justify-end">
-                    <button class="text-sm font-semibold text-gray-700 hover:underline" @click="scrollToTop">
+                    <button
+                        class="text-sm font-semibold text-gray-700 hover:underline"
+                        @click="scrollToTop"
+                    >
                         Back to top
                     </button>
                 </div>

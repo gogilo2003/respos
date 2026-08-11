@@ -3,7 +3,10 @@ import KitchenDashboardHeader from '@/Components/KitchenDashboardHeader.vue';
 import KitchenOrderQueue from '@/Components/KitchenOrderQueue.vue';
 import KitchenQueueFilters from '@/Components/KitchenQueueFilters.vue';
 import KitchenStatisticsCards from '@/Components/KitchenStatisticsCards.vue';
-import { type KitchenDashboardProps, useKitchenDashboard } from '@/Composables/useKitchenDashboard';
+import {
+    type KitchenDashboardProps,
+    useKitchenDashboard,
+} from '@/Composables/useKitchenDashboard';
 import { useKitchenQueue } from '@/Composables/useKitchenQueue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
@@ -50,8 +53,7 @@ const {
         </template>
 
         <div class="py-6">
-            <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
-
+            <div class="space-y-6 px-4 sm:px-6 lg:px-8">
                 <!-- Error banner -->
                 <div
                     v-if="error"
@@ -71,7 +73,9 @@ const {
                 />
 
                 <!-- Search + sort controls -->
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div
+                    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                >
                     <input
                         v-model="searchQuery"
                         type="search"
@@ -80,15 +84,19 @@ const {
                     />
 
                     <div class="flex flex-wrap items-center gap-2">
-                        <span class="text-xs font-medium text-gray-500">Sort:</span>
+                        <span class="text-xs font-medium text-gray-500"
+                            >Sort:</span
+                        >
                         <button
                             v-for="opt in QUEUE_SORT_OPTIONS"
                             :key="opt.key"
                             type="button"
                             class="rounded-full border px-3 py-1 text-xs font-medium transition"
-                            :class="sortBy === opt.key
-                                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
+                            :class="
+                                sortBy === opt.key
+                                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                            "
                             @click="setSort(opt.key)"
                         >
                             {{ opt.label }}
@@ -113,7 +121,9 @@ const {
                     <h3 class="mb-4 text-lg font-medium text-gray-900">
                         Order Queue
                         <span class="ml-2 text-sm font-normal text-gray-500">
-                            ({{ orderCount }} order{{ orderCount === 1 ? '' : 's' }})
+                            ({{ orderCount }} order{{
+                                orderCount === 1 ? '' : 's'
+                            }})
                         </span>
                         <span
                             v-if="refreshing"
@@ -132,10 +142,13 @@ const {
                         v-if="isEmpty && !loading && !refreshing"
                         class="py-12 text-center text-sm text-gray-500"
                     >
-                        {{ hasActiveFilters ? 'No orders match the active filters.' : 'No active orders.' }}
+                        {{
+                            hasActiveFilters
+                                ? 'No orders match the active filters.'
+                                : 'No active orders.'
+                        }}
                     </p>
                 </section>
-
             </div>
         </div>
     </AuthenticatedLayout>

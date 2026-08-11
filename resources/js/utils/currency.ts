@@ -1,13 +1,18 @@
 import { usePage } from '@inertiajs/vue3';
 
-export function formatCurrency(amount: number | string | null | undefined): string {
+export function formatCurrency(
+    amount: number | string | null | undefined,
+): string {
     const numericAmount = Number(amount) || 0;
     let symbol = 'KES ';
 
     try {
         const page = usePage();
         const currencyProp = (page.props as any)?.currency;
-        if (currencyProp?.symbol !== undefined && currencyProp?.symbol !== null) {
+        if (
+            currencyProp?.symbol !== undefined &&
+            currencyProp?.symbol !== null
+        ) {
             symbol = currencyProp.symbol;
         }
     } catch (e) {

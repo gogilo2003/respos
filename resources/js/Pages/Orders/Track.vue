@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatCurrency } from '@/utils/currency';
 import WebLayout from '@/Layouts/WebLayout.vue';
+import { formatCurrency } from '@/utils/currency';
 import { Head, Link } from '@inertiajs/vue3';
 
 interface OrderItem {
@@ -52,18 +52,27 @@ const getStepIndex = (status: string) => {
     <Head :title="`Order #${order.id} Status`" />
 
     <WebLayout :title="'Order #' + order.id + ' Tracking'">
-        <div class="py-12 bg-gray-50 min-h-screen">
+        <div class="min-h-screen bg-gray-50 py-12">
             <div class="mx-auto max-w-2xl px-4 sm:px-6">
                 <!-- Status Banner -->
-                <div class="overflow-hidden rounded-2xl bg-white shadow-sm border border-gray-200 p-6 text-center mb-6">
-                    <div class="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-2xl text-blue-600 mb-3">
+                <div
+                    class="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 text-center shadow-sm"
+                >
+                    <div
+                        class="mb-3 inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-2xl text-blue-600"
+                    >
                         🍳
                     </div>
-                    <h1 class="text-xl font-bold text-gray-900">Order #{{ order.id }} Tracking</h1>
-                    <p class="text-xs text-gray-500 mt-1">Table {{ order.table_number }} • Placed at {{ order.placed_at }}</p>
+                    <h1 class="text-xl font-bold text-gray-900">
+                        Order #{{ order.id }} Tracking
+                    </h1>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Table {{ order.table_number }} • Placed at
+                        {{ order.placed_at }}
+                    </p>
 
                     <!-- Stepper -->
-                    <div class="mt-8 relative">
+                    <div class="relative mt-8">
                         <div class="grid grid-cols-5 gap-2 text-center">
                             <div
                                 v-for="(step, idx) in steps"
@@ -71,7 +80,7 @@ const getStepIndex = (status: string) => {
                                 class="flex flex-col items-center"
                             >
                                 <div
-                                    class="h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold transition"
+                                    class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition"
                                     :class="
                                         getStepIndex(order.status) >= idx
                                             ? 'bg-blue-600 text-white ring-4 ring-blue-100'
@@ -80,43 +89,80 @@ const getStepIndex = (status: string) => {
                                 >
                                     {{ idx + 1 }}
                                 </div>
-                                <span class="mt-2 text-[11px] font-semibold text-gray-800">{{ step.label }}</span>
+                                <span
+                                    class="mt-2 text-[11px] font-semibold text-gray-800"
+                                    >{{ step.label }}</span
+                                >
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Order Itemized Summary -->
-                <div class="rounded-2xl bg-white shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-sm font-bold text-gray-900 uppercase tracking-wider mb-4">Your Ordered Items</h2>
+                <div
+                    class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm"
+                >
+                    <h2
+                        class="mb-4 text-sm font-bold uppercase tracking-wider text-gray-900"
+                    >
+                        Your Ordered Items
+                    </h2>
 
                     <div class="divide-y divide-gray-100">
-                        <div v-for="item in order.items" :key="item.id" class="py-3 flex items-start justify-between">
+                        <div
+                            v-for="item in order.items"
+                            :key="item.id"
+                            class="flex items-start justify-between py-3"
+                        >
                             <div>
-                                <div class="font-bold text-gray-900 text-sm">
+                                <div class="text-sm font-bold text-gray-900">
                                     {{ item.quantity }}x {{ item.name }}
                                 </div>
-                                <div v-if="item.selected_modifiers && item.selected_modifiers.length > 0" class="text-xs text-indigo-600 mt-0.5">
-                                    + {{ item.selected_modifiers.map(m => m.name).join(', ') }}
+                                <div
+                                    v-if="
+                                        item.selected_modifiers &&
+                                        item.selected_modifiers.length > 0
+                                    "
+                                    class="mt-0.5 text-xs text-indigo-600"
+                                >
+                                    +
+                                    {{
+                                        item.selected_modifiers
+                                            .map((m) => m.name)
+                                            .join(', ')
+                                    }}
                                 </div>
-                                <div v-if="item.special_instructions" class="text-xs text-gray-500 italic mt-0.5">
+                                <div
+                                    v-if="item.special_instructions"
+                                    class="mt-0.5 text-xs italic text-gray-500"
+                                >
                                     "{{ item.special_instructions }}"
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-bold text-gray-900 text-sm">{{ formatCurrency(item.total_price) }}</div>
-                                <span class="inline-block text-[10px] uppercase font-bold text-gray-400 mt-0.5">{{ item.status }}</span>
+                                <div class="text-sm font-bold text-gray-900">
+                                    {{ formatCurrency(item.total_price) }}
+                                </div>
+                                <span
+                                    class="mt-0.5 inline-block text-[10px] font-bold uppercase text-gray-400"
+                                    >{{ item.status }}</span
+                                >
                             </div>
                         </div>
                     </div>
 
-                    <div class="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center text-base font-bold text-gray-900">
+                    <div
+                        class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4 text-base font-bold text-gray-900"
+                    >
                         <span>Total Amount:</span>
                         <span>{{ formatCurrency(order.total_amount) }}</span>
                     </div>
 
                     <div class="mt-6 text-center">
-                        <Link :href="route('menu')" class="text-xs font-semibold text-blue-600 hover:underline">
+                        <Link
+                            :href="route('menu')"
+                            class="text-xs font-semibold text-blue-600 hover:underline"
+                        >
                             ← Back to Food Menu
                         </Link>
                     </div>

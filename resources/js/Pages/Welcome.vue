@@ -58,9 +58,12 @@ const handleAddToCart = (item: {
                         >
                             KARIBU RESPOS
                         </p>
-                        <p class="mt-3 max-w-xl text-sm text-white/90 sm:text-base">
-                            ResPos is your restaurant companion—browse the menu, add
-                            meals to your cart, and manage your orders with ease.
+                        <p
+                            class="mt-3 max-w-xl text-sm text-white/90 sm:text-base"
+                        >
+                            ResPos is your restaurant companion—browse the menu,
+                            add meals to your cart, and manage your orders with
+                            ease.
                         </p>
                     </div>
                 </div>

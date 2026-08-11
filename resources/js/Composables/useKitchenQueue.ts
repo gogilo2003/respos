@@ -5,7 +5,13 @@ import { computed, ref, type ComputedRef, type Ref } from 'vue';
 // Types
 // ---------------------------------------------------------------------------
 
-export type QueueStatusFilter = '' | 'pending' | 'accepted' | 'preparing' | 'ready' | 'served';
+export type QueueStatusFilter =
+    | ''
+    | 'pending'
+    | 'accepted'
+    | 'preparing'
+    | 'ready'
+    | 'served';
 
 export type QueueSortKey = 'placed_at' | 'waiting' | 'table';
 
@@ -18,16 +24,16 @@ export interface QueueSortOption {
 
 export const QUEUE_SORT_OPTIONS: QueueSortOption[] = [
     { key: 'placed_at', label: 'Order time' },
-    { key: 'waiting',   label: 'Waiting longest' },
-    { key: 'table',     label: 'Table number' },
+    { key: 'waiting', label: 'Waiting longest' },
+    { key: 'table', label: 'Table number' },
 ];
 
 export const QUEUE_STATUS_OPTIONS = [
-    { label: 'All',       value: '' as QueueStatusFilter },
-    { label: 'Pending',   value: 'pending' as QueueStatusFilter },
+    { label: 'All', value: '' as QueueStatusFilter },
+    { label: 'Pending', value: 'pending' as QueueStatusFilter },
     { label: 'Preparing', value: 'preparing' as QueueStatusFilter },
-    { label: 'Ready',     value: 'ready' as QueueStatusFilter },
-    { label: 'Served',    value: 'served' as QueueStatusFilter },
+    { label: 'Ready', value: 'ready' as QueueStatusFilter },
+    { label: 'Served', value: 'served' as QueueStatusFilter },
 ];
 
 // ---------------------------------------------------------------------------
@@ -44,7 +50,6 @@ export const QUEUE_STATUS_OPTIONS = [
 export function useKitchenQueue(
     orders: Ref<ShapedOrder[]> | ComputedRef<ShapedOrder[]>,
 ) {
-
     // -----------------------------------------------------------------------
     // Filter / search / sort state
     // -----------------------------------------------------------------------
@@ -78,9 +83,7 @@ export function useKitchenQueue(
         if (String(order.orderNumber).toLowerCase().includes(q)) return true;
         if (order.table.toLowerCase().includes(q)) return true;
 
-        return order.items.some((item) =>
-            item.name.toLowerCase().includes(q),
-        );
+        return order.items.some((item) => item.name.toLowerCase().includes(q));
     }
 
     /**
@@ -88,7 +91,10 @@ export function useKitchenQueue(
      * orderId serves as a stable proxy for placed_at (higher id = later order).
      * waitingDuration is parsed back to seconds for accurate numeric comparison.
      */
-    function numericSortKey(order: ShapedOrder, key: QueueSortKey): number | string {
+    function numericSortKey(
+        order: ShapedOrder,
+        key: QueueSortKey,
+    ): number | string {
         switch (key) {
             case 'placed_at':
                 // Larger orderId = placed later → ascending shows oldest first
@@ -126,7 +132,10 @@ export function useKitchenQueue(
         let result: number;
 
         if (typeof aKey === 'string' && typeof bKey === 'string') {
-            result = aKey.localeCompare(bKey, undefined, { numeric: true, sensitivity: 'base' });
+            result = aKey.localeCompare(bKey, undefined, {
+                numeric: true,
+                sensitivity: 'base',
+            });
         } else {
             result = (aKey as number) - (bKey as number);
         }
@@ -182,7 +191,8 @@ export function useKitchenQueue(
     /** Toggle sort direction, or set a new sort key (resets to asc). */
     function setSort(key: QueueSortKey): void {
         if (sortBy.value === key) {
-            sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+            sortDirection.value =
+                sortDirection.value === 'asc' ? 'desc' : 'asc';
         } else {
             sortBy.value = key;
             sortDirection.value = 'asc';

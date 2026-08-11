@@ -19,7 +19,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+    >
         <TableCard
             v-for="table in tables"
             :key="table.tableNumber"
@@ -27,7 +29,8 @@ const emit = defineEmits<{
             :capacity="table.capacity"
             :status="table.status"
             :class="{
-                'ring-2 ring-indigo-500': selectedTableNumber === table.tableNumber,
+                'ring-2 ring-indigo-500':
+                    selectedTableNumber === table.tableNumber,
             }"
             @click="emit('select-table', table.tableNumber)"
         />

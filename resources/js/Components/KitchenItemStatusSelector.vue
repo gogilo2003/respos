@@ -23,9 +23,11 @@ const statuses = [
             :key="item.value"
             type="button"
             class="rounded-full border px-3 py-1.5 text-sm font-medium transition"
-            :class="props.status === item.value
-                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
-                : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'"
+            :class="
+                props.status === item.value
+                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                    : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+            "
             @click="emit('update:status', item.value)"
         >
             {{ item.label }}

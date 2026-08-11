@@ -57,12 +57,17 @@ const openQrModal = (table: RestaurantTable) => {
 };
 
 const regenerateQr = (table: RestaurantTable) => {
-    router.post(route('tables.regenerate-qr', table.id), {}, {
-        preserveScroll: true,
-        onSuccess: () => {
-            selectedQrTable.value = props.tables.find(t => t.id === table.id) || table;
+    router.post(
+        route('tables.regenerate-qr', table.id),
+        {},
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                selectedQrTable.value =
+                    props.tables.find((t) => t.id === table.id) || table;
+            },
         },
-    });
+    );
 };
 
 const submit = () => {
@@ -119,10 +124,15 @@ const statusClass = (status: string) => {
         <template #header>
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    <h2
+                        class="text-xl font-semibold leading-tight text-gray-800"
+                    >
                         Dining Tables &amp; QR Management
                     </h2>
-                    <p class="text-xs text-gray-500 mt-1">Manage restaurant floor tables and scannable QR ordering codes</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        Manage restaurant floor tables and scannable QR ordering
+                        codes
+                    </p>
                 </div>
                 <PrimaryButton @click="openCreateModal">
                     + Add Table
@@ -131,44 +141,66 @@ const statusClass = (status: string) => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-200">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div
+                    class="overflow-hidden border border-gray-200 bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="overflow-x-auto p-6 text-gray-900">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Table Number
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Location
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Capacity
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Status
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         QR Code
                                     </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
                                 <tr v-for="table in tables" :key="table.id">
-                                    <td class="whitespace-nowrap px-6 py-4 font-bold text-gray-900">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 font-bold text-gray-900"
+                                    >
                                         Table {{ table.table_number }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm text-gray-600"
+                                    >
                                         {{ table.location || '-' }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm text-gray-700"
+                                    >
                                         👥 {{ table.capacity }} guests
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm"
+                                    >
                                         <span
                                             :class="statusClass(table.status)"
                                             class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize"
@@ -176,23 +208,29 @@ const statusClass = (status: string) => {
                                             {{ table.status }}
                                         </span>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm"
+                                    >
                                         <button
                                             @click="openQrModal(table)"
-                                            class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-900 bg-blue-50 px-2.5 py-1 rounded border border-blue-200"
+                                            class="inline-flex items-center gap-1 rounded border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-600 hover:text-blue-900"
                                         >
                                             📱 View QR Code
                                         </button>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+                                    >
                                         <button
                                             @click="openEditModal(table)"
-                                            class="text-indigo-600 hover:text-indigo-900 mr-4"
+                                            class="mr-4 text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            @click="confirmTableDeletion(table.id)"
+                                            @click="
+                                                confirmTableDeletion(table.id)
+                                            "
                                             class="text-red-600 hover:text-red-900"
                                         >
                                             Delete
@@ -212,16 +250,19 @@ const statusClass = (status: string) => {
                 <h2 class="text-lg font-bold text-gray-900">
                     Table {{ selectedQrTable.table_number }} QR Code
                 </h2>
-                <p class="text-xs text-gray-500 mt-1">
-                    Location: {{ selectedQrTable.location || 'Main Floor' }} • Capacity: {{ selectedQrTable.capacity }} guests
+                <p class="mt-1 text-xs text-gray-500">
+                    Location: {{ selectedQrTable.location || 'Main Floor' }} •
+                    Capacity: {{ selectedQrTable.capacity }} guests
                 </p>
 
                 <div class="mt-6 flex justify-center">
-                    <div class="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-inner">
+                    <div
+                        class="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-inner"
+                    >
                         <img
                             :src="route('tables.qr-image', selectedQrTable.id)"
                             :alt="`Table ${selectedQrTable.table_number} QR Code`"
-                            class="h-64 w-64 object-contain mx-auto"
+                            class="mx-auto h-64 w-64 object-contain"
                         />
                     </div>
                 </div>
@@ -230,13 +271,13 @@ const statusClass = (status: string) => {
                     <a
                         :href="route('tables.qr-image', selectedQrTable.id)"
                         download
-                        class="rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 shadow-sm"
+                        class="rounded-md bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700"
                     >
                         ⬇️ Download SVG
                     </a>
                     <button
                         @click="regenerateQr(selectedQrTable)"
-                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-sm"
+                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50"
                     >
                         🔄 Regenerate QR Token
                     </button>
@@ -265,7 +306,10 @@ const statusClass = (status: string) => {
                             required
                             maxlength="20"
                         />
-                        <InputError :message="form.errors.table_number" class="mt-2" />
+                        <InputError
+                            :message="form.errors.table_number"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -279,7 +323,10 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             required
                         />
-                        <InputError :message="form.errors.capacity" class="mt-2" />
+                        <InputError
+                            :message="form.errors.capacity"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -291,7 +338,10 @@ const statusClass = (status: string) => {
                             class="mt-1 block w-full"
                             maxlength="80"
                         />
-                        <InputError :message="form.errors.location" class="mt-2" />
+                        <InputError
+                            :message="form.errors.location"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -312,7 +362,10 @@ const statusClass = (status: string) => {
                             <option value="cleaning">Cleaning</option>
                             <option value="reserved">Reserved</option>
                         </select>
-                        <InputError :message="form.errors.status" class="mt-2" />
+                        <InputError
+                            :message="form.errors.status"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div class="flex items-center">
@@ -322,7 +375,11 @@ const statusClass = (status: string) => {
                             v-model="form.is_active"
                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                         />
-                        <label for="is_active" class="ml-2 block text-sm text-gray-900">Active</label>
+                        <label
+                            for="is_active"
+                            class="ml-2 block text-sm text-gray-900"
+                            >Active</label
+                        >
                     </div>
 
                     <div class="mt-6 flex justify-end">

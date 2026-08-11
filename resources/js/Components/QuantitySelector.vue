@@ -14,9 +14,12 @@ const emit = defineEmits<{
 
 const quantity = ref(props.modelValue ?? 1);
 
-watch(() => props.modelValue, (value) => {
-    quantity.value = value ?? 1;
-});
+watch(
+    () => props.modelValue,
+    (value) => {
+        quantity.value = value ?? 1;
+    },
+);
 
 const clamp = (value: number) => {
     const min = props.min ?? 1;

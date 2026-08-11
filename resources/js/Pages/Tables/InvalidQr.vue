@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>

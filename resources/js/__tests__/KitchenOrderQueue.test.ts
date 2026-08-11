@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
-import KitchenOrderQueue from '@/Components/KitchenOrderQueue.vue';
 import KitchenOrderCard from '@/Components/KitchenOrderCard.vue';
+import KitchenOrderQueue from '@/Components/KitchenOrderQueue.vue';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it } from 'vitest';
 
 describe('KitchenOrderQueue', () => {
     const orders = [
@@ -11,7 +11,14 @@ describe('KitchenOrderQueue', () => {
             table: 'A1',
             orderTime: '10:00',
             waitingDuration: '5m',
-            items: [{ orderItemId: 1, name: 'Pasta', quantity: 1, status: 'pending' }],
+            items: [
+                {
+                    orderItemId: 1,
+                    name: 'Pasta',
+                    quantity: 1,
+                    status: 'pending',
+                },
+            ],
             itemCounts: { pending: 1, accepted: 0, preparing: 0, ready: 0 },
         },
         {
@@ -20,7 +27,14 @@ describe('KitchenOrderQueue', () => {
             table: 'B2',
             orderTime: '10:05',
             waitingDuration: '2m',
-            items: [{ orderItemId: 2, name: 'Soup', quantity: 2, status: 'preparing' }],
+            items: [
+                {
+                    orderItemId: 2,
+                    name: 'Soup',
+                    quantity: 2,
+                    status: 'preparing',
+                },
+            ],
             itemCounts: { pending: 0, accepted: 0, preparing: 1, ready: 0 },
         },
     ];

@@ -43,7 +43,7 @@ onUnmounted(() => {
             class="flex w-full max-w-7xl items-center justify-between rounded-full px-8 py-3 transition-all duration-300"
             :class="
                 isScrolled
-                    ? 'bg-gray-800/90 shadow-lg shadow-black/20 backdrop-blur-md ring-1 ring-white/10'
+                    ? 'bg-gray-800/90 shadow-lg shadow-black/20 ring-1 ring-white/10 backdrop-blur-md'
                     : 'bg-transparent'
             "
         >
@@ -79,7 +79,7 @@ onUnmounted(() => {
             >
                 <svg
                     viewBox="0 0 24 24"
-                    class="h-5 w-5 stroke-current fill-none"
+                    class="h-5 w-5 fill-none stroke-current"
                     stroke-width="2"
                 >
                     <path

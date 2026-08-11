@@ -50,52 +50,102 @@ const toggleSidebar = () => {
                                 </div>
                             </div>
 
-                            <div class="hidden sm:ms-6 sm:flex sm:items-center space-x-3">
+                            <div
+                                class="hidden space-x-3 sm:ms-6 sm:flex sm:items-center"
+                            >
                                 <!-- Notification Dropdown -->
                                 <div class="relative">
                                     <Dropdown align="right" width="80">
                                         <template #trigger>
                                             <button
                                                 type="button"
-                                                class="relative p-2 text-gray-500 hover:text-gray-700 transition rounded-full hover:bg-gray-100"
+                                                class="relative rounded-full p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-700"
                                             >
                                                 🔔
                                                 <span
                                                     v-if="unreadCount > 0"
-                                                    class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow"
+                                                    class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow"
                                                 >
-                                                    {{ unreadCount > 9 ? '9+' : unreadCount }}
+                                                    {{
+                                                        unreadCount > 9
+                                                            ? '9+'
+                                                            : unreadCount
+                                                    }}
                                                 </span>
                                             </button>
                                         </template>
 
                                         <template #content>
-                                            <div class="p-3 border-b border-gray-100 font-semibold text-xs text-gray-700 flex justify-between items-center">
+                                            <div
+                                                class="flex items-center justify-between border-b border-gray-100 p-3 text-xs font-semibold text-gray-700"
+                                            >
                                                 <span>Notifications</span>
-                                                <span class="text-gray-400 font-normal">{{ notifications.length }} new</span>
+                                                <span
+                                                    class="font-normal text-gray-400"
+                                                    >{{
+                                                        notifications.length
+                                                    }}
+                                                    new</span
+                                                >
                                             </div>
-                                            <div class="max-h-64 overflow-y-auto divide-y divide-gray-100">
+                                            <div
+                                                class="max-h-64 divide-y divide-gray-100 overflow-y-auto"
+                                            >
                                                 <div
                                                     v-for="item in notifications"
                                                     :key="item.id"
-                                                    class="p-3 text-xs hover:bg-gray-50 flex justify-between items-start"
+                                                    class="flex items-start justify-between p-3 text-xs hover:bg-gray-50"
                                                 >
                                                     <div>
-                                                        <div class="font-bold text-gray-900 capitalize">{{ item.event_type.replace('_', ' ') }}</div>
-                                                        <div class="text-gray-500 text-[11px] mt-0.5" v-if="item.payload">
-                                                            {{ item.payload.table_number ? `Table ${item.payload.table_number}` : '' }}
-                                                            {{ item.payload.order_id ? `Order #${item.payload.order_id}` : '' }}
+                                                        <div
+                                                            class="font-bold capitalize text-gray-900"
+                                                        >
+                                                            {{
+                                                                item.event_type.replace(
+                                                                    '_',
+                                                                    ' ',
+                                                                )
+                                                            }}
                                                         </div>
-                                                        <div class="text-[10px] text-gray-400 mt-1">{{ item.time_ago }}</div>
+                                                        <div
+                                                            class="mt-0.5 text-[11px] text-gray-500"
+                                                            v-if="item.payload"
+                                                        >
+                                                            {{
+                                                                item.payload
+                                                                    .table_number
+                                                                    ? `Table ${item.payload.table_number}`
+                                                                    : ''
+                                                            }}
+                                                            {{
+                                                                item.payload
+                                                                    .order_id
+                                                                    ? `Order #${item.payload.order_id}`
+                                                                    : ''
+                                                            }}
+                                                        </div>
+                                                        <div
+                                                            class="mt-1 text-[10px] text-gray-400"
+                                                        >
+                                                            {{ item.time_ago }}
+                                                        </div>
                                                     </div>
                                                     <button
-                                                        @click="markRead(item.id)"
+                                                        @click="
+                                                            markRead(item.id)
+                                                        "
                                                         class="text-[10px] text-blue-600 hover:underline"
                                                     >
                                                         Dismiss
                                                     </button>
                                                 </div>
-                                                <div v-if="notifications.length === 0" class="p-4 text-center text-xs text-gray-400">
+                                                <div
+                                                    v-if="
+                                                        notifications.length ===
+                                                        0
+                                                    "
+                                                    class="p-4 text-center text-xs text-gray-400"
+                                                >
                                                     No new notifications
                                                 </div>
                                             </div>

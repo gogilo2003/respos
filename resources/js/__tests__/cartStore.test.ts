@@ -18,13 +18,16 @@ describe('cartStore Pinia Store', () => {
 
     it('adds items to cart and updates count and subtotal', () => {
         const store = useCartStore();
-        store.addItem({
-            id: 1,
-            title: 'Burger',
-            price: 10.5,
-            image: '',
-            description: 'Delicious burger',
-        }, 2);
+        store.addItem(
+            {
+                id: 1,
+                title: 'Burger',
+                price: 10.5,
+                image: '',
+                description: 'Delicious burger',
+            },
+            2,
+        );
 
         expect(store.items.length).toBe(1);
         expect(store.totalCount).toBe(2);
@@ -45,7 +48,7 @@ describe('cartStore Pinia Store', () => {
     it('updates item quantity and removes item when quantity is 0', () => {
         const store = useCartStore();
         store.addItem({ id: 1, title: 'Pizza', price: 15.0 }, 2);
-        
+
         store.updateQuantity(1, 5);
         expect(store.totalCount).toBe(5);
 

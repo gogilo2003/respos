@@ -104,12 +104,16 @@ const deleteCategory = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div
+                class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+            >
                 <div>
-                    <h2 class="text-xl font-semibold leading-tight text-gray-800">
+                    <h2
+                        class="text-xl font-semibold leading-tight text-gray-800"
+                    >
                         Menu Categories Management
                     </h2>
-                    <p class="text-xs text-gray-500 mt-1">
+                    <p class="mt-1 text-xs text-gray-500">
                         Organize your restaurant food & beverage menu categories
                     </p>
                 </div>
@@ -120,70 +124,114 @@ const deleteCategory = () => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="px-4 sm:px-6 lg:px-8">
                 <!-- Search & Filters Bar -->
-                <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                    <div class="relative max-w-xs w-full">
+                <div
+                    class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                    <div class="relative w-full max-w-xs">
                         <TextInput
                             v-model="searchQuery"
                             type="text"
                             placeholder="Search categories..."
                             class="w-full pl-9 text-sm"
                         />
-                        <span class="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                        <span class="absolute left-3 top-2.5 text-gray-400"
+                            >🔍</span
+                        >
                     </div>
 
                     <div class="text-xs text-gray-500">
-                        Total: <span class="font-bold text-gray-800">{{ categories.length }}</span> categories
+                        Total:
+                        <span class="font-bold text-gray-800">{{
+                            categories.length
+                        }}</span>
+                        categories
                     </div>
                 </div>
 
-                <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg border border-gray-200">
+                <div
+                    class="overflow-hidden border border-gray-200 bg-white shadow-sm sm:rounded-lg"
+                >
                     <div class="overflow-x-auto p-6 text-gray-900">
-                        <div v-if="filteredCategories.length === 0" class="py-12 text-center text-sm text-gray-500">
+                        <div
+                            v-if="filteredCategories.length === 0"
+                            class="py-12 text-center text-sm text-gray-500"
+                        >
                             No menu categories found.
                         </div>
 
-                        <table v-else class="min-w-full divide-y divide-gray-200">
+                        <table
+                            v-else
+                            class="min-w-full divide-y divide-gray-200"
+                        >
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Category Name
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Description
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Menu Items
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Sort Order
                                     </th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Status
                                     </th>
-                                    <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    <th
+                                        class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
                                         Actions
                                     </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="category in filteredCategories" :key="category.id">
-                                    <td class="whitespace-nowrap px-6 py-4 font-semibold text-gray-900">
+                                <tr
+                                    v-for="category in filteredCategories"
+                                    :key="category.id"
+                                >
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 font-semibold text-gray-900"
+                                    >
                                         {{ category.name }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                                    <td
+                                        class="max-w-xs truncate px-6 py-4 text-sm text-gray-600"
+                                    >
                                         {{ category.description || '-' }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
-                                        <span class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700">
-                                            {{ category.menu_items_count ?? 0 }} items
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm"
+                                    >
+                                        <span
+                                            class="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700"
+                                        >
+                                            {{ category.menu_items_count ?? 0 }}
+                                            items
                                         </span>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm text-gray-700"
+                                    >
                                         {{ category.sort_order }}
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-sm">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-sm"
+                                    >
                                         <button
                                             @click="toggleActive(category)"
                                             class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition"
@@ -193,19 +241,36 @@ const deleteCategory = () => {
                                                     : 'bg-red-100 text-red-800 hover:bg-red-200'
                                             "
                                         >
-                                            <span class="h-1.5 w-1.5 rounded-full" :class="category.is_active ? 'bg-green-600' : 'bg-red-600'"></span>
-                                            {{ category.is_active ? 'Active' : 'Inactive' }}
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full"
+                                                :class="
+                                                    category.is_active
+                                                        ? 'bg-green-600'
+                                                        : 'bg-red-600'
+                                                "
+                                            ></span>
+                                            {{
+                                                category.is_active
+                                                    ? 'Active'
+                                                    : 'Inactive'
+                                            }}
                                         </button>
                                     </td>
-                                    <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                                    <td
+                                        class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium"
+                                    >
                                         <button
                                             @click="openEditModal(category)"
-                                            class="text-indigo-600 hover:text-indigo-900 mr-4"
+                                            class="mr-4 text-indigo-600 hover:text-indigo-900"
                                         >
                                             Edit
                                         </button>
                                         <button
-                                            @click="confirmCategoryDeletion(category.id)"
+                                            @click="
+                                                confirmCategoryDeletion(
+                                                    category.id,
+                                                )
+                                            "
                                             class="text-red-600 hover:text-red-900"
                                         >
                                             Delete
@@ -251,7 +316,10 @@ const deleteCategory = () => {
                             maxlength="200"
                             placeholder="Optional category summary"
                         />
-                        <InputError :message="form.errors.description" class="mt-2" />
+                        <InputError
+                            :message="form.errors.description"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div>
@@ -263,7 +331,10 @@ const deleteCategory = () => {
                             min="0"
                             class="mt-1 block w-full"
                         />
-                        <InputError :message="form.errors.sort_order" class="mt-2" />
+                        <InputError
+                            :message="form.errors.sort_order"
+                            class="mt-2"
+                        />
                     </div>
 
                     <div class="flex items-center pt-2">
@@ -273,7 +344,10 @@ const deleteCategory = () => {
                             v-model="form.is_active"
                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                         />
-                        <label for="is_active" class="ml-2 block text-sm font-medium text-gray-900">
+                        <label
+                            for="is_active"
+                            class="ml-2 block text-sm font-medium text-gray-900"
+                        >
                             Active (visible to customer ordering system)
                         </label>
                     </div>
@@ -287,7 +361,11 @@ const deleteCategory = () => {
                             :class="{ 'opacity-25': form.processing }"
                             :disabled="form.processing"
                         >
-                            {{ editingCategory ? 'Update Category' : 'Create Category' }}
+                            {{
+                                editingCategory
+                                    ? 'Update Category'
+                                    : 'Create Category'
+                            }}
                         </PrimaryButton>
                     </div>
                 </form>
@@ -307,7 +385,9 @@ const deleteCategory = () => {
                     This action cannot be undone.
                 </p>
                 <div class="mt-6 flex justify-end">
-                    <SecondaryButton @click="confirmingCategoryDeletion = false">
+                    <SecondaryButton
+                        @click="confirmingCategoryDeletion = false"
+                    >
                         Cancel
                     </SecondaryButton>
                     <DangerButton

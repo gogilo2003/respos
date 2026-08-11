@@ -2,8 +2,8 @@
 import KitchenStatusBadge from '@/Components/KitchenStatusBadge.vue';
 import Modal from '@/Components/Modal.vue';
 import ToastContainer from '@/Components/ToastContainer.vue';
-import { ref } from 'vue';
 import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 interface Props {
     orderItemId: number;
@@ -25,7 +25,10 @@ const updateStatus = (newStatus: 'preparing' | 'ready') => {
         { status: newStatus },
         {
             onSuccess: () => {
-                const label = newStatus === 'ready' ? 'marked as ready' : 'now being prepared';
+                const label =
+                    newStatus === 'ready'
+                        ? 'marked as ready'
+                        : 'now being prepared';
                 toastRef.value?.show(`${props.name} ${label}.`, 'success');
             },
             onError: () => {
@@ -75,11 +78,17 @@ const markServed = () => {
 </script>
 
 <template>
-    <div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-        <div class="flex-1 min-w-0">
-            <p class="truncate text-sm font-semibold text-gray-900">{{ name }}</p>
+    <div
+        class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
+    >
+        <div class="min-w-0 flex-1">
+            <p class="truncate text-sm font-semibold text-gray-900">
+                {{ name }}
+            </p>
             <p class="text-xs text-gray-500">Qty: {{ quantity }}</p>
-            <p v-if="notes" class="mt-1 text-xs text-gray-600">Notes: {{ notes }}</p>
+            <p v-if="notes" class="mt-1 text-xs text-gray-600">
+                Notes: {{ notes }}
+            </p>
         </div>
 
         <div class="flex items-center gap-2">
@@ -120,12 +129,19 @@ const markServed = () => {
     </div>
 
     <!-- Confirmation dialog for served transition -->
-    <Modal :show="showServeConfirm" max-width="sm" @close="showServeConfirm = false">
+    <Modal
+        :show="showServeConfirm"
+        max-width="sm"
+        @close="showServeConfirm = false"
+    >
         <div class="p-6">
-            <h2 class="text-base font-semibold text-gray-900">Confirm Item Served</h2>
+            <h2 class="text-base font-semibold text-gray-900">
+                Confirm Item Served
+            </h2>
             <p class="mt-2 text-sm text-gray-600">
-                Mark <span class="font-medium">{{ name }}</span> (×{{ quantity }}) as served?
-                This cannot be undone.
+                Mark <span class="font-medium">{{ name }}</span> (×{{
+                    quantity
+                }}) as served? This cannot be undone.
             </p>
             <div class="mt-6 flex justify-end gap-3">
                 <button

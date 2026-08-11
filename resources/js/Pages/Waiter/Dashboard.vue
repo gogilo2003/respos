@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import TableGrid from '@/Components/TableGrid.vue';
-import TableFilters from '@/Components/TableFilters.vue';
-import TableSearch from '@/Components/TableSearch.vue';
-import WaiterDashboardHeader from '@/Components/WaiterDashboardHeader.vue';
-import StatisticsCards from '@/Components/StatisticsCards.vue';
 import ActiveOrders from '@/Components/ActiveOrders.vue';
 import AssistanceList from '@/Components/AssistanceList.vue';
-import { ref, computed } from 'vue';
+import StatisticsCards from '@/Components/StatisticsCards.vue';
+import TableFilters from '@/Components/TableFilters.vue';
+import TableGrid from '@/Components/TableGrid.vue';
+import TableSearch from '@/Components/TableSearch.vue';
+import WaiterDashboardHeader from '@/Components/WaiterDashboardHeader.vue';
 import type { WaiterStatistics } from '@/interfaces/waiter';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 interface ActiveSession {
     table_session_id: number;
@@ -48,26 +48,43 @@ interface WaiterAssistance {
     time: string;
 }
 
-const props = defineProps<{
-    tables: WaiterTable[];
-    orders: WaiterOrder[];
-    statistics: WaiterStatistics;
-    assistance_requests: WaiterAssistance[];
-}>();
+const props = withDefaults(
+    defineProps<{
+        tables?: WaiterTable[];
+        orders?: WaiterOrder[];
+        statistics?: WaiterStatistics;
+        assistance_requests?: WaiterAssistance[];
+    }>(),
+    {
+        tables: () => [],
+        orders: () => [],
+        statistics: () => ({
+            activeTables: 0,
+            pendingOrders: 0,
+            readyOrders: 0,
+            assistanceRequests: 0,
+        }),
+        assistance_requests: () => [],
+    },
+);
 
 const activeFilter = ref('');
 const searchQuery = ref('');
 
 const filteredTables = computed(() => {
-    let tables = props.tables;
+    let tables = props.tables ?? [];
 
     if (activeFilter.value) {
-        tables = tables.filter((table) => table.active_session?.status === activeFilter.value);
+        tables = tables.filter(
+            (table) => table.active_session?.status === activeFilter.value,
+        );
     }
 
     if (searchQuery.value.trim()) {
         const query = searchQuery.value.trim().toLowerCase();
-        tables = tables.filter((table) => table.table_name.toLowerCase().includes(query));
+        tables = tables.filter((table) =>
+            table.table_name.toLowerCase().includes(query),
+        );
     }
 
     return tables;
@@ -96,7 +113,7 @@ const handleRefresh = () => {
         </template>
 
         <div class="py-12">
-            <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+            <div class="space-y-6 sm:px-6 lg:px-8">
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
                         <StatisticsCards :stats="statistics" />
@@ -104,18 +121,29 @@ const handleRefresh = () => {
                 </div>
 
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 space-y-4">
-                        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                            <h3 class="text-lg font-medium text-gray-900">Tables</h3>
-                            <TableSearch v-model="searchQuery" placeholder="Search tables..." />
+                    <div class="space-y-4 p-6 text-gray-900">
+                        <div
+                            class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                            <h3 class="text-lg font-medium text-gray-900">
+                                Tables
+                            </h3>
+                            <TableSearch
+                                v-model="searchQuery"
+                                placeholder="Search tables..."
+                            />
                         </div>
                         <TableFilters v-model="activeFilter" />
                         <TableGrid
-                            :tables="filteredTables.map((table) => ({
-                                tableNumber: table.table_name,
-                                capacity: 0,
-                                status: table.active_session?.status ?? 'available',
-                            }))"
+                            :tables="
+                                filteredTables.map((table) => ({
+                                    tableNumber: table.table_name,
+                                    capacity: 0,
+                                    status:
+                                        table.active_session?.status ??
+                                        'available',
+                                }))
+                            "
                             @select-table="handleSelectTable"
                         />
                     </div>
@@ -123,14 +151,18 @@ const handleRefresh = () => {
 
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="mb-4 text-lg font-medium text-gray-900">Active Orders</h3>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900">
+                            Active Orders
+                        </h3>
                         <ActiveOrders :orders="orders" />
                     </div>
                 </div>
 
                 <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900">
-                        <h3 class="mb-4 text-lg font-medium text-gray-900">Assistance Requests</h3>
+                        <h3 class="mb-4 text-lg font-medium text-gray-900">
+                            Assistance Requests
+                        </h3>
                         <AssistanceList :requests="assistance_requests" />
                     </div>
                 </div>

@@ -165,8 +165,19 @@ const deleteUser = () => {
                                                     : 'bg-red-100 text-red-800 hover:bg-red-200'
                                             "
                                         >
-                                            <span class="h-1.5 w-1.5 rounded-full" :class="user.is_active ? 'bg-green-600' : 'bg-red-600'"></span>
-                                            {{ user.is_active ? 'Active' : 'Suspended' }}
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full"
+                                                :class="
+                                                    user.is_active
+                                                        ? 'bg-green-600'
+                                                        : 'bg-red-600'
+                                                "
+                                            ></span>
+                                            {{
+                                                user.is_active
+                                                    ? 'Active'
+                                                    : 'Suspended'
+                                            }}
                                         </button>
                                     </td>
                                     <td
@@ -182,7 +193,11 @@ const deleteUser = () => {
                                             @click="toggleUserStatus(user)"
                                             class="text-amber-600 hover:text-amber-900"
                                         >
-                                            {{ user.is_active ? 'Suspend' : 'Activate' }}
+                                            {{
+                                                user.is_active
+                                                    ? 'Suspend'
+                                                    : 'Activate'
+                                            }}
                                         </button>
                                         <button
                                             @click="

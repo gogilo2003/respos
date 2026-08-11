@@ -16,7 +16,9 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <div class="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md">
+    <div
+        class="flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:shadow-md"
+    >
         <div class="h-40 w-full overflow-hidden bg-gray-100">
             <img
                 v-if="imageUrl"
@@ -37,7 +39,11 @@ const emit = defineEmits<{
                 <h3 class="text-sm font-semibold text-gray-900">{{ name }}</h3>
                 <span
                     class="inline-flex rounded-full px-2 py-0.5 text-xs font-medium"
-                    :class="available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'"
+                    :class="
+                        available
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                    "
                 >
                     {{ available ? 'Available' : 'Unavailable' }}
                 </span>

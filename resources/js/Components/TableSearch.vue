@@ -9,14 +9,17 @@ interface Props {
 const props = defineProps<Props>();
 const emit = defineEmits<{
     'update:modelValue': [value: string];
-    'search': [value: string];
+    search: [value: string];
 }>();
 
 const query = ref(props.modelValue ?? '');
 
-watch(() => props.modelValue, (value) => {
-    query.value = value ?? '';
-});
+watch(
+    () => props.modelValue,
+    (value) => {
+        query.value = value ?? '';
+    },
+);
 
 const onInput = (event: Event) => {
     const target = event.target as HTMLInputElement;

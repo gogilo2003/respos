@@ -81,14 +81,18 @@ export interface ShapedOrder {
 // Partial-reload keys — must match Inertia::render prop names in the controller
 // ---------------------------------------------------------------------------
 
-const RELOAD_KEYS = ['pending_orders', 'preparing_orders', 'ready_orders', 'statistics'] as const;
+const RELOAD_KEYS = [
+    'pending_orders',
+    'preparing_orders',
+    'ready_orders',
+    'statistics',
+] as const;
 
 // ---------------------------------------------------------------------------
 // Composable
 // ---------------------------------------------------------------------------
 
 export function useKitchenDashboard(props: KitchenDashboardProps) {
-
     // -----------------------------------------------------------------------
     // State
     // -----------------------------------------------------------------------
@@ -103,11 +107,18 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
     // -----------------------------------------------------------------------
 
     function formatClock(): string {
-        return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        return new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        });
     }
 
     function formatOrderTime(placedAt: string): string {
-        return new Date(placedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return new Date(placedAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+        });
     }
 
     function formatWaitingDuration(placedAt: string): string {
@@ -196,7 +207,9 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
 
     let autoRefreshTimer: ReturnType<typeof setInterval> | null = null;
 
-    const isTabVisible = () => typeof document !== 'undefined' && document.visibilityState === 'visible';
+    const isTabVisible = () =>
+        typeof document !== 'undefined' &&
+        document.visibilityState === 'visible';
 
     const startAutoRefresh = () => {
         if (autoRefreshTimer !== null) return;
@@ -228,7 +241,10 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
         startAutoRefresh();
 
         if (typeof document !== 'undefined') {
-            document.addEventListener('visibilitychange', handleVisibilityChange);
+            document.addEventListener(
+                'visibilitychange',
+                handleVisibilityChange,
+            );
         }
     });
 
@@ -236,7 +252,10 @@ export function useKitchenDashboard(props: KitchenDashboardProps) {
         stopAutoRefresh();
 
         if (typeof document !== 'undefined') {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener(
+                'visibilitychange',
+                handleVisibilityChange,
+            );
         }
     });
 

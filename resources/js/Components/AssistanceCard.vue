@@ -20,8 +20,12 @@ const emit = defineEmits<{
     >
         <div class="flex items-start justify-between gap-3">
             <div class="space-y-1">
-                <p class="text-sm font-medium text-gray-500">Table {{ tableNumber }}</p>
-                <p class="text-base font-semibold text-gray-900">{{ request }}</p>
+                <p class="text-sm font-medium text-gray-500">
+                    Table {{ tableNumber }}
+                </p>
+                <p class="text-base font-semibold text-gray-900">
+                    {{ request }}
+                </p>
             </div>
 
             <span
@@ -36,7 +40,9 @@ const emit = defineEmits<{
             </span>
         </div>
 
-        <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
+        <div
+            class="mt-3 flex items-center justify-between text-xs text-gray-500"
+        >
             <span>Assistance request</span>
             <span>{{ time }}</span>
         </div>
