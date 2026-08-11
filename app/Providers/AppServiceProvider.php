@@ -14,8 +14,18 @@ use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Interfaces\Repositories\UserRepositoryInterface;
 use App\Interfaces\Repositories\WaiterStatisticsRepositoryInterface;
 use App\Models\Bill;
+use App\Models\CashReconciliation;
+use App\Models\MenuCategory;
+use App\Models\MenuItem;
+use App\Models\Order;
+use App\Models\RestaurantTable;
 use App\Models\User;
 use App\Policies\BillPolicy;
+use App\Policies\CashReconciliationPolicy;
+use App\Policies\MenuCategoryPolicy;
+use App\Policies\MenuItemPolicy;
+use App\Policies\OrderPolicy;
+use App\Policies\RestaurantTablePolicy;
 use App\Repositories\AssistanceRequestRepository;
 use App\Repositories\CashReconciliationRepository;
 use App\Repositories\KitchenRepository;
@@ -100,5 +110,10 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::policy(Bill::class, BillPolicy::class);
+        Gate::policy(Order::class, OrderPolicy::class);
+        Gate::policy(MenuCategory::class, MenuCategoryPolicy::class);
+        Gate::policy(MenuItem::class, MenuItemPolicy::class);
+        Gate::policy(RestaurantTable::class, RestaurantTablePolicy::class);
+        Gate::policy(CashReconciliation::class, CashReconciliationPolicy::class);
     }
 }
