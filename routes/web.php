@@ -57,7 +57,7 @@ Route::prefix('roles')
 
 Route::prefix('menu-categories')
     ->name('menu-categories')
-    ->middleware(['auth', 'verified', 'role:admin|manager|kitchen'])
+    ->middleware(['auth', 'verified', 'permission:menu-categories.index'])
     ->group(function () {
         Route::get('/', [MenuCategoryController::class, 'index']);
         Route::post('/', [MenuCategoryController::class, 'store'])->name('.store');
@@ -68,18 +68,18 @@ Route::prefix('menu-categories')
 
 Route::prefix('menu-items')
     ->name('menu-items')
-    ->middleware(['auth', 'verified', 'role:admin|manager|kitchen'])
+    ->middleware(['auth', 'verified'])
     ->group(function () {
-        Route::get('/', [MenuItemController::class, 'index']);
-        Route::post('/', [MenuItemController::class, 'store'])->name('.store');
-        Route::patch('/{item}', [MenuItemController::class, 'update'])->name('.update');
-        Route::patch('/{item}/toggle-availability', [MenuItemController::class, 'toggleAvailability'])->name('.toggle-availability');
-        Route::delete('/{item}', [MenuItemController::class, 'destroy'])->name('.destroy');
+        Route::get('/', [MenuItemController::class, 'index'])->middleware('permission:menu-items.index');
+        Route::post('/', [MenuItemController::class, 'store'])->middleware('permission:menu-items.index')->name('.store');
+        Route::patch('/{item}', [MenuItemController::class, 'update'])->middleware('permission:menu-items.index')->name('.update');
+        Route::patch('/{item}/toggle-availability', [MenuItemController::class, 'toggleAvailability'])->middleware('permission:menu-items.availability')->name('.toggle-availability');
+        Route::delete('/{item}', [MenuItemController::class, 'destroy'])->middleware('permission:menu-items.index')->name('.destroy');
     });
 
 Route::prefix('tables')
     ->name('tables')
-    ->middleware(['auth', 'verified', 'role:admin|manager'])
+    ->middleware(['auth', 'verified', 'permission:tables.index'])
     ->group(function () {
         Route::get('/', [TableController::class, 'index']);
         Route::post('/', [TableController::class, 'store'])->name('.store');
@@ -97,7 +97,7 @@ Route::prefix('table-sessions')
     });
 
 Route::patch('/orders/{order}/status', [OrderController::class, 'transition'])
-    ->middleware(['auth', 'role:admin|manager|kitchen|waiter'])
+    ->middleware(['auth'])
     ->name('orders.status.update');
 
 Route::get('/session/{table}', [TableSessionController::class, 'show'])->name('session.entry');
@@ -105,7 +105,7 @@ Route::get('/orders/{order}/track', [CustomerOrderController::class, 'track'])->
 
 Route::prefix('bills')
     ->name('bills')
-    ->middleware(['auth', 'verified', 'role:admin|manager|cashier'])
+    ->middleware(['auth', 'verified', 'permission:bills.index'])
     ->group(function () {
         Route::get('/', [BillController::class, 'index'])->name('.index');
         Route::post('/', [BillController::class, 'store'])->name('.store');
@@ -116,14 +116,14 @@ Route::prefix('bills')
 
 Route::prefix('payments')
     ->name('payments')
-    ->middleware(['auth', 'verified', 'role:admin|manager|cashier'])
+    ->middleware(['auth', 'verified', 'permission:bills.index'])
     ->group(function () {
         Route::post('/bills/{bill}', [PaymentController::class, 'store'])->name('.store');
     });
 
 Route::prefix('kitchen')
     ->name('kitchen')
-    ->middleware(['auth', 'verified', 'role:admin|manager|kitchen|waiter'])
+    ->middleware(['auth', 'verified', 'permission:kitchen.dashboard'])
     ->group(function () {
         Route::get('/dashboard', [KitchenController::class, 'dashboard'])->name('.dashboard');
         Route::patch('/order-items/{orderItem}', [KitchenController::class, 'updateItemStatus'])->name('.item.update');
@@ -132,7 +132,7 @@ Route::prefix('kitchen')
 
 Route::prefix('waiter')
     ->name('waiter')
-    ->middleware(['auth', 'verified', 'role:admin|manager|waiter'])
+    ->middleware(['auth', 'verified', 'permission:waiter.dashboard'])
     ->group(function () {
         Route::get('/dashboard', [WaiterController::class, 'dashboard'])->name('.dashboard');
         Route::post('/orders', [WaiterController::class, 'storeOrder'])->name('.orders.store');
@@ -150,15 +150,15 @@ Route::prefix('api/v1/polling')->group(function () {
 
 Route::prefix('reconciliations')
     ->name('reconciliations')
-    ->middleware(['auth', 'verified', 'role:admin|manager|cashier'])
+    ->middleware(['auth', 'verified', 'permission:reconciliations.index'])
     ->group(function () {
         Route::get('/', [CashReconciliationController::class, 'index'])->name('.index');
         Route::post('/', [CashReconciliationController::class, 'store'])->name('.store');
-        Route::post('/{id}/approve', [CashReconciliationController::class, 'approve'])->middleware('role:admin|manager')->name('.approve');
+        Route::post('/{id}/approve', [CashReconciliationController::class, 'approve'])->middleware('permission:reconciliations.approve')->name('.approve');
     });
 
 Route::get('/audit-logs', [AuditLogController::class, 'index'])
-    ->middleware(['auth', 'verified', 'role:admin'])
+    ->middleware(['auth', 'verified', 'permission:audit-logs.index'])
     ->name('audit-logs.index');
 
 Route::middleware('auth')->group(function () {
