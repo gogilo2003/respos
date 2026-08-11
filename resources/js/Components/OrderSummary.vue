@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import { computed } from 'vue';
 
 interface OrderItem {
@@ -20,7 +21,7 @@ const subtotal = computed(() =>
 );
 
 const formattedSubtotal = computed(() =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(subtotal.value)
+    formatCurrency(subtotal.value)
 );
 </script>
 
@@ -42,10 +43,10 @@ const formattedSubtotal = computed(() =>
                 </div>
                 <div class="text-right">
                     <p class="text-sm font-medium text-gray-900">
-                        {{ item.quantity }} x {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.price) }}
+                        {{ item.quantity }} x {{ formatCurrency(item.price) }}
                     </p>
                     <p class="text-xs text-gray-500">
-                        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.price * item.quantity) }}
+                        {{ formatCurrency(item.price * item.quantity) }}
                     </p>
                 </div>
             </div>

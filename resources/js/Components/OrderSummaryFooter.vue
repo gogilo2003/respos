@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import { computed } from 'vue';
 
 interface Props {
@@ -12,7 +13,7 @@ const totalItems = computed(() =>
 );
 
 const grandTotal = computed(() =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(
+    formatCurrency(
         props.items.reduce((sum, item) => sum + item.price * item.quantity, 0)
     )
 );

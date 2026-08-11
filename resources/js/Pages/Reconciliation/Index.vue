@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -92,11 +93,11 @@ const approve = (id: number) => {
 
                             <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex flex-col justify-center">
                                 <span class="text-xs font-semibold text-blue-600 uppercase">System Cash Expected</span>
-                                <span class="text-2xl font-bold text-blue-950 mt-1">${{ system_cash_total.toFixed(2) }}</span>
+                                <span class="text-2xl font-bold text-blue-950 mt-1">{{ formatCurrency(system_cash_total) }}</span>
                             </div>
 
                             <div>
-                                <InputLabel for="physical_count" value="Physical Cash Counted ($)" />
+                                <InputLabel for="physical_count" value="Physical Cash Counted" />
                                 <TextInput
                                     id="physical_count"
                                     v-model="form.physical_count"
@@ -115,7 +116,7 @@ const approve = (id: number) => {
                         <div v-if="form.physical_count" class="p-4 rounded-xl border flex items-center justify-between" :class="isVarianceFlagged ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-green-50 border-green-200 text-green-900'">
                             <div>
                                 <span class="text-xs font-bold uppercase">Calculated Drawer Variance:</span>
-                                <span class="ml-2 font-extrabold">${{ calculatedVariance.toFixed(2) }}</span>
+                                <span class="ml-2 font-extrabold">{{ formatCurrency(calculatedVariance) }}</span>
                                 <span v-if="isVarianceFlagged" class="ml-2 text-xs font-bold text-amber-700 bg-amber-200 px-2 py-0.5 rounded">
                                     ⚠️ Flagged (>0.5% Variance - Requires Manager Approval)
                                 </span>
@@ -164,10 +165,10 @@ const approve = (id: number) => {
                                     <tr v-for="r in reconciliations" :key="r.id">
                                         <td class="px-4 py-3 font-semibold text-gray-900">{{ r.reconciliation_date }}</td>
                                         <td class="px-4 py-3 text-gray-600">{{ r.prepared_by }}</td>
-                                        <td class="px-4 py-3 text-right font-medium">${{ r.system_total.toFixed(2) }}</td>
-                                        <td class="px-4 py-3 text-right font-bold">${{ r.physical_count.toFixed(2) }}</td>
+                                        <td class="px-4 py-3 text-right font-medium">{{ formatCurrency(r.system_total) }}</td>
+                                        <td class="px-4 py-3 text-right font-bold">{{ formatCurrency(r.physical_count) }}</td>
                                         <td class="px-4 py-3 text-right font-bold" :class="r.variance_amount < 0 ? 'text-red-600' : 'text-green-600'">
-                                            ${{ r.variance_amount.toFixed(2) }} ({{ r.variance_pct.toFixed(2) }}%)
+                                            {{ formatCurrency(r.variance_amount) }} ({{ r.variance_pct.toFixed(2) }}%)
                                         </td>
                                         <td class="px-4 py-3 text-center">
                                             <span v-if="!r.flagged" class="bg-green-100 text-green-800 text-xs font-bold px-2 py-0.5 rounded-full">

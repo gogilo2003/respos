@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
 import QuantitySelector from '@/Components/QuantitySelector.vue';
+import { formatCurrency } from '@/utils/currency';
+import { computed } from 'vue';
 
 interface CartItem {
     id: number;
@@ -28,7 +29,7 @@ const subtotal = computed(() =>
 );
 
 const formattedSubtotal = computed(() =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(subtotal.value)
+    formatCurrency(subtotal.value)
 );
 </script>
 
@@ -51,7 +52,7 @@ const formattedSubtotal = computed(() =>
                 <div class="flex-1 min-w-0">
                     <p class="truncate text-sm font-medium text-gray-900">{{ item.name }}</p>
                     <p class="text-xs text-gray-500">
-                        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.unitPrice) }} each
+                        {{ formatCurrency(item.unitPrice) }} each
                     </p>
                 </div>
 
@@ -62,7 +63,7 @@ const formattedSubtotal = computed(() =>
                 />
 
                 <div class="w-24 text-right text-sm font-medium text-gray-900">
-                    {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.unitPrice * item.quantity) }}
+                    {{ formatCurrency(item.unitPrice * item.quantity) }}
                 </div>
 
                 <button

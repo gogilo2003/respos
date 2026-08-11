@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -51,7 +52,7 @@ defineProps<{
                             <span class="rounded-lg bg-green-50 p-2 text-green-600">💵</span>
                         </div>
                         <div class="mt-3 text-2xl font-bold text-gray-900">
-                            ${{ statistics.cash_collected_today.toFixed(2) }}
+                            {{ formatCurrency(statistics.cash_collected_today) }}
                         </div>
                     </div>
 
@@ -115,7 +116,7 @@ defineProps<{
                                     </span>
                                 </div>
                                 <div class="mt-2 text-xl font-bold text-gray-900">
-                                    ${{ bill.grand_total.toFixed(2) }}
+                                    {{ formatCurrency(bill.grand_total) }}
                                 </div>
                             </div>
                             <div class="mt-4 flex items-center justify-between pt-3 border-t border-gray-100 text-xs">

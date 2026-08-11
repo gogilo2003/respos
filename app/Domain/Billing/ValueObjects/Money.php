@@ -126,25 +126,26 @@ final readonly class Money
         return $this->amountInCents === $other->amountInCents;
     }
 
-    public function format(string $currency = 'USD'): string
+    public function format(?string $currency = null): string
     {
+        $currencyCode = $currency ?? (function_exists('app') && app()->bound('config') ? config('billing.currency', 'KES') : 'KES');
         $sign = $this->amountInCents < 0 ? '-' : '';
         $abs = abs($this->amountInCents);
 
         $dollars = (int) floor($abs / 100);
         $cents = $abs % 100;
 
-        return sprintf('%s%d.%02d %s', $sign, $dollars, $cents, strtoupper($currency));
+        return sprintf('%s%d.%02d %s', $sign, $dollars, $cents, strtoupper($currencyCode));
     }
 
     /**
      * @return array{amount: int, currency: string}
      */
-    public function toArray(): array
+    public function toArray(?string $currency = null): array
     {
         return [
             'amount' => $this->amountInCents,
-            'currency' => 'USD',
+            'currency' => $currency ?? (function_exists('app') && app()->bound('config') ? config('billing.currency', 'KES') : 'KES'),
         ];
     }
 }

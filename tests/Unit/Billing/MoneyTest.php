@@ -129,28 +129,28 @@ final class MoneyTest extends TestCase
         $this->assertFalse(Money::from(10)->equals(Money::from(20)));
     }
 
-    public function test_format_defaults_to_usd(): void
+    public function test_format_defaults_to_kes(): void
     {
-        $this->assertSame('10.99 USD', Money::from(10.99)->format());
+        $this->assertSame('10.99 KES', Money::from(10.99)->format());
     }
 
     public function test_format_uses_custom_currency(): void
     {
-        $this->assertSame('10.99 KES', Money::from(10.99)->format('KES'));
+        $this->assertSame('10.99 USD', Money::from(10.99)->format('USD'));
     }
 
     public function test_format_handles_negative_amounts(): void
     {
-        $this->assertSame('-10.99 USD', Money::from(-10.99)->format());
+        $this->assertSame('-10.99 KES', Money::from(-10.99)->format());
     }
 
     public function test_format_pads_cents(): void
     {
-        $this->assertSame('10.50 USD', Money::from(10.5)->format());
+        $this->assertSame('10.50 KES', Money::from(10.5)->format());
     }
 
     public function test_to_array_returns_amount_and_currency(): void
     {
-        $this->assertSame(['amount' => 1099, 'currency' => 'USD'], Money::from(10.99)->toArray());
+        $this->assertSame(['amount' => 1099, 'currency' => 'KES'], Money::from(10.99)->toArray());
     }
 }

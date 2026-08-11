@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
 interface MenuItem {
@@ -148,7 +149,7 @@ onBeforeUnmount(() => {
             >
                 <span>{{ item.name }}</span>
                 <span class="text-gray-500">
-                    {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.price) }}
+                    {{ formatCurrency(item.price) }}
                 </span>
             </button>
             <div

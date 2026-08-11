@@ -5,16 +5,11 @@ import { Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import { ref } from 'vue';
 
+import { formatCurrency } from '@/utils/currency';
+
 const cartStore = useCartStore();
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
-
-const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    }).format(price);
-};
 
 const handleCheckout = async () => {
     if (cartStore.isEmpty) return;
@@ -112,7 +107,7 @@ const handleClearCart = () => {
                                     + {{ item.selected_modifiers.map(m => m.name).join(', ') }}
                                 </p>
                                 <p class="mt-1 text-lg font-bold text-gray-900">
-                                    {{ formatPrice(item.price) }}
+                                    {{ formatCurrency(item.price) }}
                                 </p>
                             </div>
 
@@ -139,7 +134,7 @@ const handleClearCart = () => {
 
                     <div class="flex items-center justify-between rounded-lg bg-white p-4 shadow-md">
                         <span class="text-xl font-bold text-gray-900">Total:</span>
-                        <span class="text-xl font-bold text-gray-900">{{ formatPrice(cartStore.subtotal) }}</span>
+                        <span class="text-xl font-bold text-gray-900">{{ formatCurrency(cartStore.subtotal) }}</span>
                     </div>
 
                     <div class="space-y-3">

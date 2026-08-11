@@ -11,9 +11,9 @@ return [
     |
     */
 
-    'currency' => env('BILLING_CURRENCY', 'USD'),
+    'currency' => env('BILLING_CURRENCY', 'KES'),
 
-    'currency_symbol' => env('BILLING_CURRENCY_SYMBOL', '$'),
+    'currency_symbol' => env('BILLING_CURRENCY_SYMBOL', 'KES '),
 
     /*
     |--------------------------------------------------------------------------

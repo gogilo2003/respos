@@ -196,8 +196,10 @@ const deleteItem = () => {
     }
 };
 
+import { formatCurrency } from '@/utils/currency';
+
 const formatPrice = (price: string | number) => {
-    return Number(price).toFixed(2);
+    return formatCurrency(price);
 };
 </script>
 
@@ -310,7 +312,7 @@ const formatPrice = (price: string | number) => {
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-900">
-                                        ${{ formatPrice(item.base_price) }}
+                                        {{ formatPrice(item.base_price) }}
                                         <span v-if="item.tax_inclusive" class="text-[10px] font-normal text-gray-500 ml-1">(inc. tax)</span>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-700">
@@ -405,7 +407,7 @@ const formatPrice = (price: string | number) => {
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <InputLabel for="base_price" value="Base Price ($)" />
+                            <InputLabel for="base_price" value="Base Price" />
                             <TextInput
                                 id="base_price"
                                 v-model="form.base_price"

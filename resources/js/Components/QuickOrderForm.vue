@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import { computed, ref } from 'vue';
 import { useForm } from '@inertiajs/vue3';
 import InputError from '@/Components/InputError.vue';
@@ -158,7 +159,7 @@ const submitOrder = () => {
                 >
                     <span>{{ item.name }}</span>
                     <span class="text-gray-500">
-                        {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.price) }}
+                        {{ formatCurrency(item.price) }}
                     </span>
                 </button>
                 <div
@@ -181,7 +182,7 @@ const submitOrder = () => {
                     <div>
                         <p class="text-sm font-medium text-gray-900">{{ item.name }}</p>
                         <p class="text-xs text-gray-500">
-                            {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.unitPrice) }}
+                            {{ formatCurrency(item.unitPrice) }}
                         </p>
                     </div>
 

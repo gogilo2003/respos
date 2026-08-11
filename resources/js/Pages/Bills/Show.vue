@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import DangerButton from '@/Components/DangerButton.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -157,8 +158,8 @@ const printReceipt = () => {
                                 <tr v-for="(item, idx) in bill.items" :key="idx">
                                     <td class="py-3 px-3 font-medium text-gray-900">{{ item.name }}</td>
                                     <td class="py-3 px-3 text-center text-gray-700">{{ item.quantity }}</td>
-                                    <td class="py-3 px-3 text-right text-gray-700">${{ item.unit_price.toFixed(2) }}</td>
-                                    <td class="py-3 px-3 text-right font-semibold text-gray-900">${{ item.total_price.toFixed(2) }}</td>
+                                    <td class="py-3 px-3 text-right text-gray-700">{{ formatCurrency(item.unit_price) }}</td>
+                                    <td class="py-3 px-3 text-right font-semibold text-gray-900">{{ formatCurrency(item.total_price) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -168,23 +169,23 @@ const printReceipt = () => {
                     <div class="border-t border-gray-200 pt-4 space-y-2 text-xs">
                         <div class="flex justify-between text-gray-600">
                             <span>Subtotal:</span>
-                            <span>${{ bill.subtotal.toFixed(2) }}</span>
+                            <span>{{ formatCurrency(bill.subtotal) }}</span>
                         </div>
                         <div v-if="bill.discount > 0" class="flex justify-between text-green-600">
                             <span>Discount:</span>
-                            <span>-${{ bill.discount.toFixed(2) }}</span>
+                            <span>-{{ formatCurrency(bill.discount) }}</span>
                         </div>
                         <div v-if="bill.tax > 0" class="flex justify-between text-gray-600">
                             <span>Tax:</span>
-                            <span>+${{ bill.tax.toFixed(2) }}</span>
+                            <span>+{{ formatCurrency(bill.tax) }}</span>
                         </div>
                         <div v-if="bill.service_charge > 0" class="flex justify-between text-gray-600">
                             <span>Service Charge:</span>
-                            <span>+${{ bill.service_charge.toFixed(2) }}</span>
+                            <span>+{{ formatCurrency(bill.service_charge) }}</span>
                         </div>
                         <div class="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-3">
                             <span>Grand Total:</span>
-                            <span>${{ bill.grand_total.toFixed(2) }}</span>
+                            <span>{{ formatCurrency(bill.grand_total) }}</span>
                         </div>
                     </div>
 
@@ -205,12 +206,12 @@ const printReceipt = () => {
                     Settle Bill #{{ bill.bill_number }}
                 </h2>
                 <p class="text-xs text-gray-500 mt-1">
-                    Total Amount Due: <span class="font-bold text-gray-900">${{ bill.grand_total.toFixed(2) }}</span>
+                    Total Amount Due: <span class="font-bold text-gray-900">{{ formatCurrency(bill.grand_total) }}</span>
                 </p>
 
                 <form @submit.prevent="processPayment" class="mt-6 space-y-4">
                     <div>
-                        <InputLabel for="amount_received" value="Amount Received ($)" />
+                        <InputLabel for="amount_received" value="Amount Received" />
                         <TextInput
                             id="amount_received"
                             v-model="paymentForm.amount_received"

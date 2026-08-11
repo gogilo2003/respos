@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import WebLayout from '@/Layouts/WebLayout.vue';
 import { useCartStore } from '@/Stores/cartStore';
+import { formatCurrency } from '@/utils/currency';
 import { ref } from 'vue';
 
 const cartStore = useCartStore();
@@ -97,7 +98,7 @@ const handleAddToCart = (item: {
                                         {{ item.title }}
                                     </h3>
                                     <div class="text-sm font-semibold text-gray-900 font-mono">
-                                        ${{ Number(item.price).toFixed(2) }}
+                                        {{ formatCurrency(item.price) }}
                                     </div>
                                 </div>
 

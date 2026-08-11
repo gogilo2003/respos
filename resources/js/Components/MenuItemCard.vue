@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
+
 interface Props {
     id: number;
     name: string;
@@ -42,7 +44,7 @@ const emit = defineEmits<{
             </div>
 
             <p class="mt-2 text-sm text-gray-500">
-                {{ new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price) }}
+                {{ formatCurrency(price) }}
             </p>
 
             <button

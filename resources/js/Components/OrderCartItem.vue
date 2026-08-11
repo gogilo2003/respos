@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import { computed } from 'vue';
+
 interface Props {
     name: string;
     price: number;
@@ -10,11 +12,11 @@ interface Props {
 const props = defineProps<Props>();
 
 const formattedPrice = computed(() =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(props.price)
+    formatCurrency(props.price)
 );
 
 const lineTotal = computed(() =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(props.price * props.quantity)
+    formatCurrency(props.price * props.quantity)
 );
 </script>
 

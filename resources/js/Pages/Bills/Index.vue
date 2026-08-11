@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import DangerButton from '@/Components/DangerButton.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -171,7 +172,7 @@ const executeVoid = () => {
                                         </span>
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 text-sm font-bold text-gray-900">
-                                        ${{ bill.grand_total.toFixed(2) }}
+                                        {{ formatCurrency(bill.grand_total) }}
                                     </td>
                                     <td class="whitespace-nowrap px-6 py-4 text-sm">
                                         <span

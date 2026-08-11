@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatCurrency } from '@/utils/currency';
 import WebLayout from '@/Layouts/WebLayout.vue';
 import { Head, Link } from '@inertiajs/vue3';
 
@@ -103,7 +104,7 @@ const getStepIndex = (status: string) => {
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="font-bold text-gray-900 text-sm">${{ item.total_price.toFixed(2) }}</div>
+                                <div class="font-bold text-gray-900 text-sm">{{ formatCurrency(item.total_price) }}</div>
                                 <span class="inline-block text-[10px] uppercase font-bold text-gray-400 mt-0.5">{{ item.status }}</span>
                             </div>
                         </div>
@@ -111,7 +112,7 @@ const getStepIndex = (status: string) => {
 
                     <div class="border-t border-gray-200 mt-4 pt-4 flex justify-between items-center text-base font-bold text-gray-900">
                         <span>Total Amount:</span>
-                        <span>${{ order.total_amount.toFixed(2) }}</span>
+                        <span>{{ formatCurrency(order.total_amount) }}</span>
                     </div>
 
                     <div class="mt-6 text-center">

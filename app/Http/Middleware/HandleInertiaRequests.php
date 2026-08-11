@@ -45,6 +45,10 @@ class HandleInertiaRequests extends Middleware
                 ] : null,
             ],
             'navigationMenu' => $this->navigationMenuService->getNavigationMenu($request->user()),
+            'currency' => [
+                'code' => config('billing.currency', 'KES'),
+                'symbol' => config('billing.currency_symbol', 'KES '),
+            ],
         ];
     }
 }
