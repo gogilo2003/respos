@@ -286,8 +286,6 @@ const canEditOrder = (order: OrderData) => {
             </div>
         </template>
 
-        <pre>{{ userRole }}</pre>
-
         <div class="py-6 w-full px-4 sm:px-6 lg:px-8 space-y-6">
             <!-- Filter Toolbar -->
             <div
@@ -326,7 +324,7 @@ const canEditOrder = (order: OrderData) => {
                                     <strong class="text-gray-800">{{
                                         order.session?.table?.table_number ||
                                         'N/A'
-                                    }}</strong></span>
+                                        }}</strong></span>
                             </div>
                             <OrderStatusBadge :status="order.status" />
                         </div>
@@ -364,7 +362,7 @@ const canEditOrder = (order: OrderData) => {
                             <span>Total</span>
                             <span class="text-indigo-600">{{
                                 formatCurrency(calculateOrderTotal(order))
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div class="flex gap-2 justify-end">
@@ -472,7 +470,7 @@ const canEditOrder = (order: OrderData) => {
                             Table:
                             <strong>{{
                                 selectedOrder.session?.table?.table_number
-                            }}</strong>
+                                }}</strong>
                             | Placed by: {{ selectedOrder.placed_by_role }}
                         </p>
                     </div>
@@ -653,7 +651,7 @@ const canEditOrder = (order: OrderData) => {
                                     | Status:
                                     <span class="font-semibold text-indigo-600">{{
                                         item.status
-                                    }}</span>
+                                        }}</span>
                                 </p>
                             </div>
                             <div class="flex items-center gap-2">
@@ -667,7 +665,7 @@ const canEditOrder = (order: OrderData) => {
                                 </SecondaryButton>
                                 <span class="font-bold text-xs px-1">{{
                                     item.quantity
-                                }}</span>
+                                    }}</span>
                                 <SecondaryButton @click="
                                     updateItemQuantity(
                                         item,
