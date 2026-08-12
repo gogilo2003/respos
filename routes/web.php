@@ -101,6 +101,7 @@ Route::patch('/orders/{order}/status', [OrderController::class, 'transition'])
     ->name('orders.status.update');
 
 Route::get('/session/{table}', [TableSessionController::class, 'show'])->name('session.entry');
+Route::get('/orders/track', [CustomerOrderController::class, 'trackLatest'])->name('orders.track.latest');
 Route::get('/orders/{order}/track', [CustomerOrderController::class, 'track'])->name('orders.track');
 
 Route::prefix('bills')

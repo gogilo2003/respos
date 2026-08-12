@@ -135,8 +135,9 @@ class HomeController extends Controller
             return $order;
         });
 
-        // Clear cart session
+        // Clear cart session and set active order tracking ID
         $request->session()->forget('cart');
+        session(['active_order_id' => $order->id]);
 
         // Dispatch notifications for kitchen and waiter
         app(NotificationService::class)->notifyRole('kitchen', 'order_placed', $session->id, [

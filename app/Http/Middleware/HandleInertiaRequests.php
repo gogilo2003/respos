@@ -53,6 +53,7 @@ class HandleInertiaRequests extends Middleware
                 'code' => config('billing.currency', 'KES'),
                 'symbol' => config('billing.currency_symbol', 'KES '),
             ],
+            'activeOrderId' => session('active_order_id') ?: ($request->route('order')?->id ?? null),
         ];
     }
 }

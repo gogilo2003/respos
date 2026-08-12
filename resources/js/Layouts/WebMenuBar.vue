@@ -1,18 +1,44 @@
 <script lang="ts" setup>
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { useCartStore } from '@/Stores/cartStore';
-import { Link } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+
+interface NavLinkItem {
+    name: string;
+    href: string;
+    isCart?: boolean;
+    isTrack?: boolean;
+}
 
 const cartStore = useCartStore();
+const page = usePage();
 
-const links = ref([
-    { name: 'Home', href: '/' },
-    { name: 'Categories', href: '/categories' },
-    { name: 'Menu', href: '/menu' },
-    { name: 'About', href: '/about' },
-    { name: 'Cart', href: '/cart', isCart: true },
-]);
+const activeOrderId = computed(() => {
+    const fromProps = (page.props as any).activeOrderId;
+    return cartStore.activeOrderId || fromProps || null;
+});
+
+const links = computed<NavLinkItem[]>(() => {
+    const list: NavLinkItem[] = [
+        { name: 'Home', href: '/' },
+        { name: 'Categories', href: '/categories' },
+        { name: 'Menu', href: '/menu' },
+        { name: 'About', href: '/about' },
+    ];
+
+    if (activeOrderId.value) {
+        list.push({
+            name: 'Track Order',
+            href: `/orders/${activeOrderId.value}/track`,
+            isTrack: true,
+        });
+    }
+
+    list.push({ name: 'Cart', href: '/cart', isCart: true });
+
+    return list;
+});
 
 const SCROLL_THRESHOLD = 64;
 
@@ -59,7 +85,17 @@ onUnmounted(() => {
                     :href="link.href"
                     class="relative text-xl font-medium uppercase text-white/90 transition-colors hover:text-white"
                 >
-                    {{ link.name }}
+                    <span v-if="link.isTrack" class="inline-flex items-center gap-1.5 font-bold text-amber-400 hover:text-amber-300">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+                        </span>
+                        {{ link.name }}
+                    </span>
+                    <template v-else>
+                        {{ link.name }}
+                    </template>
+
                     <span
                         v-if="link.isCart && cartStore.totalCount > 0"
                         class="ml-1.5 inline-flex items-center justify-center rounded-full bg-yellow-400 px-2 py-0.5 text-xs font-bold text-gray-900"
@@ -118,7 +154,15 @@ onUnmounted(() => {
                     class="flex items-center justify-between rounded-lg px-4 py-2.5 text-sm font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                     @click="mobileOpen = false"
                 >
-                    <span>{{ link.name }}</span>
+                    <span v-if="link.isTrack" class="inline-flex items-center gap-1.5 text-amber-400 font-bold">
+                        <span class="relative flex h-2 w-2">
+                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
+                        </span>
+                        {{ link.name }}
+                    </span>
+                    <span v-else>{{ link.name }}</span>
+
                     <span
                         v-if="link.isCart && cartStore.totalCount > 0"
                         class="rounded-full bg-yellow-400 px-2 py-0.5 text-xs font-bold text-gray-900"

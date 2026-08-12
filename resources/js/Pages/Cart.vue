@@ -61,6 +61,9 @@ const handleCheckout = async () => {
         const res = await axios.post(route('cart.complete'), payload);
 
         if (res.data?.ok && res.data?.track_url) {
+            if (res.data?.order_id) {
+                cartStore.setActiveOrderId(res.data.order_id);
+            }
             cartStore.clearCart();
             router.visit(res.data.track_url);
         } else {

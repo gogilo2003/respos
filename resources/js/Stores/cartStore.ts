@@ -19,6 +19,7 @@ export interface CartItem {
 }
 
 const STORAGE_KEY = 'cart';
+const ORDER_KEY = 'active_order_id';
 
 function getInitialCart(): CartItem[] {
     try {
@@ -35,8 +36,24 @@ function getInitialCart(): CartItem[] {
     return [];
 }
 
+function getInitialOrderId(): number | null {
+    try {
+        const stored = localStorage.getItem(ORDER_KEY);
+        if (stored) {
+            const parsed = Number(stored);
+            if (!isNaN(parsed) && parsed > 0) {
+                return parsed;
+            }
+        }
+    } catch (e) {
+        console.error('Failed to parse stored active_order_id from localStorage:', e);
+    }
+    return null;
+}
+
 export const useCartStore = defineStore('cart', () => {
     const items = ref<CartItem[]>(getInitialCart());
+    const activeOrderId = ref<number | null>(getInitialOrderId());
 
     watch(
         items,
@@ -48,6 +65,21 @@ export const useCartStore = defineStore('cart', () => {
             }
         },
         { deep: true },
+    );
+
+    watch(
+        activeOrderId,
+        (newOrderId) => {
+            try {
+                if (newOrderId) {
+                    localStorage.setItem(ORDER_KEY, String(newOrderId));
+                } else {
+                    localStorage.removeItem(ORDER_KEY);
+                }
+            } catch (e) {
+                console.error('Failed to save active_order_id to localStorage:', e);
+            }
+        },
     );
 
     const totalCount = computed(() => {
@@ -120,8 +152,17 @@ export const useCartStore = defineStore('cart', () => {
         items.value = [];
     }
 
+    function setActiveOrderId(id: number | null) {
+        activeOrderId.value = id;
+    }
+
+    function clearActiveOrderId() {
+        activeOrderId.value = null;
+    }
+
     return {
         items,
+        activeOrderId,
         totalCount,
         subtotal,
         isEmpty,
@@ -129,5 +170,7 @@ export const useCartStore = defineStore('cart', () => {
         updateQuantity,
         removeItem,
         clearCart,
+        setActiveOrderId,
+        clearActiveOrderId,
     };
 });

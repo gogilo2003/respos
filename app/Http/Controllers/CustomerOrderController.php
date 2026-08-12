@@ -32,4 +32,28 @@ class CustomerOrderController extends Controller
             ],
         ]);
     }
+
+    public function trackLatest(Request $request)
+    {
+        $orderId = $request->query('order_id') ?: session('active_order_id');
+
+        if (! $orderId && session('active_session_id')) {
+            $latestOrder = Order::where('session_id', session('active_session_id'))
+                ->latest()
+                ->first();
+
+            if ($latestOrder) {
+                $orderId = $latestOrder->id;
+            }
+        }
+
+        if ($orderId) {
+            $order = Order::find($orderId);
+            if ($order) {
+                return redirect()->route('orders.track', $order->id);
+            }
+        }
+
+        return redirect()->route('menu');
+    }
 }
