@@ -88,7 +88,7 @@ test('waiter user receives waiter navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toBe(['dashboard', 'orders.index', 'kitchen.dashboard', 'waiter.dashboard']);
+    expect($keys)->toBe(['dashboard', 'orders.index', 'waiter.dashboard']);
 });
 
 test('kitchen user receives kitchen navigation menu', function () {
@@ -101,5 +101,5 @@ test('kitchen user receives kitchen navigation menu', function () {
     $menu = $this->service->getNavigationMenu($user);
 
     $keys = array_column($menu, 'key');
-    expect($keys)->toBe(['dashboard', 'orders.index', 'kitchen.dashboard', 'waiter.dashboard']);
+    expect($keys)->toBe(['dashboard', 'orders.index', 'kitchen.dashboard']);
 });

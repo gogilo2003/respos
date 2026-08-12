@@ -157,7 +157,7 @@ class PermissionRegistry
                 'group' => 'Kitchen Operations',
                 'label' => 'Kitchen Display System',
                 'routeName' => 'kitchen.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'kitchen', 'waiter'],
+                'defaultRoles' => ['admin', 'manager', 'kitchen'],
                 'nav' => [
                     'showInNav' => true,
                     'label' => 'Kitchen Display',
@@ -173,7 +173,7 @@ class PermissionRegistry
                 'group' => 'Waiter Operations',
                 'label' => 'Waiter Workspace & Ordering',
                 'routeName' => 'waiter.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'waiter', 'kitchen'],
+                'defaultRoles' => ['admin', 'manager', 'waiter'],
                 'nav' => [
                     'showInNav' => true,
                     'label' => 'Waiter Station',
@@ -289,7 +289,7 @@ class PermissionRegistry
             ];
         }
 
-        usort($navItems, fn ($a, $b) => ($a['order'] ?? 50) <=> ($b['order'] ?? 50));
+        usort($navItems, fn($a, $b) => ($a['order'] ?? 50) <=> ($b['order'] ?? 50));
 
         return $navItems;
     }
@@ -300,10 +300,10 @@ class PermissionRegistry
             try {
                 return route($routeName);
             } catch (\Throwable $e) {
-                return '/'.str_replace('.', '/', $routeName);
+                return '/' . str_replace('.', '/', $routeName);
             }
         }
 
-        return '/'.str_replace('.', '/', $routeName);
+        return '/' . str_replace('.', '/', $routeName);
     }
 }
