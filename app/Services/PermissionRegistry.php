@@ -135,13 +135,29 @@ class PermissionRegistry
                 'nav' => ['showInNav' => false],
             ],
 
+            // Order Operations
+            [
+                'key' => 'orders.index',
+                'group' => 'Order Operations',
+                'label' => 'View Orders Queue',
+                'routeName' => 'dashboard',
+                'defaultRoles' => ['admin', 'manager', 'waiter', 'kitchen', 'cashier'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Orders',
+                    'shortLabel' => 'O',
+                    'activePattern' => 'dashboard*',
+                    'order' => 15,
+                ],
+            ],
+
             // Kitchen Operations
             [
                 'key' => 'kitchen.dashboard',
                 'group' => 'Kitchen Operations',
                 'label' => 'Kitchen Display System',
                 'routeName' => 'kitchen.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'kitchen'],
+                'defaultRoles' => ['admin', 'manager', 'kitchen', 'waiter'],
                 'nav' => [
                     'showInNav' => true,
                     'label' => 'Kitchen Display',
@@ -157,7 +173,7 @@ class PermissionRegistry
                 'group' => 'Waiter Operations',
                 'label' => 'Waiter Workspace & Ordering',
                 'routeName' => 'waiter.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'waiter'],
+                'defaultRoles' => ['admin', 'manager', 'waiter', 'kitchen'],
                 'nav' => [
                     'showInNav' => true,
                     'label' => 'Waiter Station',
