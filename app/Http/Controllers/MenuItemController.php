@@ -81,6 +81,22 @@ class MenuItemController extends Controller
         return redirect()->back()->with('message', 'Menu item availability updated successfully.');
     }
 
+    public function toggleFeatured(Request $request, int $id)
+    {
+        $item = $this->itemRepository->find($id);
+        if (! $item) {
+            abort(404);
+        }
+
+        Gate::authorize('toggleAvailability', $item);
+
+        $this->itemRepository->update($id, [
+            'is_featured' => ! $item->is_featured,
+        ]);
+
+        return redirect()->back()->with('message', 'Menu item featured status updated successfully.');
+    }
+
     public function destroy(int $id)
     {
         $item = $this->itemRepository->find($id);

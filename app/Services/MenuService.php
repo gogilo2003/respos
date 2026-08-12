@@ -58,6 +58,16 @@ class MenuService
     }
 
     /**
+     * Get featured menu items for public landing page.
+     */
+    public function getFeaturedMenuItems(): array
+    {
+        $items = $this->menuItemRepository->getFeaturedItems();
+
+        return MenuItemResource::collection($items)->resolve();
+    }
+
+    /**
      * Get menu categories filtered by role.
      */
     public function getMenuCategories(?User $user = null): array

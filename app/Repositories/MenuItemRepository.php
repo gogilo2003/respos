@@ -55,4 +55,13 @@ class MenuItemRepository extends BaseRepository implements MenuItemRepositoryInt
 
         return $query->orderBy('sort_order')->get();
     }
+
+    public function getFeaturedItems()
+    {
+        return $this->model->where('is_featured', true)
+            ->where('is_available', true)
+            ->with('category')
+            ->orderBy('sort_order')
+            ->get();
+    }
 }

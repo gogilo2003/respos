@@ -132,6 +132,7 @@ const statusTabs = [
     { label: 'Preparing', value: 'preparing' },
     { label: 'Ready', value: 'ready' },
     { label: 'Served', value: 'served' },
+    { label: 'Billed', value: 'billed' },
     { label: 'Completed', value: 'completed' },
     { label: 'Cancelled', value: 'cancelled' },
 ];
@@ -258,7 +259,7 @@ const calculateOrderTotal = (order: OrderData) => {
 const canEditOrder = (order: OrderData) => {
     return (
         ['admin', 'manager', 'waiter'].includes(userRole.value) &&
-        !['completed', 'cancelled', 'served'].includes(order.status)
+        !['completed', 'cancelled', 'billed'].includes(order.status)
     );
 };
 </script>
@@ -529,6 +530,17 @@ const canEditOrder = (order: OrderData) => {
                             transitionOrderStatus(selectedOrder, 'served')
                             ">
                             Mark Served
+                        </SecondaryButton>
+
+                        <SecondaryButton v-if="
+                            selectedOrder.status === 'served' &&
+                            ['admin', 'manager', 'waiter'].includes(
+                                userRole,
+                            )
+                        " @click="
+                            transitionOrderStatus(selectedOrder, 'billed')
+                            ">
+                            Bill Order
                         </SecondaryButton>
 
                         <DangerButton v-if="

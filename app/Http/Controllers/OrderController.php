@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\TableSession;
 use App\Services\NotificationService;
+use App\Services\OrderService;
 use App\Services\OrderTransitionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,8 @@ use Inertia\Inertia;
 class OrderController extends Controller
 {
     public function __construct(
-        protected OrderTransitionService $transitionService
+        protected OrderTransitionService $transitionService,
+        protected OrderService $orderService,
     ) {}
 
     public function index(Request $request)
@@ -143,6 +145,10 @@ class OrderController extends Controller
     {
         Gate::authorize('update', $order);
 
+        if ($order->status === 'billed') {
+            return redirect()->back()->with('error', 'Cannot add items to a billed order.');
+        }
+
         $validated = $request->validate([
             'menu_item_id' => 'required|exists:menu_items,id',
             'quantity' => 'required|integer|min:1',
@@ -151,19 +157,25 @@ class OrderController extends Controller
 
         $menuItem = MenuItem::findOrFail($validated['menu_item_id']);
 
-        $orderItem = OrderItem::create([
-            'order_id' => $order->id,
-            'menu_item_id' => $menuItem->id,
-            'quantity' => $validated['quantity'],
-            'unit_price' => $menuItem->base_price,
-            'special_instructions' => $validated['special_instructions'] ?? null,
-            'status' => 'pending',
-        ]);
+        DB::transaction(function () use ($order, $menuItem, $validated) {
+            $orderItem = OrderItem::create([
+                'order_id' => $order->id,
+                'menu_item_id' => $menuItem->id,
+                'quantity' => $validated['quantity'],
+                'unit_price' => $menuItem->base_price,
+                'special_instructions' => $validated['special_instructions'] ?? null,
+                'status' => 'pending',
+            ]);
 
-        app(NotificationService::class)->notifyRole('kitchen', 'order_item_added', $order->session_id, [
-            'order_id' => $order->id,
-            'item_id' => $orderItem->id,
-        ]);
+            if ($order->status === 'served') {
+                $this->orderService->reopenOrderForPreparation($order->fresh());
+            }
+
+            app(NotificationService::class)->notifyRole('kitchen', 'order_item_added', $order->session_id, [
+                'order_id' => $order->id,
+                'item_id' => $orderItem->id,
+            ]);
+        });
 
         return redirect()->back()->with('message', "Added {$menuItem->name} to Order #{$order->id}.");
     }
@@ -205,7 +217,7 @@ class OrderController extends Controller
         Gate::authorize('transition', $order);
 
         $validated = $request->validate([
-            'status' => 'required|string|in:pending,accepted,preparing,ready,served,completed,cancelled',
+            'status' => 'required|string|in:pending,accepted,preparing,ready,served,billed,completed,cancelled',
         ]);
 
         $updatedOrder = $this->transitionService->transition($order, $validated['status']);

@@ -12,7 +12,7 @@ class OrderTransitionService
      */
     public function transition(Order $order, string $targetStatus): Order
     {
-        $allowed = ['pending', 'accepted', 'preparing', 'ready', 'served', 'completed', 'cancelled'];
+        $allowed = ['pending', 'accepted', 'preparing', 'ready', 'served', 'billed', 'completed', 'cancelled'];
         if (! in_array($targetStatus, $allowed, true)) {
             throw new \InvalidArgumentException("Invalid order status: {$targetStatus}");
         }
@@ -27,6 +27,7 @@ class OrderTransitionService
                 'preparing' => 'preparing',
                 'ready' => 'ready',
                 'served' => 'served',
+                'billed' => 'served',
                 'completed' => 'served',
                 'cancelled' => 'cancelled',
             ];
@@ -39,6 +40,8 @@ class OrderTransitionService
                     $updateData['accepted_at'] = $now;
                 } elseif ($targetStatus === 'ready') {
                     $updateData['ready_at'] = $now;
+                } elseif ($targetStatus === 'served' || $targetStatus === 'billed') {
+                    $updateData['served_at'] = $now;
                 }
 
                 $order->items()->update($updateData);

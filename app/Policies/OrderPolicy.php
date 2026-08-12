@@ -24,8 +24,11 @@ class OrderPolicy
 
     public function transition(User $user, Order $order): bool
     {
-        // Kitchen staff cannot accept new pending orders (waiter accepts)
         if ($user->hasRole('kitchen') && $order->status === 'pending') {
+            return false;
+        }
+
+        if ($order->status === 'served' && $user->hasRole('kitchen')) {
             return false;
         }
 

@@ -21,6 +21,7 @@ class MenuItem extends Model
         'image_url',
         'modifier_groups',
         'is_available',
+        'is_featured',
         'sort_order',
     ];
 
@@ -30,6 +31,7 @@ class MenuItem extends Model
             'base_price' => 'decimal:2',
             'tax_inclusive' => 'boolean',
             'is_available' => 'boolean',
+            'is_featured' => 'boolean',
             'modifier_groups' => 'array',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',

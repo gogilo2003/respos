@@ -49,6 +49,19 @@ test('kitchen staff can toggle menu item availability', function () {
     ]);
 });
 
+test('kitchen staff can toggle menu item featured status', function () {
+    $kitchen = User::factory()->withRole('kitchen')->create();
+    $item = MenuItem::factory()->create(['is_featured' => false]);
+
+    $response = $this->actingAs($kitchen)->patchJson(route('menu-items.toggle-featured', $item));
+
+    $response->assertStatus(302);
+    $this->assertDatabaseHas('menu_items', [
+        'id' => $item->id,
+        'is_featured' => true,
+    ]);
+});
+
 test('waiter cannot create or delete a menu item', function () {
     $waiter = User::factory()->withRole('waiter')->create();
     $category = MenuCategory::factory()->create();

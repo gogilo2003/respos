@@ -97,7 +97,7 @@ class KitchenRepository extends BaseRepository implements KitchenRepositoryInter
             'pending_items' => (int) ($counts->pending_items ?? 0),
             'preparing_items' => (int) ($counts->preparing_items ?? 0),
             'ready_items' => (int) ($counts->ready_items ?? 0),
-            'avg_prep_seconds' => $avgSeconds !== null ? (int) round($avgSeconds) : null,
+            'avg_prep_seconds' => $avgSeconds !== null ? (int) round((float) $avgSeconds) : null,
         ];
     }
 

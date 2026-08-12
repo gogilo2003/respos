@@ -30,6 +30,7 @@ export interface MenuItem {
     image_url: string | null;
     modifier_groups: ModifierGroup[] | null;
     is_available: boolean;
+    is_featured: boolean;
     sort_order: number;
     created_at?: string;
     updated_at?: string;

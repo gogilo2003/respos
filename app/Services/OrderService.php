@@ -46,4 +46,21 @@ class OrderService
             ['fully_served_at' => now()],
         );
     }
+
+    /**
+     * Reopen an order for preparation after new items are added
+     * to a served or billed order.
+     */
+    public function reopenOrderForPreparation(Order $order): bool
+    {
+        if ($order->status !== 'served') {
+            return false;
+        }
+
+        return (bool) $this->orderRepository->updateStatus(
+            $order->id,
+            'accepted',
+            ['accepted_at' => now()],
+        );
+    }
 }

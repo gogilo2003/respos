@@ -26,8 +26,12 @@ class HomeController extends Controller
     public function welcome(Request $request)
     {
         $menuItems = $this->menuService->getMenuItems($request->user());
+        $featuredMenuItems = $this->menuService->getFeaturedMenuItems();
 
-        return Inertia::render('Welcome', ['menuItems' => $menuItems]);
+        return Inertia::render('Welcome', [
+            'menuItems' => $menuItems,
+            'featuredMenuItems' => $featuredMenuItems,
+        ]);
     }
 
     public function categories(Request $request)

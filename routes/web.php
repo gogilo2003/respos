@@ -158,6 +158,7 @@ Route::prefix('menu-items')
         Route::post('/', [MenuItemController::class, 'store'])->middleware('permission:menu-items.index')->name('.store');
         Route::patch('/{item}', [MenuItemController::class, 'update'])->middleware('permission:menu-items.index')->name('.update');
         Route::patch('/{item}/toggle-availability', [MenuItemController::class, 'toggleAvailability'])->middleware('permission:menu-items.availability')->name('.toggle-availability');
+        Route::patch('/{item}/toggle-featured', [MenuItemController::class, 'toggleFeatured'])->middleware('permission:menu-items.availability')->name('.toggle-featured');
         Route::delete('/{item}', [MenuItemController::class, 'destroy'])->middleware('permission:menu-items.index')->name('.destroy');
     });
 

@@ -187,6 +187,16 @@ const toggleAvailability = (item: MenuItem) => {
     );
 };
 
+const toggleFeatured = (item: MenuItem) => {
+    router.patch(
+        route('menu-items.toggle-featured', item.id),
+        {},
+        {
+            preserveScroll: true,
+        },
+    );
+};
+
 const closeModal = () => {
     showItemModal.value = false;
     form.reset();
@@ -328,6 +338,11 @@ const formatPrice = (price: string | number) => {
                                         Availability
                                     </th>
                                     <th
+                                        class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                                    >
+                                        Featured
+                                    </th>
+                                    <th
                                         class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
                                     >
                                         Actions
@@ -425,6 +440,29 @@ const formatPrice = (price: string | number) => {
                                                 item.is_available
                                                     ? 'Available'
                                                     : 'Out of Stock'
+                                            }}
+                                        </button>
+                                        <button
+                                            @click="toggleFeatured(item)"
+                                            class="ml-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition"
+                                            :class="
+                                                item.is_featured
+                                                    ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                                            "
+                                        >
+                                            <span
+                                                class="h-1.5 w-1.5 rounded-full"
+                                                :class="
+                                                    item.is_featured
+                                                        ? 'bg-green-600'
+                                                        : 'bg-gray-400'
+                                                "
+                                            ></span>
+                                            {{
+                                                item.is_featured
+                                                    ? 'Promoted'
+                                                    : 'Demoted'
                                             }}
                                         </button>
                                     </td>
