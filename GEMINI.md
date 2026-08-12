@@ -50,6 +50,7 @@ A QR-based restaurant ordering and billing management system built with Laravel 
 - **Type Safety:** Always use TypeScript for props, emits, and internal logic.
 - **Components:** Shared components in `resources/js/Components`. Page components in `resources/js/Pages`.
 - **Component Reuse First:** ALWAYS check `resources/js/Components/` before creating custom inline UI (e.g. use `PrimaryButton`, `SecondaryButton`, `DangerButton`, `Modal`, `TextInput`, `InputLabel`, `InputError`, `Checkbox`, `QuantitySelector`, `Paginator`, `OrderStatusBadge` rather than raw HTML/custom inline elements).
+- **Full Width Layouts:** Avoid outer `max-w-7xl` or `max-w-5xl` constraints on authenticated staff pages. Use full-width containers with responsive padding (`w-full px-4 sm:px-6 lg:px-8`).
 - **CRUD:** Prefer single-page Inertia flows with dialogs for Create/Edit/View/Delete actions.
 
 ## Project Resources

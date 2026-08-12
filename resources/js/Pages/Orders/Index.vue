@@ -264,6 +264,7 @@ const canEditOrder = (order: OrderData) => {
 </script>
 
 <template>
+
     <Head title="Orders Management" />
 
     <AuthenticatedLayout>
@@ -271,117 +272,85 @@ const canEditOrder = (order: OrderData) => {
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-xl font-semibold text-gray-800">
-                        Orders Listing & Management
+                        Orders Listing & Managements
                     </h2>
                     <p class="text-xs text-gray-500">
                         Monitor live restaurant orders, update preparation
                         status, and manage items
                     </p>
                 </div>
-                <PrimaryButton
-                    v-if="['admin', 'manager', 'waiter'].includes(userRole)"
-                    @click="openCreateModal"
-                >
+                <PrimaryButton v-if="['admin', 'manager', 'waiter'].includes(userRole)" @click="openCreateModal">
                     + New Waiter Order
                 </PrimaryButton>
             </div>
         </template>
 
-        <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <pre>{{ userRole }}</pre>
+
+        <div class="py-6 w-full px-4 sm:px-6 lg:px-8 space-y-6">
             <!-- Filter Toolbar -->
             <div
-                class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center"
-            >
+                class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center">
                 <!-- Status Filter Pills -->
                 <div class="flex flex-wrap gap-2">
-                    <button
-                        v-for="tab in statusTabs"
-                        :key="tab.value"
-                        @click="selectedStatus = tab.value"
-                        :class="[
-                            'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
-                            selectedStatus === tab.value
-                                ? 'bg-indigo-600 text-white shadow-sm'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
-                        ]"
-                    >
+                    <button v-for="tab in statusTabs" :key="tab.value" @click="selectedStatus = tab.value" :class="[
+                        'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                        selectedStatus === tab.value
+                            ? 'bg-indigo-600 text-white shadow-sm'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                    ]">
                         {{ tab.label }}
                     </button>
                 </div>
 
                 <!-- Search Input -->
                 <div class="w-full md:w-64">
-                    <TextInput
-                        v-model="search"
-                        type="text"
-                        placeholder="Search order # or table..."
-                        class="w-full text-xs"
-                        @keyup.enter="updateFilters"
-                    />
+                    <TextInput v-model="search" type="text" placeholder="Search order # or table..."
+                        class="w-full text-xs" @keyup.enter="updateFilters" />
                 </div>
             </div>
 
             <!-- Orders Grid -->
-            <div
-                v-if="orders.data.length > 0"
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-                <div
-                    v-for="order in orders.data"
-                    :key="order.id"
-                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between hover:shadow-md transition-shadow"
-                >
+            <div v-if="orders.data.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div v-for="order in orders.data" :key="order.id"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between hover:shadow-md transition-shadow">
                     <div>
                         <!-- Card Header -->
-                        <div
-                            class="flex items-center justify-between pb-3 border-b border-gray-100"
-                        >
+                        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                             <div>
                                 <h3 class="text-sm font-bold text-gray-900">
                                     Order #{{ order.id }}
                                 </h3>
-                                <span class="text-xs text-gray-500"
-                                    >Table:
+                                <span class="text-xs text-gray-500">Table:
                                     <strong class="text-gray-800">{{
                                         order.session?.table?.table_number ||
                                         'N/A'
-                                    }}</strong></span
-                                >
+                                    }}</strong></span>
                             </div>
                             <OrderStatusBadge :status="order.status" />
                         </div>
 
                         <!-- Card Meta -->
-                        <div
-                            class="py-2 text-xs text-gray-500 flex justify-between"
-                        >
+                        <div class="py-2 text-xs text-gray-500 flex justify-between">
                             <span>Placed by: {{ order.placed_by_role }}</span>
                             <span>{{ order.created_at }}</span>
                         </div>
 
                         <!-- Items Summary Preview -->
                         <div class="py-2 space-y-1">
-                            <div
-                                v-for="item in (order.items || []).slice(0, 3)"
-                                :key="item.id"
-                                class="flex justify-between text-xs"
-                            >
-                                <span class="text-gray-700 truncate"
-                                    >{{ item.quantity }}x
+                            <div v-for="item in (order.items || []).slice(0, 3)" :key="item.id"
+                                class="flex justify-between text-xs">
+                                <span class="text-gray-700 truncate">{{ item.quantity }}x
                                     {{
                                         item.menu_item?.name || 'Item'
-                                    }}</span
-                                >
+                                    }}</span>
                                 <span class="font-medium text-gray-900">{{
                                     formatCurrency(
                                         item.quantity * Number(item.unit_price),
                                     )
                                 }}</span>
                             </div>
-                            <p
-                                v-if="(order.items || []).length > 3"
-                                class="text-xs text-indigo-600 font-medium pt-1"
-                            >
+                            <p v-if="(order.items || []).length > 3" class="text-xs text-indigo-600 font-medium pt-1">
                                 +{{ (order.items || []).length - 3 }} more
                                 items...
                             </p>
@@ -390,9 +359,7 @@ const canEditOrder = (order: OrderData) => {
 
                     <!-- Card Footer & Actions -->
                     <div class="pt-4 border-t border-gray-100">
-                        <div
-                            class="flex items-center justify-between mb-3 font-semibold text-sm"
-                        >
+                        <div class="flex items-center justify-between mb-3 font-semibold text-sm">
                             <span>Total</span>
                             <span class="text-indigo-600">{{
                                 formatCurrency(calculateOrderTotal(order))
@@ -403,10 +370,7 @@ const canEditOrder = (order: OrderData) => {
                             <SecondaryButton @click="openViewModal(order)">
                                 Details
                             </SecondaryButton>
-                            <PrimaryButton
-                                v-if="canEditOrder(order)"
-                                @click="openEditItemsModal(order)"
-                            >
+                            <PrimaryButton v-if="canEditOrder(order)" @click="openEditItemsModal(order)">
                                 Edit Items
                             </PrimaryButton>
                         </div>
@@ -415,10 +379,7 @@ const canEditOrder = (order: OrderData) => {
             </div>
 
             <!-- Empty State -->
-            <div
-                v-else
-                class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center"
-            >
+            <div v-else class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
                 <p class="text-gray-500 font-medium">No orders found.</p>
                 <p class="text-xs text-gray-400 mt-1">
                     Try clearing search query or changing status filters.
@@ -440,21 +401,11 @@ const canEditOrder = (order: OrderData) => {
 
                 <form @submit.prevent="submitCreateOrder" class="space-y-4">
                     <div>
-                        <InputLabel
-                            for="table_session"
-                            value="Select Active Table Session"
-                        />
-                        <select
-                            id="table_session"
-                            v-model="createForm.table_session_id"
+                        <InputLabel for="table_session" value="Select Active Table Session" />
+                        <select id="table_session" v-model="createForm.table_session_id"
                             class="w-full text-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            required
-                        >
-                            <option
-                                v-for="s in activeSessions"
-                                :key="s.id"
-                                :value="s.id"
-                            >
+                            required>
+                            <option v-for="s in activeSessions" :key="s.id" :value="s.id">
                                 Table {{ s.table_number }} (Session #{{ s.id }})
                             </option>
                         </select>
@@ -462,62 +413,31 @@ const canEditOrder = (order: OrderData) => {
 
                     <!-- Items Rows -->
                     <div class="space-y-3 pt-2">
-                        <label class="block text-xs font-medium text-gray-700"
-                            >Order Items</label
-                        >
-                        <div
-                            v-for="(row, idx) in createForm.items"
-                            :key="idx"
-                            class="flex flex-col sm:flex-row gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200"
-                        >
+                        <label class="block text-xs font-medium text-gray-700">Order Items</label>
+                        <div v-for="(row, idx) in createForm.items" :key="idx"
+                            class="flex flex-col sm:flex-row gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200">
                             <div class="flex-1">
-                                <span class="text-xs text-gray-500 font-medium"
-                                    >Item</span
-                                >
-                                <select
-                                    v-model="row.menu_item_id"
-                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm"
-                                    required
-                                >
-                                    <option
-                                        v-for="m in menuItems"
-                                        :key="m.id"
-                                        :value="m.id"
-                                    >
+                                <span class="text-xs text-gray-500 font-medium">Item</span>
+                                <select v-model="row.menu_item_id"
+                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm" required>
+                                    <option v-for="m in menuItems" :key="m.id" :value="m.id">
                                         {{ m.name }} -
                                         {{ formatCurrency(m.price) }}
                                     </option>
                                 </select>
                             </div>
                             <div class="w-20">
-                                <span class="text-xs text-gray-500 font-medium"
-                                    >Qty</span
-                                >
-                                <TextInput
-                                    v-model.number="row.quantity"
-                                    type="number"
-                                    min="1"
-                                    max="50"
-                                    class="w-full text-xs"
-                                    required
-                                />
+                                <span class="text-xs text-gray-500 font-medium">Qty</span>
+                                <TextInput v-model.number="row.quantity" type="number" min="1" max="50"
+                                    class="w-full text-xs" required />
                             </div>
                             <div class="flex-1">
-                                <span class="text-xs text-gray-500 font-medium"
-                                    >Notes</span
-                                >
-                                <TextInput
-                                    v-model="row.special_instructions"
-                                    type="text"
-                                    placeholder="Optional instructions..."
-                                    class="w-full text-xs"
-                                />
+                                <span class="text-xs text-gray-500 font-medium">Notes</span>
+                                <TextInput v-model="row.special_instructions" type="text"
+                                    placeholder="Optional instructions..." class="w-full text-xs" />
                             </div>
-                            <DangerButton
-                                type="button"
-                                @click="removeCreateItemRow(idx)"
-                                v-if="createForm.items.length > 1"
-                            >
+                            <DangerButton type="button" @click="removeCreateItemRow(idx)"
+                                v-if="createForm.items.length > 1">
                                 X
                             </DangerButton>
                         </div>
@@ -560,85 +480,68 @@ const canEditOrder = (order: OrderData) => {
 
                 <!-- Status Transition Action Buttons -->
                 <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                    <span class="block text-xs font-semibold text-gray-700 mb-2"
-                        >Update Order Status</span
-                    >
+                    <span class="block text-xs font-semibold text-gray-700 mb-2">Update Order Status</span>
                     <div class="flex flex-wrap gap-2">
-                        <SecondaryButton
-                            v-if="
-                                selectedOrder.status === 'pending' &&
-                                ['admin', 'manager', 'waiter'].includes(
-                                    userRole,
-                                )
-                            "
-                            @click="
-                                transitionOrderStatus(selectedOrder, 'accepted')
-                            "
-                        >
+                        <SecondaryButton v-if="
+                            selectedOrder.status === 'pending' &&
+                            ['admin', 'manager', 'waiter'].includes(
+                                userRole,
+                            )
+                        " @click="
+                            transitionOrderStatus(selectedOrder, 'accepted')
+                            ">
                             Accept Order
                         </SecondaryButton>
 
-                        <SecondaryButton
-                            v-if="
-                                ['accepted', 'pending'].includes(
-                                    selectedOrder.status,
-                                ) &&
-                                ['admin', 'manager', 'kitchen'].includes(
-                                    userRole,
-                                )
-                            "
-                            @click="
-                                transitionOrderStatus(
-                                    selectedOrder,
-                                    'preparing',
-                                )
-                            "
-                        >
+                        <SecondaryButton v-if="
+                            ['accepted', 'pending'].includes(
+                                selectedOrder.status,
+                            ) &&
+                            ['admin', 'manager', 'kitchen'].includes(
+                                userRole,
+                            )
+                        " @click="
+                            transitionOrderStatus(
+                                selectedOrder,
+                                'preparing',
+                            )
+                            ">
                             Start Preparing
                         </SecondaryButton>
 
-                        <SecondaryButton
-                            v-if="
-                                selectedOrder.status === 'preparing' &&
-                                ['admin', 'manager', 'kitchen'].includes(
-                                    userRole,
-                                )
-                            "
-                            @click="
-                                transitionOrderStatus(selectedOrder, 'ready')
-                            "
-                        >
+                        <SecondaryButton v-if="
+                            selectedOrder.status === 'preparing' &&
+                            ['admin', 'manager', 'kitchen'].includes(
+                                userRole,
+                            )
+                        " @click="
+                            transitionOrderStatus(selectedOrder, 'ready')
+                            ">
                             Mark Ready
                         </SecondaryButton>
 
-                        <SecondaryButton
-                            v-if="
-                                selectedOrder.status === 'ready' &&
-                                ['admin', 'manager', 'waiter'].includes(
-                                    userRole,
-                                )
-                            "
-                            @click="
-                                transitionOrderStatus(selectedOrder, 'served')
-                            "
-                        >
+                        <SecondaryButton v-if="
+                            selectedOrder.status === 'ready' &&
+                            ['admin', 'manager', 'waiter'].includes(
+                                userRole,
+                            )
+                        " @click="
+                            transitionOrderStatus(selectedOrder, 'served')
+                            ">
                             Mark Served
                         </SecondaryButton>
 
-                        <DangerButton
-                            v-if="
-                                !['completed', 'cancelled'].includes(
-                                    selectedOrder.status,
-                                ) &&
-                                ['admin', 'manager'].includes(userRole)
-                            "
-                            @click="
-                                transitionOrderStatus(
-                                    selectedOrder,
-                                    'cancelled',
-                                )
-                            "
-                        >
+                        <DangerButton v-if="
+                            !['completed', 'cancelled'].includes(
+                                selectedOrder.status,
+                            ) &&
+                            ['admin', 'manager'].includes(userRole)
+                        " @click="
+                            transitionOrderStatus(
+                                selectedOrder,
+                                'cancelled',
+                            )
+                            ">
                             Cancel Order
                         </DangerButton>
                     </div>
@@ -650,20 +553,14 @@ const canEditOrder = (order: OrderData) => {
                         Order Items
                     </h4>
                     <div class="divide-y border rounded-lg overflow-hidden">
-                        <div
-                            v-for="item in selectedOrder.items || []"
-                            :key="item.id"
-                            class="p-3 flex justify-between items-center text-xs"
-                        >
+                        <div v-for="item in selectedOrder.items || []" :key="item.id"
+                            class="p-3 flex justify-between items-center text-xs">
                             <div>
                                 <p class="font-bold text-gray-900">
                                     {{ item.quantity }}x
                                     {{ item.menu_item?.name || 'Item' }}
                                 </p>
-                                <p
-                                    v-if="item.special_instructions"
-                                    class="text-gray-500 italic"
-                                >
+                                <p v-if="item.special_instructions" class="text-gray-500 italic">
                                     Note: {{ item.special_instructions }}
                                 </p>
                             </div>
@@ -673,9 +570,7 @@ const canEditOrder = (order: OrderData) => {
                                         item.quantity * Number(item.unit_price),
                                     )
                                 }}</span>
-                                <span
-                                    class="block text-[10px] uppercase font-bold text-indigo-600"
-                                >
+                                <span class="block text-[10px] uppercase font-bold text-indigo-600">
                                     {{ item.status }}
                                 </span>
                             </div>
@@ -704,42 +599,22 @@ const canEditOrder = (order: OrderData) => {
                 </div>
 
                 <!-- Add New Item Section -->
-                <form
-                    @submit.prevent="submitAddItem"
-                    class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-3"
-                >
+                <form @submit.prevent="submitAddItem"
+                    class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-3">
                     <h4 class="text-xs font-bold text-gray-700 uppercase">
                         Add New Item to Order
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                        <select
-                            v-model="addItemForm.menu_item_id"
-                            class="text-xs rounded-md border-gray-300 shadow-sm"
-                            required
-                        >
-                            <option
-                                v-for="m in menuItems"
-                                :key="m.id"
-                                :value="m.id"
-                            >
+                        <select v-model="addItemForm.menu_item_id" class="text-xs rounded-md border-gray-300 shadow-sm"
+                            required>
+                            <option v-for="m in menuItems" :key="m.id" :value="m.id">
                                 {{ m.name }} - {{ formatCurrency(m.price) }}
                             </option>
                         </select>
-                        <TextInput
-                            v-model.number="addItemForm.quantity"
-                            type="number"
-                            min="1"
-                            max="50"
-                            class="text-xs"
-                            placeholder="Qty"
-                            required
-                        />
-                        <TextInput
-                            v-model="addItemForm.special_instructions"
-                            type="text"
-                            placeholder="Notes..."
-                            class="text-xs"
-                        />
+                        <TextInput v-model.number="addItemForm.quantity" type="number" min="1" max="50" class="text-xs"
+                            placeholder="Qty" required />
+                        <TextInput v-model="addItemForm.special_instructions" type="text" placeholder="Notes..."
+                            class="text-xs" />
                     </div>
                     <div class="flex justify-end">
                         <PrimaryButton type="submit" :disabled="addItemForm.processing">
@@ -754,11 +629,8 @@ const canEditOrder = (order: OrderData) => {
                         Existing Items
                     </h4>
                     <div class="divide-y border rounded-lg overflow-hidden">
-                        <div
-                            v-for="item in selectedOrder.items || []"
-                            :key="item.id"
-                            class="p-3 flex justify-between items-center text-xs"
-                        >
+                        <div v-for="item in selectedOrder.items || []" :key="item.id"
+                            class="p-3 flex justify-between items-center text-xs">
                             <div>
                                 <p class="font-bold text-gray-900">
                                     {{ item.menu_item?.name || 'Item' }}
@@ -773,28 +645,23 @@ const canEditOrder = (order: OrderData) => {
                                 </p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <SecondaryButton
-                                    @click="
-                                        updateItemQuantity(
-                                            item,
-                                            item.quantity - 1,
-                                        )
-                                    "
-                                    :disabled="item.quantity <= 1"
-                                >
+                                <SecondaryButton @click="
+                                    updateItemQuantity(
+                                        item,
+                                        item.quantity - 1,
+                                    )
+                                    " :disabled="item.quantity <= 1">
                                     -
                                 </SecondaryButton>
                                 <span class="font-bold text-xs px-1">{{
                                     item.quantity
                                 }}</span>
-                                <SecondaryButton
-                                    @click="
-                                        updateItemQuantity(
-                                            item,
-                                            item.quantity + 1,
-                                        )
-                                    "
-                                >
+                                <SecondaryButton @click="
+                                    updateItemQuantity(
+                                        item,
+                                        item.quantity + 1,
+                                    )
+                                    ">
                                     +
                                 </SecondaryButton>
                                 <DangerButton @click="removeItem(item)">

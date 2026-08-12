@@ -25,4 +25,4 @@ Use this skill for frontend work in the Laravel/Inertia/Vue restaurant app.
 
 ## Stack Rules
 
-Use Vue 3 `script setup`, TypeScript, composables for reusable state/actions, Tailwind scale spacing, shadcn-vue components, and mobile-first responsive layouts.
+Use Vue 3 `script setup`, TypeScript, composables for reusable state/actions, Tailwind scale spacing, shadcn-vue components, and mobile-first responsive layouts. Avoid outer `max-w-7xl` constraints on authenticated pages; use full-width responsive containers with clean padding (`w-full px-4 sm:px-6 lg:px-8`).

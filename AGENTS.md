@@ -27,6 +27,9 @@ Favor single-page Inertia CRUD flows with index pages as the workspace and dialo
 ### Component Reuse First
 BEFORE building custom inline UI elements (such as raw `<button class="...">` tags, custom dialog overlays, form controls, badge chips, pagination, or quantity controls), ALWAYS inspect `resources/js/Components/` to see if a matching component exists (e.g., `PrimaryButton`, `SecondaryButton`, `DangerButton`, `SuccessButton`, `WarningButton`, `BaseButton`, `Modal`, `TextInput`, `InputLabel`, `InputError`, `Checkbox`, `QuantitySelector`, `Paginator`, `OrderStatusBadge`). ALWAYS import and reuse existing components from `resources/js/Components/` instead of re-creating custom or inline HTML elements.
 
+### Full Width Responsive Layouts
+Avoid setting outer max-width constraints (such as `max-w-7xl`, `max-w-5xl`) on authenticated staff pages. Use full-width responsive containers with clean padding (`w-full px-4 sm:px-6 lg:px-8`) so pages look great and scale fluidly across all display sizes.
+
 ## Testing & Pull Requests
 
 Use Pest for PHP tests. Put request, auth, and workflow coverage in `tests/Feature`; keep isolated logic checks in `tests/Unit`. Run `php artisan test` before backend submissions and `npm run build` when changing Vue or TypeScript. Keep commits focused and imperative. Pull requests should include a summary, test results, linked issues when applicable, screenshots for UI changes, and migration or environment notes.

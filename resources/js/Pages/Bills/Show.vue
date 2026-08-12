@@ -119,7 +119,7 @@ const printReceipt = () => {
         </template>
 
         <div class="py-8">
-            <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
                 <!-- Receipt Card -->
                 <div
                     class="overflow-hidden rounded-xl border border-gray-200 bg-white p-8 shadow-sm print:border-none print:shadow-none"
