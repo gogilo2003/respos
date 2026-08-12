@@ -15,6 +15,158 @@ class PermissionRegistry
     public function getAllPermissions(): array
     {
         return [
+            // Order Operations
+            [
+                'key' => 'orders.index',
+                'group' => 'Order Operations',
+                'label' => 'View Orders Queue',
+                'routeName' => 'dashboard',
+                'defaultRoles' => ['admin', 'manager', 'waiter', 'kitchen', 'cashier'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Orders',
+                    'shortLabel' => 'O',
+                    'activePattern' => 'dashboard*',
+                    'order' => 15,
+                ],
+            ],
+
+            // Waiter Operations (Management direct view)
+            [
+                'key' => 'waiter.dashboard',
+                'group' => 'Waiter Operations',
+                'label' => 'Waiter Workspace & Ordering',
+                'routeName' => 'waiter.dashboard',
+                'defaultRoles' => ['admin', 'manager', 'waiter'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Waiter Station',
+                    'shortLabel' => 'W',
+                    'activePattern' => 'waiter*',
+                    'order' => 20,
+                ],
+            ],
+
+            // Kitchen Operations (Management direct view)
+            [
+                'key' => 'kitchen.dashboard',
+                'group' => 'Kitchen Operations',
+                'label' => 'Kitchen Display System',
+                'routeName' => 'kitchen.dashboard',
+                'defaultRoles' => ['admin', 'manager', 'kitchen'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Kitchen Display',
+                    'shortLabel' => 'K',
+                    'activePattern' => 'kitchen*',
+                    'order' => 25,
+                ],
+            ],
+
+            // Billing & Invoicing
+            [
+                'key' => 'bills.index',
+                'group' => 'Billing & Cashier',
+                'label' => 'View Active Bills & Process Payments',
+                'routeName' => 'bills.index',
+                'defaultRoles' => ['admin', 'manager', 'cashier'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Bills',
+                    'shortLabel' => 'B',
+                    'activePattern' => 'bills*',
+                    'order' => 30,
+                ],
+            ],
+            [
+                'key' => 'bills.void',
+                'group' => 'Billing & Cashier',
+                'label' => 'Void Bills (Manager Override)',
+                'routeName' => 'bills.void',
+                'defaultRoles' => ['admin', 'manager'],
+                'nav' => ['showInNav' => false],
+            ],
+
+            // Tables & QR Codes
+            [
+                'key' => 'tables.index',
+                'group' => 'Table Management',
+                'label' => 'Manage Restaurant Tables & QR Codes',
+                'routeName' => 'tables',
+                'defaultRoles' => ['admin', 'manager'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Tables',
+                    'shortLabel' => 'T',
+                    'activePattern' => 'tables*',
+                    'order' => 40,
+                ],
+            ],
+
+            // Menu Categories
+            [
+                'key' => 'menu-categories.index',
+                'group' => 'Menu Management',
+                'label' => 'View & Manage Categories',
+                'routeName' => 'menu-categories',
+                'defaultRoles' => ['admin', 'manager'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Menu Categories',
+                    'shortLabel' => 'C',
+                    'activePattern' => 'menu-categories*',
+                    'order' => 50,
+                ],
+            ],
+
+            // Menu Items
+            [
+                'key' => 'menu-items.index',
+                'group' => 'Menu Management',
+                'label' => 'View & Manage Menu Items',
+                'routeName' => 'menu-items',
+                'defaultRoles' => ['admin', 'manager'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Menu Items',
+                    'shortLabel' => 'M',
+                    'activePattern' => 'menu-items*',
+                    'order' => 55,
+                ],
+            ],
+            [
+                'key' => 'menu-items.availability',
+                'group' => 'Menu Management',
+                'label' => 'Toggle Daily Item Availability',
+                'routeName' => 'menu-items.toggle-availability',
+                'defaultRoles' => ['admin', 'manager', 'kitchen'],
+                'nav' => ['showInNav' => false],
+            ],
+
+            // Cash Reconciliation
+            [
+                'key' => 'reconciliations.index',
+                'group' => 'Reports & Auditing',
+                'label' => 'Submit Daily Cash Balance Count',
+                'routeName' => 'reconciliations.index',
+                'defaultRoles' => ['admin', 'manager', 'cashier'],
+                'nav' => [
+                    'showInNav' => true,
+                    'label' => 'Reconciliation',
+                    'shortLabel' => 'R',
+                    'activePattern' => 'reconciliations*',
+                    'order' => 60,
+                ],
+            ],
+            [
+                'key' => 'reconciliations.approve',
+                'group' => 'Reports & Auditing',
+                'label' => 'Approve Flagged Cash Reconciliations',
+                'routeName' => 'reconciliations.approve',
+                'defaultRoles' => ['admin', 'manager'],
+                'nav' => ['showInNav' => false],
+            ],
+
             // User Management
             [
                 'key' => 'users.index',
@@ -27,7 +179,7 @@ class PermissionRegistry
                     'label' => 'Users',
                     'shortLabel' => 'U',
                     'activePattern' => 'users*',
-                    'order' => 20,
+                    'order' => 70,
                 ],
             ],
             [
@@ -51,160 +203,8 @@ class PermissionRegistry
                     'label' => 'Role Permissions',
                     'shortLabel' => 'P',
                     'activePattern' => 'roles*',
-                    'order' => 25,
+                    'order' => 75,
                 ],
-            ],
-
-            // Menu Categories
-            [
-                'key' => 'menu-categories.index',
-                'group' => 'Menu Management',
-                'label' => 'View & Manage Categories',
-                'routeName' => 'menu-categories',
-                'defaultRoles' => ['admin', 'manager'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Menu Categories',
-                    'shortLabel' => 'C',
-                    'activePattern' => 'menu-categories*',
-                    'order' => 30,
-                ],
-            ],
-
-            // Menu Items
-            [
-                'key' => 'menu-items.index',
-                'group' => 'Menu Management',
-                'label' => 'View & Manage Menu Items',
-                'routeName' => 'menu-items',
-                'defaultRoles' => ['admin', 'manager'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Menu Items',
-                    'shortLabel' => 'M',
-                    'activePattern' => 'menu-items*',
-                    'order' => 35,
-                ],
-            ],
-            [
-                'key' => 'menu-items.availability',
-                'group' => 'Menu Management',
-                'label' => 'Toggle Daily Item Availability',
-                'routeName' => 'menu-items.toggle-availability',
-                'defaultRoles' => ['admin', 'manager', 'kitchen'],
-                'nav' => ['showInNav' => false],
-            ],
-
-            // Tables & QR Codes
-            [
-                'key' => 'tables.index',
-                'group' => 'Table Management',
-                'label' => 'Manage Restaurant Tables & QR Codes',
-                'routeName' => 'tables',
-                'defaultRoles' => ['admin', 'manager'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Tables',
-                    'shortLabel' => 'T',
-                    'activePattern' => 'tables*',
-                    'order' => 40,
-                ],
-            ],
-
-            // Billing & Invoicing
-            [
-                'key' => 'bills.index',
-                'group' => 'Billing & Cashier',
-                'label' => 'View Active Bills & Process Payments',
-                'routeName' => 'bills.index',
-                'defaultRoles' => ['admin', 'manager', 'cashier'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Bills',
-                    'shortLabel' => 'B',
-                    'activePattern' => 'bills*',
-                    'order' => 50,
-                ],
-            ],
-            [
-                'key' => 'bills.void',
-                'group' => 'Billing & Cashier',
-                'label' => 'Void Bills (Manager Override)',
-                'routeName' => 'bills.void',
-                'defaultRoles' => ['admin', 'manager'],
-                'nav' => ['showInNav' => false],
-            ],
-
-            // Order Operations
-            [
-                'key' => 'orders.index',
-                'group' => 'Order Operations',
-                'label' => 'View Orders Queue',
-                'routeName' => 'dashboard',
-                'defaultRoles' => ['admin', 'manager', 'waiter', 'kitchen', 'cashier'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Orders',
-                    'shortLabel' => 'O',
-                    'activePattern' => 'dashboard*',
-                    'order' => 15,
-                ],
-            ],
-
-            // Kitchen Operations
-            [
-                'key' => 'kitchen.dashboard',
-                'group' => 'Kitchen Operations',
-                'label' => 'Kitchen Display System',
-                'routeName' => 'kitchen.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'kitchen'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Kitchen Display',
-                    'shortLabel' => 'K',
-                    'activePattern' => 'kitchen*',
-                    'order' => 60,
-                ],
-            ],
-
-            // Waiter Operations
-            [
-                'key' => 'waiter.dashboard',
-                'group' => 'Waiter Operations',
-                'label' => 'Waiter Workspace & Ordering',
-                'routeName' => 'waiter.dashboard',
-                'defaultRoles' => ['admin', 'manager', 'waiter'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Waiter Station',
-                    'shortLabel' => 'W',
-                    'activePattern' => 'waiter*',
-                    'order' => 70,
-                ],
-            ],
-
-            // Cash Reconciliation
-            [
-                'key' => 'reconciliations.index',
-                'group' => 'Reports & Auditing',
-                'label' => 'Submit Daily Cash Balance Count',
-                'routeName' => 'reconciliations.index',
-                'defaultRoles' => ['admin', 'manager', 'cashier'],
-                'nav' => [
-                    'showInNav' => true,
-                    'label' => 'Reconciliation',
-                    'shortLabel' => 'R',
-                    'activePattern' => 'reconciliations*',
-                    'order' => 80,
-                ],
-            ],
-            [
-                'key' => 'reconciliations.approve',
-                'group' => 'Reports & Auditing',
-                'label' => 'Approve Flagged Cash Reconciliations',
-                'routeName' => 'reconciliations.approve',
-                'defaultRoles' => ['admin', 'manager'],
-                'nav' => ['showInNav' => false],
             ],
 
             // Audit Logs
@@ -219,7 +219,7 @@ class PermissionRegistry
                     'label' => 'Audit Logs',
                     'shortLabel' => 'A',
                     'activePattern' => 'audit-logs*',
-                    'order' => 90,
+                    'order' => 80,
                 ],
             ],
         ];
@@ -278,6 +278,11 @@ class PermissionRegistry
                 continue;
             }
 
+            // Skip duplicate station links for Waiter & Kitchen roles (they access via Dashboard)
+            if (in_array($permission['key'], ['waiter.dashboard', 'kitchen.dashboard'], true) && ! in_array($user->role?->name, ['admin', 'manager'], true)) {
+                continue;
+            }
+
             $navItems[] = [
                 'key' => $permission['key'],
                 'label' => $permission['nav']['label'],
@@ -289,7 +294,7 @@ class PermissionRegistry
             ];
         }
 
-        usort($navItems, fn($a, $b) => ($a['order'] ?? 50) <=> ($b['order'] ?? 50));
+        usort($navItems, fn ($a, $b) => ($a['order'] ?? 50) <=> ($b['order'] ?? 50));
 
         return $navItems;
     }
@@ -300,10 +305,10 @@ class PermissionRegistry
             try {
                 return route($routeName);
             } catch (\Throwable $e) {
-                return '/' . str_replace('.', '/', $routeName);
+                return '/'.str_replace('.', '/', $routeName);
             }
         }
 
-        return '/' . str_replace('.', '/', $routeName);
+        return '/'.str_replace('.', '/', $routeName);
     }
 }
