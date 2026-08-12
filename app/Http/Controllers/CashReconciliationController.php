@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Interfaces\Repositories\CashReconciliationRepositoryInterface;
+use App\Models\CashReconciliation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
@@ -15,7 +16,7 @@ class CashReconciliationController extends Controller
 
     public function index(Request $request)
     {
-        Gate::authorize('cashier');
+        Gate::authorize('viewAny', CashReconciliation::class);
 
         $date = $request->query('date', today()->toDateString());
         $systemCashTotal = $this->reconciliationRepository->getSystemCashTotalForDate($date);
@@ -43,7 +44,7 @@ class CashReconciliationController extends Controller
 
     public function store(Request $request)
     {
-        Gate::authorize('cashier');
+        Gate::authorize('create', CashReconciliation::class);
 
         $validated = $request->validate([
             'reconciliation_date' => 'required|date',
@@ -66,7 +67,7 @@ class CashReconciliationController extends Controller
 
     public function approve(Request $request, int $id)
     {
-        Gate::authorize('admin');
+        Gate::authorize('approve', CashReconciliation::class);
 
         $this->reconciliationRepository->approve($id, auth()->id());
 

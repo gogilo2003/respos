@@ -28,7 +28,7 @@ class UserController extends Controller
 
     public function index()
     {
-        Gate::authorize('admin');
+        Gate::authorize('viewAny', User::class);
 
         return Inertia::render('Users/Index', [
             'users' => $this->userRepository->all()->load('role'),
@@ -38,7 +38,7 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        Gate::authorize('admin');
+        Gate::authorize('manage', User::class);
 
         $validated = $request->validate([
             'role_id' => 'required|exists:roles,id',
@@ -58,7 +58,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
-        Gate::authorize('admin');
+        Gate::authorize('manage', User::class);
 
         $validated = $request->validate([
             'role_id' => 'required|exists:roles,id',
@@ -82,7 +82,7 @@ class UserController extends Controller
 
     public function toggleStatus(User $user)
     {
-        Gate::authorize('admin');
+        Gate::authorize('manage', User::class);
 
         $this->userRepository->update($user->id, [
             'is_active' => ! $user->is_active,
@@ -104,7 +104,7 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        Gate::authorize('admin');
+        Gate::authorize('manage', User::class);
 
         $this->userRepository->delete($id);
 

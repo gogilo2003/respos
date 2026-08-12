@@ -9,31 +9,31 @@ class RestaurantTablePolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('manager');
+        return $user->hasPermission('tables.index');
     }
 
     public function view(User $user, RestaurantTable $table): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('manager');
+        return $user->hasPermission('tables.index');
     }
 
     public function create(User $user): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('manager');
+        return $user->hasPermission('tables.index');
     }
 
     public function update(User $user, RestaurantTable $table): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('manager');
+        return $user->hasPermission('tables.index');
     }
 
     public function delete(User $user, RestaurantTable $table): bool
     {
-        return $user->hasRole('admin');
+        return $user->hasPermission('tables.index');
     }
 
     public function generateQr(User $user, RestaurantTable $table): bool
     {
-        return $user->hasRole('admin') || $user->hasRole('manager');
+        return $user->hasPermission('tables.index');
     }
 }

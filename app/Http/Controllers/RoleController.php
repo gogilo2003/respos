@@ -18,7 +18,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        Gate::authorize('admin');
+        Gate::authorize('viewAny', Role::class);
 
         $roles = Role::orderBy('id')->get()->map(function ($role) {
             return [
@@ -53,7 +53,7 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
-        Gate::authorize('admin');
+        Gate::authorize('update', $role);
 
         $validated = $request->validate([
             'permissions' => ['required', 'array'],

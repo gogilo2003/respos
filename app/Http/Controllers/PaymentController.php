@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePaymentRequest;
 use App\Models\Bill;
+use App\Models\Payment;
 use App\Services\BillService;
 use Illuminate\Support\Facades\Gate;
 
@@ -18,7 +19,7 @@ class PaymentController extends Controller
 
     public function store(StorePaymentRequest $request, Bill $bill)
     {
-        Gate::authorize('cashier');
+        Gate::authorize('create', Payment::class);
 
         $validated = $request->validated();
 

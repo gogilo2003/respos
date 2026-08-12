@@ -9,6 +9,7 @@ use App\Interfaces\Repositories\OrderRepositoryInterface;
 use App\Interfaces\Repositories\TableRepositoryInterface;
 use App\Interfaces\Repositories\TableSessionRepositoryInterface;
 use App\Models\AssistanceRequest;
+use App\Models\Order;
 use App\Models\OrderItem;
 use App\Services\OrderService;
 use App\Services\WaiterStatisticsService;
@@ -31,7 +32,7 @@ class WaiterController extends Controller
 
     public function dashboard()
     {
-        Gate::authorize('waiter');
+        Gate::authorize('waiter', Order::class);
 
         $tables = $this->tableRepository->getActiveTablesWithSessions()->map(function ($table) {
             $session = $table->activeSession;
@@ -90,7 +91,7 @@ class WaiterController extends Controller
 
     public function storeOrder(StoreOrderRequest $request)
     {
-        Gate::authorize('waiter');
+        Gate::authorize('waiter', Order::class);
 
         $validated = $request->validated();
 
@@ -126,7 +127,7 @@ class WaiterController extends Controller
 
     public function assistanceRequests(Request $request)
     {
-        Gate::authorize('waiter');
+        Gate::authorize('waiter', Order::class);
 
         $status = $request->query('status', 'open');
 
@@ -139,7 +140,7 @@ class WaiterController extends Controller
 
     public function updateAssistance(Request $request, AssistanceRequest $assistanceRequest)
     {
-        Gate::authorize('waiter');
+        Gate::authorize('waiter', Order::class);
 
         $validated = $request->validate([
             'status' => 'required|in:pending,assigned,resolved',
@@ -157,7 +158,7 @@ class WaiterController extends Controller
 
     public function serveOrderItem(OrderItem $orderItem)
     {
-        Gate::authorize('waiter');
+        Gate::authorize('waiter', Order::class);
 
         $order = $orderItem->order;
         $session = $order->session;

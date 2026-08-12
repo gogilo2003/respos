@@ -11,7 +11,7 @@ class AuditLogController extends Controller
 {
     public function index(Request $request)
     {
-        Gate::authorize('admin');
+        Gate::authorize('viewAny', AuditLog::class);
 
         $query = AuditLog::with('user')->orderBy('created_at', 'desc');
 

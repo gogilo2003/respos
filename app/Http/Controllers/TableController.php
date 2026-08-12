@@ -18,7 +18,7 @@ class TableController extends Controller
 
     public function index()
     {
-        Gate::authorize('admin');
+        Gate::authorize('viewAny', RestaurantTable::class);
 
         $tables = $this->tableRepository->all()->load('qrCode');
 
@@ -36,7 +36,7 @@ class TableController extends Controller
 
     public function store(Request $request)
     {
-        Gate::authorize('admin');
+        Gate::authorize('create', RestaurantTable::class);
 
         $validated = $request->validate([
             'table_number' => 'required|string|max:20',
@@ -54,7 +54,8 @@ class TableController extends Controller
 
     public function update(Request $request, $id)
     {
-        Gate::authorize('admin');
+        $table = RestaurantTable::findOrFail($id);
+        Gate::authorize('update', $table);
 
         $validated = $request->validate([
             'table_number' => 'required|string|max:20',
@@ -71,7 +72,7 @@ class TableController extends Controller
 
     public function qrImage(RestaurantTable $table)
     {
-        Gate::authorize('admin');
+        Gate::authorize('generateQr', $table);
 
         $qrCode = $this->qrCodeService->getOrCreateQrCode($table);
         $svg = $this->qrCodeService->generateSvg($qrCode->payload);
@@ -84,7 +85,7 @@ class TableController extends Controller
 
     public function regenerateQr(RestaurantTable $table)
     {
-        Gate::authorize('admin');
+        Gate::authorize('generateQr', $table);
 
         $this->qrCodeService->regenerate($table);
 
@@ -93,7 +94,8 @@ class TableController extends Controller
 
     public function destroy($id)
     {
-        Gate::authorize('admin');
+        $table = RestaurantTable::findOrFail($id);
+        Gate::authorize('delete', $table);
 
         $this->tableRepository->delete($id);
 

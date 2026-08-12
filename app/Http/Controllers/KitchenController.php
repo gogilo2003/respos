@@ -22,14 +22,14 @@ class KitchenController extends Controller
 
     public function dashboard()
     {
-        Gate::authorize('kitchen');
+        Gate::authorize('kitchen', Order::class);
 
         return Inertia::render('Kitchen/Dashboard', $this->kitchenDashboardService->getDashboardData());
     }
 
     public function updateItemStatus(KitchenUpdateItemRequest $request, OrderItem $orderItem)
     {
-        Gate::authorize('kitchen');
+        Gate::authorize('kitchen', Order::class);
 
         $validated = $request->validated();
 
@@ -79,7 +79,7 @@ class KitchenController extends Controller
 
     public function markOrderReady(Order $order)
     {
-        Gate::authorize('kitchen');
+        Gate::authorize('kitchen', Order::class);
 
         $session = $order->session;
 

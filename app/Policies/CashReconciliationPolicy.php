@@ -9,21 +9,21 @@ class CashReconciliationPolicy
 {
     public function viewAny(User $user): bool
     {
-        return $user->hasRole('cashier') || $user->hasRole('manager') || $user->hasRole('admin');
+        return $user->hasPermission('reconciliations.index');
     }
 
     public function view(User $user, CashReconciliation $reconciliation): bool
     {
-        return $user->hasRole('cashier') || $user->hasRole('manager') || $user->hasRole('admin');
+        return $user->hasPermission('reconciliations.index');
     }
 
     public function create(User $user): bool
     {
-        return $user->hasRole('cashier') || $user->hasRole('manager') || $user->hasRole('admin');
+        return $user->hasPermission('reconciliations.index');
     }
 
-    public function approve(User $user, CashReconciliation $reconciliation): bool
+    public function approve(User $user, ?CashReconciliation $reconciliation = null): bool
     {
-        return $user->hasRole('manager') || $user->hasRole('admin');
+        return $user->hasPermission('reconciliations.approve');
     }
 }
