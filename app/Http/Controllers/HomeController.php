@@ -35,11 +35,17 @@ class HomeController extends Controller
         return Inertia::render('Categories', ['categories' => $this->menuService->getMenuCategories($request->user())]);
     }
 
-    public function menu(Request $request)
+    public function menu(Request $request, ?int $category_id = null)
     {
-        $menuItems = $this->menuService->getMenuItems($request->user());
+        $categoryId = $category_id ? (int) $category_id : null;
+        $menuItems = $this->menuService->getMenuItems($request->user(), $categoryId);
+        $categories = $this->menuService->getMenuCategories($request->user());
 
-        return Inertia::render('Menu', ['menuItems' => $menuItems]);
+        return Inertia::render('Menu', [
+            'menuItems' => $menuItems,
+            'categories' => $categories,
+            'selectedCategoryId' => $categoryId,
+        ]);
     }
 
     public function about()

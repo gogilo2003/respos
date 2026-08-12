@@ -74,7 +74,7 @@ const scrollToCategory = () => {
                                 </p>
 
                                 <Link
-                                    :href="route('menu')"
+                                    :href="route('menu', category.id)"
                                     class="mt-4 flex w-full justify-center rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800"
                                 >
                                     View

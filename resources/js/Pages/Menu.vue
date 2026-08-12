@@ -2,6 +2,7 @@
 import WebLayout from '@/Layouts/WebLayout.vue';
 import { useCartStore } from '@/Stores/cartStore';
 import { formatCurrency } from '@/utils/currency';
+import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const cartStore = useCartStore();
@@ -14,6 +15,11 @@ const props = defineProps<{
         price: number;
         image: string;
     }[];
+    categories?: {
+        id: number;
+        name: string;
+    }[];
+    selectedCategoryId?: number | null;
 }>();
 
 const addSuccessMessage = ref<string | null>(null);
@@ -76,6 +82,37 @@ const handleAddToCart = (item: {
                             cartStore.totalCount
                         }}</span>
                     </div>
+                </div>
+
+                <!-- Category Filter Pills -->
+                <div
+                    v-if="props.categories && props.categories.length > 0"
+                    class="mb-8 flex flex-wrap items-center gap-2"
+                >
+                    <Link
+                        :href="route('menu')"
+                        class="rounded-full px-4 py-2 text-xs font-bold transition-all"
+                        :class="
+                            !props.selectedCategoryId
+                                ? 'bg-yellow-400 text-gray-900 shadow-md ring-2 ring-yellow-400/50'
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+                        "
+                    >
+                        All Items
+                    </Link>
+                    <Link
+                        v-for="category in props.categories"
+                        :key="category.id"
+                        :href="route('menu', category.id)"
+                        class="rounded-full px-4 py-2 text-xs font-bold transition-all"
+                        :class="
+                            props.selectedCategoryId === category.id
+                                ? 'bg-yellow-400 text-gray-900 shadow-md ring-2 ring-yellow-400/50'
+                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white'
+                        "
+                    >
+                        {{ category.name }}
+                    </Link>
                 </div>
 
                 <div

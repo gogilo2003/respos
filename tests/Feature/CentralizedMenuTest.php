@@ -43,6 +43,32 @@ test('public guest views only active categories and available items on menu page
     );
 });
 
+test('public guest can filter menu items by optional category_id parameter', function () {
+    $mainsCategory = MenuCategory::factory()->create([
+        'name' => 'Mains',
+        'is_active' => true,
+    ]);
+    $mainItem = MenuItem::factory()->create([
+        'category_id' => $mainsCategory->id,
+        'name' => 'Grilled Steak',
+        'is_available' => true,
+    ]);
+
+    // Filter by Mains category
+    $response = $this->get(route('menu', $mainsCategory->id));
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('Menu')
+        ->where('selectedCategoryId', $mainsCategory->id)
+        ->has('menuItems', fn (Assert $json) => $json
+            ->where('0.name', 'Grilled Steak')
+            ->missing('1.name')
+            ->etc()
+        )
+    );
+});
+
 test('public guest views active categories on categories page', function () {
     $response = $this->get(route('categories'));
 

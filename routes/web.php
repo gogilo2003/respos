@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [HomeController::class, 'welcome'])->name('home');
 Route::get('/categories', [HomeController::class, 'categories'])->name('categories');
-Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+Route::get('/menu/{category_id?}', [HomeController::class, 'menu'])->name('menu');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 
 // Cart & Checkout
