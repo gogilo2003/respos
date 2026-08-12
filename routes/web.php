@@ -63,10 +63,19 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-// Orders & Status Transitions
-Route::patch('/orders/{order}/status', [OrderController::class, 'transition'])
-    ->middleware(['auth'])
-    ->name('orders.status.update');
+// Orders & Management
+Route::prefix('orders')
+    ->name('orders')
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/', [OrderController::class, 'index'])->middleware('permission:orders.index')->name('.index');
+        Route::post('/', [OrderController::class, 'store'])->name('.store');
+        Route::get('/{order}', [OrderController::class, 'show'])->middleware('permission:orders.index')->name('.show');
+        Route::patch('/{order}/status', [OrderController::class, 'transition'])->name('.status.update');
+        Route::post('/{order}/items', [OrderController::class, 'addItem'])->name('.items.add');
+        Route::patch('/{order}/items/{item}', [OrderController::class, 'updateItem'])->name('.items.update');
+        Route::delete('/{order}/items/{item}', [OrderController::class, 'removeItem'])->name('.items.remove');
+    });
 
 // Waiter Station
 Route::prefix('waiter')

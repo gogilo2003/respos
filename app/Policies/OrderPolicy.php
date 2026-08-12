@@ -32,6 +32,11 @@ class OrderPolicy
         return in_array($user->role?->name, ['admin', 'manager', 'waiter', 'kitchen'], true);
     }
 
+    public function update(User $user, Order $order): bool
+    {
+        return in_array($user->role?->name, ['admin', 'manager', 'waiter', 'kitchen'], true);
+    }
+
     public function cancel(User $user, Order $order): bool
     {
         return in_array($user->role?->name, ['admin', 'manager'], true);
