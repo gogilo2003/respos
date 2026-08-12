@@ -11,6 +11,10 @@ class Bill extends Model
 
     public $timestamps = false;
 
+    const CREATED_AT = 'generated_at';
+
+    const UPDATED_AT = null;
+
     protected $table = 'bills';
 
     protected $fillable = [

@@ -32,18 +32,18 @@ class CashierDashboardService
 
         $openSessionsCount = TableSession::where('status', 'open')->count();
 
-        $recentOpenBills = Bill::with(['table', 'order'])
+        $recentOpenBills = Bill::with(['session.table'])
             ->whereIn('status', ['draft', 'open'])
-            ->latest()
+            ->latest('generated_at')
             ->take(6)
             ->get()
             ->map(fn ($bill) => [
                 'id' => $bill->id,
                 'bill_number' => $bill->bill_number,
-                'table_number' => $bill->table?->table_number ?? 'N/A',
+                'table_number' => $bill->session?->table?->table_number ?? 'N/A',
                 'grand_total' => (float) $bill->grand_total,
                 'status' => $bill->status,
-                'created_at' => $bill->created_at?->format('H:i'),
+                'created_at' => $bill->generated_at?->format('H:i'),
             ]);
 
         return [
