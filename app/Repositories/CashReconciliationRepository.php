@@ -39,7 +39,7 @@ class CashReconciliationRepository implements CashReconciliationRepositoryInterf
     public function getSystemCashTotalForDate(string $date): float
     {
         return (float) Payment::where('payment_method', 'cash')
-            ->whereDate('paid_at', $date)
-            ->sum('amount');
+            ->whereDate('confirmed_at', $date)
+            ->sum('amount_due');
     }
 }

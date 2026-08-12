@@ -8,6 +8,12 @@ class Payment extends Model
 {
     protected $table = 'payments';
 
+    public $timestamps = false;
+
+    const CREATED_AT = 'confirmed_at';
+
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'bill_id',
         'split_id',

@@ -1,7 +1,30 @@
 <?php
 
+use App\Models\Bill;
 use App\Models\CashReconciliation;
+use App\Models\Payment;
+use App\Models\TableSession;
 use App\Models\User;
+
+test('cashier can view reconciliations page without query error', function () {
+    $cashier = User::factory()->withRole('cashier')->create();
+    $session = TableSession::factory()->create();
+    $bill = Bill::factory()->create(['session_id' => $session->id]);
+
+    Payment::create([
+        'bill_id' => $bill->id,
+        'cashier_id' => $cashier->id,
+        'payment_method' => 'cash',
+        'amount_due' => 125.50,
+        'amount_received' => 130.00,
+        'change_due' => 4.50,
+        'status' => 'confirmed',
+    ]);
+
+    $response = $this->actingAs($cashier)->get(route('reconciliations.index'));
+
+    $response->assertStatus(200);
+});
 
 test('cashier can submit daily cash count reconciliation', function () {
     $cashier = User::factory()->withRole('cashier')->create();
