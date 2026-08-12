@@ -24,6 +24,9 @@ Follow Laravel conventions: PSR-4 namespaces under `App\`, singular model names 
 
 Favor single-page Inertia CRUD flows with index pages as the workspace and dialogs for create, edit, view, and delete actions unless a workflow needs a dedicated screen. Use Vue `script setup`, TypeScript, composables, Tailwind scale spacing, existing `gogilo/breeze` components, and shadcn-vue primitives.
 
+### Component Reuse First
+BEFORE building custom inline UI elements (such as raw `<button class="...">` tags, custom dialog overlays, form controls, badge chips, pagination, or quantity controls), ALWAYS inspect `resources/js/Components/` to see if a matching component exists (e.g., `PrimaryButton`, `SecondaryButton`, `DangerButton`, `SuccessButton`, `WarningButton`, `BaseButton`, `Modal`, `TextInput`, `InputLabel`, `InputError`, `Checkbox`, `QuantitySelector`, `Paginator`, `OrderStatusBadge`). ALWAYS import and reuse existing components from `resources/js/Components/` instead of re-creating custom or inline HTML elements.
+
 ## Testing & Pull Requests
 
 Use Pest for PHP tests. Put request, auth, and workflow coverage in `tests/Feature`; keep isolated logic checks in `tests/Unit`. Run `php artisan test` before backend submissions and `npm run build` when changing Vue or TypeScript. Keep commits focused and imperative. Pull requests should include a summary, test results, linked issues when applicable, screenshots for UI changes, and migration or environment notes.

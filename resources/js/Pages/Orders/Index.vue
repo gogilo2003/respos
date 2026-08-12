@@ -1,4 +1,12 @@
 <script setup lang="ts">
+import DangerButton from '@/Components/DangerButton.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import Modal from '@/Components/Modal.vue';
+import OrderStatusBadge from '@/Components/OrderStatusBadge.vue';
+import Paginator from '@/Components/Paginator.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import TextInput from '@/Components/TextInput.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { formatCurrency } from '@/utils/currency';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
@@ -100,51 +108,73 @@ const showEditItemsModal = ref(false);
 const selectedOrder = ref<OrderData | null>(null);
 
 // Forms
-const createOrderForm = useForm({
-    table_session_id: '' as string | number,
-    items: [] as {
-        menu_item_id: number;
-        quantity: number;
-        special_instructions: string;
-    }[],
+const createForm = useForm({
+    table_session_id: '',
+    items: [
+        {
+            menu_item_id: '',
+            quantity: 1,
+            special_instructions: '',
+        },
+    ],
 });
 
 const addItemForm = useForm({
-    menu_item_id: '' as string | number,
+    menu_item_id: '',
     quantity: 1,
     special_instructions: '',
 });
 
-// Item selection helper for order creation
-const newItemSelection = ref({
-    menu_item_id: '' as string | number,
-    quantity: 1,
-    special_instructions: '',
-});
+const statusTabs = [
+    { label: 'All Orders', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Accepted', value: 'accepted' },
+    { label: 'Preparing', value: 'preparing' },
+    { label: 'Ready', value: 'ready' },
+    { label: 'Served', value: 'served' },
+    { label: 'Completed', value: 'completed' },
+    { label: 'Cancelled', value: 'cancelled' },
+];
 
-const addCreateItem = () => {
-    if (!newItemSelection.value.menu_item_id) return;
-    createOrderForm.items.push({
-        menu_item_id: Number(newItemSelection.value.menu_item_id),
-        quantity: Number(newItemSelection.value.quantity) || 1,
-        special_instructions: newItemSelection.value.special_instructions,
-    });
-    newItemSelection.value = {
-        menu_item_id: '',
-        quantity: 1,
-        special_instructions: '',
-    };
+const openCreateModal = () => {
+    createForm.reset();
+    createForm.clearErrors();
+    createForm.table_session_id = props.activeSessions[0]?.id
+        ? String(props.activeSessions[0].id)
+        : '';
+    createForm.items = [
+        {
+            menu_item_id: props.menuItems[0]?.id
+                ? String(props.menuItems[0].id)
+                : '',
+            quantity: 1,
+            special_instructions: '',
+        },
+    ];
+    showCreateModal.value = true;
 };
 
-const removeCreateItem = (index: number) => {
-    createOrderForm.items.splice(index, 1);
+const addCreateItemRow = () => {
+    createForm.items.push({
+        menu_item_id: props.menuItems[0]?.id
+            ? String(props.menuItems[0].id)
+            : '',
+        quantity: 1,
+        special_instructions: '',
+    });
+};
+
+const removeCreateItemRow = (index: number) => {
+    if (createForm.items.length > 1) {
+        createForm.items.splice(index, 1);
+    }
 };
 
 const submitCreateOrder = () => {
-    createOrderForm.post(route('orders.store'), {
+    createForm.post(route('orders.store'), {
         onSuccess: () => {
             showCreateModal.value = false;
-            createOrderForm.reset();
+            createForm.reset();
         },
     });
 };
@@ -156,549 +186,625 @@ const openViewModal = (order: OrderData) => {
 
 const openEditItemsModal = (order: OrderData) => {
     selectedOrder.value = order;
+    addItemForm.reset();
+    addItemForm.clearErrors();
+    addItemForm.menu_item_id = props.menuItems[0]?.id
+        ? String(props.menuItems[0].id)
+        : '';
     showEditItemsModal.value = true;
 };
 
 const submitAddItem = () => {
-    if (!selectedOrder.value || !addItemForm.menu_item_id) return;
-    addItemForm.post(
-        route('orders.items.add', { order: selectedOrder.value.id }),
-        {
-            onSuccess: () => {
-                addItemForm.reset();
-            },
+    if (!selectedOrder.value) return;
+
+    addItemForm.post(route('orders.items.add', selectedOrder.value.id), {
+        onSuccess: () => {
+            addItemForm.reset();
+            addItemForm.menu_item_id = props.menuItems[0]?.id
+                ? String(props.menuItems[0].id)
+                : '';
         },
-    );
+    });
 };
 
 const updateItemQuantity = (item: OrderItemData, newQty: number) => {
     if (!selectedOrder.value || newQty < 1) return;
+
     router.patch(
-        route('orders.items.update', {
-            order: selectedOrder.value.id,
-            item: item.id,
-        }),
-        { quantity: newQty },
+        route('orders.items.update', [selectedOrder.value.id, item.id]),
+        {
+            quantity: newQty,
+        },
         { preserveScroll: true },
     );
 };
 
 const removeItem = (item: OrderItemData) => {
     if (!selectedOrder.value) return;
-    if (!confirm('Are you sure you want to remove this item?')) return;
-    router.delete(
-        route('orders.items.remove', {
-            order: selectedOrder.value.id,
-            item: item.id,
-        }),
-        { preserveScroll: true },
-    );
-};
 
-const updateOrderStatus = (order: OrderData, status: string) => {
-    router.patch(
-        route('orders.status.update', { order: order.id }),
-        { status },
-        { preserveScroll: true },
-    );
-};
-
-const updateOrderItemStatus = (
-    order: OrderData,
-    item: OrderItemData,
-    status: string,
-) => {
-    router.patch(
-        route('orders.items.update', { order: order.id, item: item.id }),
-        { status },
-        { preserveScroll: true },
-    );
-};
-
-const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-        case 'pending':
-            return 'bg-amber-100 text-amber-800 border-amber-300';
-        case 'accepted':
-            return 'bg-blue-100 text-blue-800 border-blue-300';
-        case 'preparing':
-            return 'bg-purple-100 text-purple-800 border-purple-300';
-        case 'ready':
-            return 'bg-emerald-100 text-emerald-800 border-emerald-300';
-        case 'served':
-            return 'bg-teal-100 text-teal-800 border-teal-300';
-        case 'completed':
-            return 'bg-gray-100 text-gray-800 border-gray-300';
-        case 'cancelled':
-            return 'bg-red-100 text-red-800 border-red-300';
-        default:
-            return 'bg-gray-100 text-gray-700 border-gray-300';
+    if (confirm('Are you sure you want to remove this item from the order?')) {
+        router.delete(
+            route('orders.items.remove', [selectedOrder.value.id, item.id]),
+            { preserveScroll: true },
+        );
     }
 };
 
-const calculateOrderTotal = (items?: OrderItemData[]) => {
-    if (!items) return 0;
-    return items.reduce(
-        (sum, item) => sum + Number(item.unit_price) * item.quantity,
+const transitionOrderStatus = (order: OrderData, newStatus: string) => {
+    router.post(
+        route('orders.status.update', order.id),
+        { status: newStatus },
+        {
+            onSuccess: () => {
+                if (
+                    selectedOrder.value &&
+                    selectedOrder.value.id === order.id
+                ) {
+                    selectedOrder.value.status = newStatus;
+                }
+            },
+        },
+    );
+};
+
+const calculateOrderTotal = (order: OrderData) => {
+    if (!order.items || order.items.length === 0) return 0;
+    return order.items.reduce(
+        (sum, item) => sum + item.quantity * Number(item.unit_price),
         0,
+    );
+};
+
+const canEditOrder = (order: OrderData) => {
+    return (
+        ['admin', 'manager', 'waiter'].includes(userRole.value) &&
+        !['completed', 'cancelled', 'served'].includes(order.status)
     );
 };
 </script>
 
 <template>
-
-    <Head title="Orders Workspace" />
+    <Head title="Orders Management" />
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-xl font-bold leading-tight text-gray-800">
-                        Orders Management
+                    <h2 class="text-xl font-semibold text-gray-800">
+                        Orders Listing & Management
                     </h2>
                     <p class="text-xs text-gray-500">
-                        Manage live restaurant orders, statuses, and items
+                        Monitor live restaurant orders, update preparation
+                        status, and manage items
                     </p>
                 </div>
-                <div v-if="['admin', 'manager', 'waiter'].includes(userRole)">
-                    <button
-                        class="rounded-lg bg-black px-4 py-2 text-sm font-semibold text-white shadow hover:bg-gray-800"
-                        @click="showCreateModal = true">
-                        + Create Order
-                    </button>
-                </div>
+                <PrimaryButton
+                    v-if="['admin', 'manager', 'waiter'].includes(userRole)"
+                    @click="openCreateModal"
+                >
+                    + New Waiter Order
+                </PrimaryButton>
             </div>
         </template>
 
-        <div class="space-y-6 p-6">
-            <!-- Filter Bar & Search -->
+        <div class="py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <!-- Filter Toolbar -->
             <div
-                class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-center md:justify-between">
-                <!-- Status Tabs -->
-                <div class="flex flex-wrap items-center gap-1">
-                    <button v-for="status in [
-                        'all',
-                        'pending',
-                        'accepted',
-                        'preparing',
-                        'ready',
-                        'served',
-                        'completed',
-                        'cancelled',
-                    ]" :key="status" class="rounded-lg px-3 py-1.5 text-xs font-semibold capitalize transition"
-                        :class="selectedStatus === status
-                                ? 'bg-gray-900 text-white'
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            " @click="selectedStatus = status">
-                        {{ status }}
+                class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-4 justify-between items-center"
+            >
+                <!-- Status Filter Pills -->
+                <div class="flex flex-wrap gap-2">
+                    <button
+                        v-for="tab in statusTabs"
+                        :key="tab.value"
+                        @click="selectedStatus = tab.value"
+                        :class="[
+                            'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
+                            selectedStatus === tab.value
+                                ? 'bg-indigo-600 text-white shadow-sm'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200',
+                        ]"
+                    >
+                        {{ tab.label }}
                     </button>
                 </div>
 
                 <!-- Search Input -->
-                <div class="flex items-center gap-2">
-                    <input v-model="search" type="text" placeholder="Search Order #, Table #, Item..."
-                        class="w-full rounded-lg border-gray-300 text-sm focus:border-black focus:ring-black md:w-64"
-                        @keyup.enter="updateFilters" />
-                    <button
-                        class="rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200"
-                        @click="updateFilters">
-                        Filter
-                    </button>
+                <div class="w-full md:w-64">
+                    <TextInput
+                        v-model="search"
+                        type="text"
+                        placeholder="Search order # or table..."
+                        class="w-full text-xs"
+                        @keyup.enter="updateFilters"
+                    />
                 </div>
             </div>
 
-            <!-- Orders Grid / List -->
-            <div v-if="props.orders.data.length === 0"
-                class="rounded-xl border border-gray-200 bg-white p-8 text-center">
-                <p class="text-sm font-medium text-gray-500">
-                    No orders match your filter criteria.
+            <!-- Orders Grid -->
+            <div
+                v-if="orders.data.length > 0"
+                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+                <div
+                    v-for="order in orders.data"
+                    :key="order.id"
+                    class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col justify-between hover:shadow-md transition-shadow"
+                >
+                    <div>
+                        <!-- Card Header -->
+                        <div
+                            class="flex items-center justify-between pb-3 border-b border-gray-100"
+                        >
+                            <div>
+                                <h3 class="text-sm font-bold text-gray-900">
+                                    Order #{{ order.id }}
+                                </h3>
+                                <span class="text-xs text-gray-500"
+                                    >Table:
+                                    <strong class="text-gray-800">{{
+                                        order.session?.table?.table_number ||
+                                        'N/A'
+                                    }}</strong></span
+                                >
+                            </div>
+                            <OrderStatusBadge :status="order.status" />
+                        </div>
+
+                        <!-- Card Meta -->
+                        <div
+                            class="py-2 text-xs text-gray-500 flex justify-between"
+                        >
+                            <span>Placed by: {{ order.placed_by_role }}</span>
+                            <span>{{ order.created_at }}</span>
+                        </div>
+
+                        <!-- Items Summary Preview -->
+                        <div class="py-2 space-y-1">
+                            <div
+                                v-for="item in (order.items || []).slice(0, 3)"
+                                :key="item.id"
+                                class="flex justify-between text-xs"
+                            >
+                                <span class="text-gray-700 truncate"
+                                    >{{ item.quantity }}x
+                                    {{
+                                        item.menu_item?.name || 'Item'
+                                    }}</span
+                                >
+                                <span class="font-medium text-gray-900">{{
+                                    formatCurrency(
+                                        item.quantity * Number(item.unit_price),
+                                    )
+                                }}</span>
+                            </div>
+                            <p
+                                v-if="(order.items || []).length > 3"
+                                class="text-xs text-indigo-600 font-medium pt-1"
+                            >
+                                +{{ (order.items || []).length - 3 }} more
+                                items...
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer & Actions -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <div
+                            class="flex items-center justify-between mb-3 font-semibold text-sm"
+                        >
+                            <span>Total</span>
+                            <span class="text-indigo-600">{{
+                                formatCurrency(calculateOrderTotal(order))
+                            }}</span>
+                        </div>
+
+                        <div class="flex gap-2 justify-end">
+                            <SecondaryButton @click="openViewModal(order)">
+                                Details
+                            </SecondaryButton>
+                            <PrimaryButton
+                                v-if="canEditOrder(order)"
+                                @click="openEditItemsModal(order)"
+                            >
+                                Edit Items
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div
+                v-else
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center"
+            >
+                <p class="text-gray-500 font-medium">No orders found.</p>
+                <p class="text-xs text-gray-400 mt-1">
+                    Try clearing search query or changing status filters.
                 </p>
             </div>
 
-            <div v-else class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <div v-for="order in props.orders.data" :key="order.id"
-                    class="flex flex-col justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
-                    <div>
-                        <!-- Header -->
-                        <div class="flex items-start justify-between border-b pb-3">
-                            <div>
-                                <span class="text-xs font-bold text-gray-400">ORDER #{{ order.id }}</span>
-                                <h3 class="text-lg font-bold text-gray-900">
-                                    {{
-                                        order.session?.table?.table_number ||
-                                        'Table #' + order.session_id
-                                    }}
-                                </h3>
-                                <p class="text-xs text-gray-500">
-                                    By:
-                                    <span class="font-medium text-gray-700 capitalize">{{
-                                        order.placed_by?.name ||
-                                        order.placed_by_role
-                                        }}</span>
-                                </p>
-                            </div>
-                            <span class="rounded-full border px-2.5 py-0.5 text-xs font-bold capitalize"
-                                :class="getStatusBadgeClass(order.status)">
-                                {{ order.status }}
-                            </span>
-                        </div>
-
-                        <!-- Items Summary -->
-                        <div class="my-3 space-y-1.5">
-                            <div v-for="item in order.items" :key="item.id"
-                                class="flex items-center justify-between text-xs text-gray-700">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-gray-900">{{ item.quantity }}x</span>
-                                    <span>{{
-                                        item.menu_item?.name || 'Item'
-                                        }}</span>
-                                </div>
-                                <span class="rounded border px-1.5 py-0.2 text-[10px] font-semibold capitalize"
-                                    :class="getStatusBadgeClass(item.status)">
-                                    {{ item.status }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Footer & Actions -->
-                    <div class="border-t pt-3">
-                        <div class="mb-3 flex items-center justify-between text-xs">
-                            <span class="text-gray-500">Total:</span>
-                            <span class="font-mono text-sm font-bold text-gray-900">
-                                {{
-                                    formatCurrency(
-                                        calculateOrderTotal(order.items),
-                                    )
-                                }}
-                            </span>
-                        </div>
-
-                        <div class="flex items-center gap-2">
-                            <button
-                                class="flex-1 rounded-lg border border-gray-300 bg-white py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
-                                @click="openViewModal(order)">
-                                View / Status
-                            </button>
-                            <button v-if="
-                                ['admin', 'manager', 'waiter'].includes(
-                                    userRole,
-                                )
-                            "
-                                class="rounded-lg bg-black px-3 py-1.5 text-xs font-semibold text-white hover:bg-gray-800"
-                                @click="openEditItemsModal(order)">
-                                Edit Items
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <!-- Pagination -->
+            <div class="flex justify-center pt-4">
+                <Paginator :links="orders.links" />
             </div>
+        </div>
 
-            <!-- View / Manage Modal -->
-            <div v-if="showViewModal && selectedOrder"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div class="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl">
-                    <div class="flex items-center justify-between border-b pb-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">
-                                Order #{{ selectedOrder.id }} Details
-                            </h3>
-                            <p class="text-xs text-gray-500">
-                                {{
-                                    selectedOrder.session?.table?.table_number ||
-                                    'Table #' + selectedOrder.session_id
-                                }}
-                            </p>
-                        </div>
-                        <button class="text-gray-400 hover:text-gray-600" @click="showViewModal = false">
-                            ✕
-                        </button>
+        <!-- Create Order Modal -->
+        <Modal :show="showCreateModal" @close="showCreateModal = false">
+            <div class="p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">
+                    Create New Waiter Order
+                </h3>
+
+                <form @submit.prevent="submitCreateOrder" class="space-y-4">
+                    <div>
+                        <InputLabel
+                            for="table_session"
+                            value="Select Active Table Session"
+                        />
+                        <select
+                            id="table_session"
+                            v-model="createForm.table_session_id"
+                            class="w-full text-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            required
+                        >
+                            <option
+                                v-for="s in activeSessions"
+                                :key="s.id"
+                                :value="s.id"
+                            >
+                                Table {{ s.table_number }} (Session #{{ s.id }})
+                            </option>
+                        </select>
                     </div>
 
-                    <!-- Order Transition Actions -->
-                    <div class="my-4 rounded-xl bg-gray-50 p-4 border border-gray-200">
-                        <span class="text-xs font-bold uppercase text-gray-500">Order Status Actions</span>
-                        <div class="mt-2 flex flex-wrap gap-2">
-                            <button v-if="
+                    <!-- Items Rows -->
+                    <div class="space-y-3 pt-2">
+                        <label class="block text-xs font-medium text-gray-700"
+                            >Order Items</label
+                        >
+                        <div
+                            v-for="(row, idx) in createForm.items"
+                            :key="idx"
+                            class="flex flex-col sm:flex-row gap-2 items-end bg-gray-50 p-3 rounded-lg border border-gray-200"
+                        >
+                            <div class="flex-1">
+                                <span class="text-xs text-gray-500 font-medium"
+                                    >Item</span
+                                >
+                                <select
+                                    v-model="row.menu_item_id"
+                                    class="w-full text-xs rounded-md border-gray-300 shadow-sm"
+                                    required
+                                >
+                                    <option
+                                        v-for="m in menuItems"
+                                        :key="m.id"
+                                        :value="m.id"
+                                    >
+                                        {{ m.name }} -
+                                        {{ formatCurrency(m.price) }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="w-20">
+                                <span class="text-xs text-gray-500 font-medium"
+                                    >Qty</span
+                                >
+                                <TextInput
+                                    v-model.number="row.quantity"
+                                    type="number"
+                                    min="1"
+                                    max="50"
+                                    class="w-full text-xs"
+                                    required
+                                />
+                            </div>
+                            <div class="flex-1">
+                                <span class="text-xs text-gray-500 font-medium"
+                                    >Notes</span
+                                >
+                                <TextInput
+                                    v-model="row.special_instructions"
+                                    type="text"
+                                    placeholder="Optional instructions..."
+                                    class="w-full text-xs"
+                                />
+                            </div>
+                            <DangerButton
+                                type="button"
+                                @click="removeCreateItemRow(idx)"
+                                v-if="createForm.items.length > 1"
+                            >
+                                X
+                            </DangerButton>
+                        </div>
+
+                        <SecondaryButton type="button" @click="addCreateItemRow">
+                            + Add Another Item
+                        </SecondaryButton>
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-4 border-t border-gray-100">
+                        <SecondaryButton type="button" @click="showCreateModal = false">
+                            Cancel
+                        </SecondaryButton>
+                        <PrimaryButton type="submit" :disabled="createForm.processing">
+                            Submit Order
+                        </PrimaryButton>
+                    </div>
+                </form>
+            </div>
+        </Modal>
+
+        <!-- View Details & Status Transition Modal -->
+        <Modal :show="showViewModal" @close="showViewModal = false">
+            <div v-if="selectedOrder" class="p-6 space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900">
+                            Order #{{ selectedOrder.id }} Details
+                        </h3>
+                        <p class="text-xs text-gray-500">
+                            Table:
+                            <strong>{{
+                                selectedOrder.session?.table?.table_number
+                            }}</strong>
+                            | Placed by: {{ selectedOrder.placed_by_role }}
+                        </p>
+                    </div>
+                    <OrderStatusBadge :status="selectedOrder.status" />
+                </div>
+
+                <!-- Status Transition Action Buttons -->
+                <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <span class="block text-xs font-semibold text-gray-700 mb-2"
+                        >Update Order Status</span
+                    >
+                    <div class="flex flex-wrap gap-2">
+                        <SecondaryButton
+                            v-if="
                                 selectedOrder.status === 'pending' &&
                                 ['admin', 'manager', 'waiter'].includes(
                                     userRole,
                                 )
                             "
-                                class="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-700"
-                                @click="
-                                    updateOrderStatus(selectedOrder, 'accepted')
-                                    ">
-                                Accept Order
-                            </button>
-                            <button v-if="
+                            @click="
+                                transitionOrderStatus(selectedOrder, 'accepted')
+                            "
+                        >
+                            Accept Order
+                        </SecondaryButton>
+
+                        <SecondaryButton
+                            v-if="
                                 ['accepted', 'pending'].includes(
                                     selectedOrder.status,
                                 ) &&
-                                [
-                                    'admin',
-                                    'manager',
-                                    'kitchen',
-                                ].includes(userRole)
+                                ['admin', 'manager', 'kitchen'].includes(
+                                    userRole,
+                                )
                             "
-                                class="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-purple-700"
-                                @click="
-                                    updateOrderStatus(
-                                        selectedOrder,
-                                        'preparing',
-                                    )
-                                    ">
-                                Start Preparing
-                            </button>
-                            <button v-if="
+                            @click="
+                                transitionOrderStatus(
+                                    selectedOrder,
+                                    'preparing',
+                                )
+                            "
+                        >
+                            Start Preparing
+                        </SecondaryButton>
+
+                        <SecondaryButton
+                            v-if="
                                 selectedOrder.status === 'preparing' &&
-                                [
-                                    'admin',
-                                    'manager',
-                                    'kitchen',
-                                ].includes(userRole)
+                                ['admin', 'manager', 'kitchen'].includes(
+                                    userRole,
+                                )
                             "
-                                class="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700"
-                                @click="
-                                    updateOrderStatus(selectedOrder, 'ready')
-                                    ">
-                                Mark Ready
-                            </button>
-                            <button v-if="
+                            @click="
+                                transitionOrderStatus(selectedOrder, 'ready')
+                            "
+                        >
+                            Mark Ready
+                        </SecondaryButton>
+
+                        <SecondaryButton
+                            v-if="
                                 selectedOrder.status === 'ready' &&
                                 ['admin', 'manager', 'waiter'].includes(
                                     userRole,
                                 )
                             "
-                                class="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700"
-                                @click="
-                                    updateOrderStatus(selectedOrder, 'served')
-                                    ">
-                                Mark Served
-                            </button>
-                        </div>
-                    </div>
+                            @click="
+                                transitionOrderStatus(selectedOrder, 'served')
+                            "
+                        >
+                            Mark Served
+                        </SecondaryButton>
 
-                    <!-- Items List -->
-                    <div class="space-y-3 max-h-72 overflow-y-auto pr-1">
-                        <div v-for="item in selectedOrder.items" :key="item.id"
-                            class="flex items-center justify-between rounded-lg border p-3">
+                        <DangerButton
+                            v-if="
+                                !['completed', 'cancelled'].includes(
+                                    selectedOrder.status,
+                                ) &&
+                                ['admin', 'manager'].includes(userRole)
+                            "
+                            @click="
+                                transitionOrderStatus(
+                                    selectedOrder,
+                                    'cancelled',
+                                )
+                            "
+                        >
+                            Cancel Order
+                        </DangerButton>
+                    </div>
+                </div>
+
+                <!-- Items Breakdown -->
+                <div>
+                    <h4 class="text-xs font-bold text-gray-700 uppercase mb-2">
+                        Order Items
+                    </h4>
+                    <div class="divide-y border rounded-lg overflow-hidden">
+                        <div
+                            v-for="item in selectedOrder.items || []"
+                            :key="item.id"
+                            class="p-3 flex justify-between items-center text-xs"
+                        >
                             <div>
-                                <div class="font-bold text-sm text-gray-900">
+                                <p class="font-bold text-gray-900">
                                     {{ item.quantity }}x
-                                    {{ item.menu_item?.name }}
-                                </div>
-                                <div v-if="item.special_instructions" class="text-xs text-amber-600 font-medium">
+                                    {{ item.menu_item?.name || 'Item' }}
+                                </p>
+                                <p
+                                    v-if="item.special_instructions"
+                                    class="text-gray-500 italic"
+                                >
                                     Note: {{ item.special_instructions }}
-                                </div>
+                                </p>
                             </div>
-                            <div class="flex items-center gap-2">
-                                <span class="rounded-full border px-2 py-0.5 text-xs font-semibold capitalize"
-                                    :class="getStatusBadgeClass(item.status)">
+                            <div class="text-right">
+                                <span class="font-semibold text-gray-900">{{
+                                    formatCurrency(
+                                        item.quantity * Number(item.unit_price),
+                                    )
+                                }}</span>
+                                <span
+                                    class="block text-[10px] uppercase font-bold text-indigo-600"
+                                >
                                     {{ item.status }}
                                 </span>
-                                <!-- Item status controls for Kitchen -->
-                                <button v-if="
-                                    item.status === 'pending' &&
-                                    [
-                                        'admin',
-                                        'manager',
-                                        'kitchen',
-                                    ].includes(userRole)
-                                "
-                                    class="rounded bg-purple-100 px-2 py-1 text-xs font-bold text-purple-800 hover:bg-purple-200"
-                                    @click="
-                                        updateOrderItemStatus(
-                                            selectedOrder,
-                                            item,
-                                            'preparing',
-                                        )
-                                        ">
-                                    Prep
-                                </button>
-                                <button v-if="
-                                    item.status === 'preparing' &&
-                                    [
-                                        'admin',
-                                        'manager',
-                                        'kitchen',
-                                    ].includes(userRole)
-                                "
-                                    class="rounded bg-emerald-100 px-2 py-1 text-xs font-bold text-emerald-800 hover:bg-emerald-200"
-                                    @click="
-                                        updateOrderItemStatus(
-                                            selectedOrder,
-                                            item,
-                                            'ready',
-                                        )
-                                        ">
-                                    Ready
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="flex justify-end pt-2">
+                    <SecondaryButton @click="showViewModal = false">
+                        Close
+                    </SecondaryButton>
+                </div>
             </div>
+        </Modal>
 
-            <!-- Edit Items Modal (Waiter / Manager) -->
-            <div v-if="showEditItemsModal && selectedOrder"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div class="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <h3 class="text-lg font-bold text-gray-900">
-                            Edit Items - Order #{{ selectedOrder.id }}
-                        </h3>
-                        <button class="text-gray-400 hover:text-gray-600" @click="showEditItemsModal = false">
-                            ✕
-                        </button>
+        <!-- Edit Order Items Modal -->
+        <Modal :show="showEditItemsModal" @close="showEditItemsModal = false">
+            <div v-if="selectedOrder" class="p-6 space-y-4">
+                <div class="flex items-center justify-between border-b pb-3">
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Edit Items for Order #{{ selectedOrder.id }}
+                    </h3>
+                    <SecondaryButton @click="showEditItemsModal = false">
+                        Done
+                    </SecondaryButton>
+                </div>
+
+                <!-- Add New Item Section -->
+                <form
+                    @submit.prevent="submitAddItem"
+                    class="bg-gray-50 p-4 rounded-lg border border-gray-200 space-y-3"
+                >
+                    <h4 class="text-xs font-bold text-gray-700 uppercase">
+                        Add New Item to Order
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                        <select
+                            v-model="addItemForm.menu_item_id"
+                            class="text-xs rounded-md border-gray-300 shadow-sm"
+                            required
+                        >
+                            <option
+                                v-for="m in menuItems"
+                                :key="m.id"
+                                :value="m.id"
+                            >
+                                {{ m.name }} - {{ formatCurrency(m.price) }}
+                            </option>
+                        </select>
+                        <TextInput
+                            v-model.number="addItemForm.quantity"
+                            type="number"
+                            min="1"
+                            max="50"
+                            class="text-xs"
+                            placeholder="Qty"
+                            required
+                        />
+                        <TextInput
+                            v-model="addItemForm.special_instructions"
+                            type="text"
+                            placeholder="Notes..."
+                            class="text-xs"
+                        />
                     </div>
-
-                    <!-- Add New Item Form -->
-                    <form class="my-4 rounded-xl bg-gray-50 p-3 border space-y-3" @submit.prevent="submitAddItem">
-                        <span class="text-xs font-bold uppercase text-gray-600">Add Item to Order</span>
-                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                            <select v-model="addItemForm.menu_item_id"
-                                class="rounded-lg border-gray-300 text-xs sm:col-span-2" required>
-                                <option value="">Select Item...</option>
-                                <option v-for="item in props.menuItems" :key="item.id" :value="item.id">
-                                    {{ item.name }} ({{
-                                        formatCurrency(item.price)
-                                    }})
-                                </option>
-                            </select>
-                            <input v-model="addItemForm.quantity" type="number" min="1" placeholder="Qty"
-                                class="rounded-lg border-gray-300 text-xs" required />
-                        </div>
-                        <input v-model="addItemForm.special_instructions" type="text"
-                            placeholder="Special instructions (optional)..."
-                            class="w-full rounded-lg border-gray-300 text-xs" />
-                        <button type="submit"
-                            class="w-full rounded-lg bg-black py-2 text-xs font-bold text-white hover:bg-gray-800">
+                    <div class="flex justify-end">
+                        <PrimaryButton type="submit" :disabled="addItemForm.processing">
                             + Add Item
-                        </button>
-                    </form>
+                        </PrimaryButton>
+                    </div>
+                </form>
 
-                    <!-- Existing Order Items -->
-                    <div class="space-y-2 max-h-60 overflow-y-auto">
-                        <div v-for="item in selectedOrder.items" :key="item.id"
-                            class="flex items-center justify-between border-b pb-2 text-xs">
+                <!-- Current Items Table -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-bold text-gray-700 uppercase">
+                        Existing Items
+                    </h4>
+                    <div class="divide-y border rounded-lg overflow-hidden">
+                        <div
+                            v-for="item in selectedOrder.items || []"
+                            :key="item.id"
+                            class="p-3 flex justify-between items-center text-xs"
+                        >
                             <div>
-                                <span class="font-bold">{{
-                                    item.menu_item?.name
+                                <p class="font-bold text-gray-900">
+                                    {{ item.menu_item?.name || 'Item' }}
+                                </p>
+                                <p class="text-gray-500">
+                                    Unit Price:
+                                    {{ formatCurrency(Number(item.unit_price)) }}
+                                    | Status:
+                                    <span class="font-semibold text-indigo-600">{{
+                                        item.status
                                     }}</span>
-                                <span class="text-gray-500 ml-2 font-mono">{{ formatCurrency(item.unit_price) }}</span>
+                                </p>
                             </div>
                             <div class="flex items-center gap-2">
-                                <button class="rounded bg-gray-200 px-2 py-0.5 font-bold" @click="
-                                    updateItemQuantity(
-                                        item,
-                                        item.quantity - 1,
-                                    )
-                                    ">
+                                <SecondaryButton
+                                    @click="
+                                        updateItemQuantity(
+                                            item,
+                                            item.quantity - 1,
+                                        )
+                                    "
+                                    :disabled="item.quantity <= 1"
+                                >
                                     -
-                                </button>
-                                <span class="font-bold">{{
+                                </SecondaryButton>
+                                <span class="font-bold text-xs px-1">{{
                                     item.quantity
-                                    }}</span>
-                                <button class="rounded bg-gray-200 px-2 py-0.5 font-bold" @click="
-                                    updateItemQuantity(
-                                        item,
-                                        item.quantity + 1,
-                                    )
-                                    ">
+                                }}</span>
+                                <SecondaryButton
+                                    @click="
+                                        updateItemQuantity(
+                                            item,
+                                            item.quantity + 1,
+                                        )
+                                    "
+                                >
                                     +
-                                </button>
-                                <button class="text-red-600 font-bold ml-2 hover:underline" @click="removeItem(item)">
+                                </SecondaryButton>
+                                <DangerButton @click="removeItem(item)">
                                     Remove
-                                </button>
+                                </DangerButton>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Create Order Modal -->
-            <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-                <div class="w-full max-w-xl rounded-2xl bg-white p-6 shadow-xl">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <h3 class="text-lg font-bold text-gray-900">
-                            Create New Waiter Order
-                        </h3>
-                        <button class="text-gray-400 hover:text-gray-600" @click="showCreateModal = false">
-                            ✕
-                        </button>
-                    </div>
-
-                    <form class="my-4 space-y-4" @submit.prevent="submitCreateOrder">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Active Table Session</label>
-                            <select v-model="createOrderForm.table_session_id"
-                                class="w-full rounded-lg border-gray-300 text-xs" required>
-                                <option value="">Select Active Table...</option>
-                                <option v-for="session in props.activeSessions" :key="session.id" :value="session.id">
-                                    {{ session.table_number }}
-                                </option>
-                            </select>
-                        </div>
-
-                        <!-- Add Items to Order -->
-                        <div class="rounded-xl bg-gray-50 p-3 border space-y-2">
-                            <span class="text-xs font-bold uppercase text-gray-600">Add Menu Items</span>
-                            <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                                <select v-model="newItemSelection.menu_item_id"
-                                    class="rounded-lg border-gray-300 text-xs sm:col-span-2">
-                                    <option value="">Select Item...</option>
-                                    <option v-for="item in props.menuItems" :key="item.id" :value="item.id">
-                                        {{ item.name }} ({{
-                                            formatCurrency(item.price)
-                                        }})
-                                    </option>
-                                </select>
-                                <input v-model="newItemSelection.quantity" type="number" min="1" placeholder="Qty"
-                                    class="rounded-lg border-gray-300 text-xs" />
-                            </div>
-                            <div class="flex gap-2">
-                                <input v-model="newItemSelection.special_instructions
-                                    " type="text" placeholder="Special instructions..."
-                                    class="flex-1 rounded-lg border-gray-300 text-xs" />
-                                <button type="button"
-                                    class="rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-bold text-white"
-                                    @click="addCreateItem">
-                                    Add
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Selected Items Preview -->
-                        <div v-if="createOrderForm.items.length > 0"
-                            class="space-y-1 max-h-40 overflow-y-auto border-t pt-2">
-                            <div v-for="(item, idx) in createOrderForm.items" :key="idx"
-                                class="flex items-center justify-between text-xs bg-gray-100 p-2 rounded">
-                                <span>
-                                    {{ item.quantity }}x
-                                    {{
-                                        props.menuItems.find(
-                                            (m) => m.id === item.menu_item_id,
-                                        )?.name
-                                    }}
-                                </span>
-                                <button type="button" class="text-red-600 font-bold text-xs"
-                                    @click="removeCreateItem(idx)">
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-
-                        <button type="submit"
-                            class="w-full rounded-lg bg-black py-2.5 text-sm font-bold text-white shadow hover:bg-gray-800 disabled:opacity-50"
-                            :disabled="!createOrderForm.table_session_id ||
-                                createOrderForm.items.length === 0
-                                ">
-                            Submit Order
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
+        </Modal>
     </AuthenticatedLayout>
 </template>

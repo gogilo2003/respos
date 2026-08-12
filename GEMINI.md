@@ -49,6 +49,7 @@ A QR-based restaurant ordering and billing management system built with Laravel 
 - **Composition API:** Use `<script setup>` in all Vue components.
 - **Type Safety:** Always use TypeScript for props, emits, and internal logic.
 - **Components:** Shared components in `resources/js/Components`. Page components in `resources/js/Pages`.
+- **Component Reuse First:** ALWAYS check `resources/js/Components/` before creating custom inline UI (e.g. use `PrimaryButton`, `SecondaryButton`, `DangerButton`, `Modal`, `TextInput`, `InputLabel`, `InputError`, `Checkbox`, `QuantitySelector`, `Paginator`, `OrderStatusBadge` rather than raw HTML/custom inline elements).
 - **CRUD:** Prefer single-page Inertia flows with dialogs for Create/Edit/View/Delete actions.
 
 ## Project Resources
