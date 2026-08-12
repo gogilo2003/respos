@@ -75,12 +75,12 @@ const getStepIndex = (status: string) => {
                             <div v-for="(step, idx) in steps" :key="step.key" class="flex flex-col items-center">
                                 <div class="flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold transition"
                                     :class="getStepIndex(order.status) >= idx
-                                        ? 'bg-blue-600 text-white ring-4 ring-blue-100'
+                                        ? 'bg-blue-600 text-white ring-2 ring-blue-100'
                                         : 'bg-gray-100 text-gray-400'
                                         ">
                                     {{ idx + 1 }}
                                 </div>
-                                <span class="mt-2 text-[11px] font-semibold text-gray-800">{{ step.label }}</span>
+                                <span class="mt-2 text-xs font-semibold text-gray-800">{{ step.label }}</span>
                             </div>
                         </div>
                     </div>
@@ -117,7 +117,7 @@ const getStepIndex = (status: string) => {
                                 <div class="text-sm font-bold text-gray-900">
                                     {{ formatCurrency(item.total_price) }}
                                 </div>
-                                <span class="mt-0.5 inline-block text-[10px] font-bold uppercase text-gray-400">{{
+                                <span class="mt-0.5 inline-block text-xs font-bold uppercase text-gray-400">{{
                                     item.status }}</span>
                             </div>
                         </div>

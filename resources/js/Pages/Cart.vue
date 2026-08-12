@@ -27,6 +27,7 @@ const cartStore = useCartStore();
 const selectedTableId = ref<number | ''>(props.activeSession?.table_id || '');
 const isSubmitting = ref(false);
 const submitError = ref<string | null>(null);
+const confirmClear = ref(false);
 
 const handleCheckout = async () => {
     if (cartStore.isEmpty) return;
@@ -79,9 +80,16 @@ const handleCheckout = async () => {
 };
 
 const handleClearCart = () => {
-    if (confirm('Are you sure you want to clear your cart?')) {
-        cartStore.clearCart();
-    }
+    confirmClear.value = true;
+};
+
+const confirmClearCart = () => {
+    cartStore.clearCart();
+    confirmClear.value = false;
+};
+
+const cancelClearCart = () => {
+    confirmClear.value = false;
 };
 </script>
 
@@ -208,7 +216,7 @@ const handleClearCart = () => {
                                         item.quantity - 1,
                                     )
                                     "
-                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300">
+                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 active:scale-95">
                                     -
                                 </button>
                                 <span class="px-2 font-bold">{{
@@ -220,12 +228,12 @@ const handleClearCart = () => {
                                         item.quantity + 1,
                                     )
                                     "
-                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300">
+                                    class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 active:scale-95">
                                     +
                                 </button>
                             </div>
 
-                            <button @click="cartStore.removeItem(item.id)" class="text-red-500 hover:text-red-700">
+                            <button @click="cartStore.removeItem(item.id)" class="rounded-full p-2 text-red-500 hover:bg-red-50 hover:text-red-700 active:scale-95">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M6 18L18 6M6 6l12 12"></path>
@@ -250,10 +258,23 @@ const handleClearCart = () => {
                                     : 'Place Order & Send to Kitchen'
                             }}
                         </button>
-                        <button @click="handleClearCart"
-                            class="w-full rounded-md bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200">
+                        <button v-if="!confirmClear" @click="handleClearCart"
+                            class="w-full rounded-md bg-gray-100 px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-200 active:scale-[0.98]">
                             Clear Cart
                         </button>
+                        <div v-else class="rounded-md bg-red-50 p-3 text-center">
+                            <p class="mb-2 text-sm text-red-700">Clear all items from your cart?</p>
+                            <div class="flex justify-center gap-2">
+                                <button @click="confirmClearCart"
+                                    class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 active:scale-95">
+                                    Yes, clear
+                                </button>
+                                <button @click="cancelClearCart"
+                                    class="rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-300 active:scale-95">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
                         <Link :href="route('categories')"
                             class="block w-full rounded-md bg-blue-600 px-4 py-3 text-center text-sm font-semibold text-white hover:bg-blue-700">
                             Continue Shopping

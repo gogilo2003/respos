@@ -24,7 +24,7 @@ const features = [
 <template>
     <Head title="About" />
     <WebLayout title="About ResPos">
-        <div class="min-h-screen text-gray-50">
+        <div class="min-h-screen bg-gray-900 text-gray-50">
             <header class="py-16">
                 <div class="px-4">
                     <h1 class="text-4xl font-extrabold text-gray-100">
@@ -72,7 +72,7 @@ const features = [
                         rel="noopener noreferrer"
                     >
                         <img
-                            src="https://tse3.mm.bing.net/th/id/OIP.7Xv7HE8tc1bESoiRSrGm3gHaEl?cb=thfvnextfalcon4&rs=1&pid=ImgDetMain&o=7&rm=3"
+                            src="/images/facebook-icon.svg"
                             alt="Facebook icon"
                             class="social-icon"
                         />
@@ -84,9 +84,8 @@ const features = [
 </template>
 
 <style scoped>
-body {
-    margin: 0;
-    padding: 0;
+.page-wrapper {
+    min-height: 100vh;
     background-color: #1b1906;
     color: #d6c5c5;
 }

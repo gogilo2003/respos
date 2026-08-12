@@ -87,7 +87,7 @@ onUnmounted(() => {
                 >
                     <span v-if="link.isTrack" class="inline-flex items-center gap-1.5 font-bold text-amber-400 hover:text-amber-300">
                         <span class="relative flex h-2.5 w-2.5">
-                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="absolute inline-flex h-full w-full animate-pulse rounded-full bg-amber-400 opacity-75"></span>
                             <span class="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-500"></span>
                         </span>
                         {{ link.name }}
@@ -108,7 +108,7 @@ onUnmounted(() => {
             <!-- Mobile toggle -->
             <button
                 type="button"
-                class="flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 md:hidden"
+                class="flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/10 active:scale-95 md:hidden"
                 :aria-expanded="mobileOpen"
                 aria-label="Toggle menu"
                 @click="toggleMobile"
@@ -139,7 +139,7 @@ onUnmounted(() => {
             enter-active-class="transition duration-150 ease-out"
             enter-from-class="opacity-0 -translate-y-2"
             enter-to-class="opacity-100 translate-y-0"
-            leave-active-class="transition duration-100 ease-in"
+            leave-active-class="transition duration-150 ease-out"
             leave-from-class="opacity-100 translate-y-0"
             leave-to-class="opacity-0 -translate-y-2"
         >
@@ -156,7 +156,7 @@ onUnmounted(() => {
                 >
                     <span v-if="link.isTrack" class="inline-flex items-center gap-1.5 text-amber-400 font-bold">
                         <span class="relative flex h-2 w-2">
-                            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="absolute inline-flex h-full w-full animate-pulse rounded-full bg-amber-400 opacity-75"></span>
                             <span class="relative inline-flex h-2 w-2 rounded-full bg-amber-500"></span>
                         </span>
                         {{ link.name }}

@@ -13,21 +13,6 @@ defineProps<{
 }>();
 
 const isOpen = ref(false);
-
-const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-const scrollToAnchor = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-};
-
-const scrollToCategory = () => {
-    document
-        .getElementById('menu-categories')
-        ?.scrollIntoView({ behavior: 'smooth' });
-};
-// const categoryCards = computed(() => usePage().props.categories)
 </script>
 
 <template>
@@ -44,11 +29,19 @@ const scrollToCategory = () => {
                         </p>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                    <div v-if="!categories.length" class="py-12 text-center">
+                        <p class="text-sm text-gray-400">No categories available right now.</p>
+                        <Link href="/menu"
+                            class="mt-4 inline-block rounded-md bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-800">
+                            Browse Menu
+                        </Link>
+                    </div>
+
+                    <div v-else class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         <article
                             v-for="category in categories"
                             :key="category.name"
-                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
+                            class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                         >
                             <div class="h-48 bg-gray-100">
                                 <img
